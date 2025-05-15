@@ -81,7 +81,7 @@
             </a-row>
         </a-card>
         <!-- Document configuration -->
-        <a-card :title="$t('docs.configuration')" class="mt-10">
+        <a-card :title="$t('docs.configuration')" class="mt-2">
             <a-form layout="vertical">
                 <a-row>
                     <a-col :xs="24" :sm="24" :md="24" :lg="24">
@@ -109,12 +109,12 @@
             </a-form>
         </a-card>
         <!-- Assign Document Signers -->
-        <a-card :title="$t('docs.assign_doc_signers')" class="mt-10" v-if="selectedOption === 'esign'">
+        <a-card :title="$t('docs.assign_doc_signers')" class="mt-2" v-if="selectedOption === 'esign'">
             <a-form layout="vertical">
                 <a-checkbox v-model:checked="formDataDoc.signOrder"
                     >{{ $t("docs.enforce_signing_order") }}</a-checkbox
                 >
-                <a-typography-title class="mt-10" :level="5">{{$t("docs.signers")}}</a-typography-title>
+                <a-typography-title class="mt-2" :level="5">{{$t("docs.signers")}}</a-typography-title>
                 <a-row>
                     <a-col :span="24">
                         <a-space
@@ -220,7 +220,7 @@
         <a-card
             :title="$t('docs.delivery_expiration')"
             v-if="selectedOption === 'esign'"
-            class="mt-10"
+            class="mt-2"
         >
             <a-form layout="vertical">
                 <a-row>
@@ -236,7 +236,7 @@
                                 <a-col span="24">
                                     <a-form-item
                                         :label="$t('campaign.email_template')"
-                                        class="mt-10"
+                                        class="mt-2"
                                     >
                                         <a-select
                                             v-model:value="
@@ -316,13 +316,13 @@
                                 </a-col>
                             </a-row>
                         </a-row>
-                        <a-row class="mt-10">
+                        <a-row class="mt-2">
                             <a-col span="24">
                                 <a-checkbox v-model:checked="smsCheck"
                                     >SMS</a-checkbox
                                 >
                                 <a-row v-if="smsCheck">
-                                    <a-col span="24" class="mt-10">
+                                    <a-col span="24" class="mt-2">
                                         <a-form-item
                                             :label="$t('docs.sms_templates')"
                                         >
@@ -372,7 +372,7 @@
                                 </a-row>
                             </a-col>
                         </a-row>
-                        <!-- <a-row class="mt-20">
+                        <!-- <a-row class="mt-5">
                             <a-typography-title :level="5">{{
                                 $t("docs.expiration_date")
                             }}</a-typography-title>
@@ -439,7 +439,7 @@
         </a-col>
     </a-row>
 
-    <a-row class="mt-20">
+    <a-row class="mt-5">
         <a-col :span="24">
             <div class="table-responsive documents-table">
                 <a-tabs v-model:activeKey="activeKey">

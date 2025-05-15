@@ -21,7 +21,7 @@
     </AdminPageHeader>
 
     <admin-page-table-content>
-        <a-card class="page-content-container mt-5 mb-5">
+        <a-card class="page-content-container mt-5 mb-20">
             <LeadNotesTable
                 logType="notes"
                 :showFormFields="true"

@@ -3,6 +3,34 @@
         <template #header>
             <a-page-header :title="$t(`menu.campaigns`)" class="p-0!" />
         </template>
+        <template #actions>
+            <a-space>
+                <template
+                    v-if="
+                        permsArray.includes('campaigns_create') ||
+                        permsArray.includes('admin')
+                    "
+                >
+                    <a-button type="primary" @click="addItem">
+                        <PlusOutlined />
+                        {{ $t("campaign.add") }}
+                    </a-button>
+                </template>
+                <a-button
+                    v-if="
+                        table.selectedRowKeys.length > 0 &&
+                        (permsArray.includes('campaigns_delete') ||
+                            permsArray.includes('admin'))
+                    "
+                    type="primary"
+                    @click="showSelectedDeleteConfirm"
+                    danger
+                >
+                    <template #icon><DeleteOutlined /></template>
+                    {{ $t("common.delete") }}
+                </a-button>
+            </a-space>
+        </template>
         <template #breadcrumb>
             <a-breadcrumb separator="-" style="font-size: 12px">
                 <a-breadcrumb-item>
@@ -16,67 +44,6 @@
             </a-breadcrumb>
         </template>
     </AdminPageHeader>
-
-    <admin-page-filters>
-        <a-row :gutter="[16, 16]">
-            <a-col :xs="24" :sm="24" :md="12" :lg="10" :xl="10">
-                <a-space>
-                    <template
-                        v-if="
-                            permsArray.includes('campaigns_create') ||
-                            permsArray.includes('admin')
-                        "
-                    >
-                        <a-button type="primary" @click="addItem">
-                            <PlusOutlined />
-                            {{ $t("campaign.add") }}
-                        </a-button>
-                    </template>
-                    <a-button
-                        v-if="
-                            table.selectedRowKeys.length > 0 &&
-                            (permsArray.includes('campaigns_delete') ||
-                                permsArray.includes('admin'))
-                        "
-                        type="primary"
-                        @click="showSelectedDeleteConfirm"
-                        danger
-                    >
-                        <template #icon><DeleteOutlined /></template>
-                        {{ $t("common.delete") }}
-                    </a-button>
-                </a-space>
-            </a-col>
-            <a-col :xs="24" :sm="24" :md="12" :lg="14" :xl="14">
-                <a-row :gutter="[16, 16]" justify="end">
-                    <a-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12">
-                        <a-input-group compact>
-                            <a-select
-                                style="width: 25%"
-                                v-model:value="table.searchColumn"
-                                :placeholder="$t('common.select_default_text', [''])"
-                            >
-                                <a-select-option
-                                    v-for="filterableColumn in filterableColumns"
-                                    :key="filterableColumn.key"
-                                >
-                                    {{ filterableColumn.value }}
-                                </a-select-option>
-                            </a-select>
-                            <a-input-search
-                                style="width: 75%"
-                                v-model:value="table.searchString"
-                                show-search
-                                @change="onTableSearch"
-                                @search="onTableSearch"
-                                :loading="table.filterLoading"
-                            />
-                        </a-input-group>
-                    </a-col>
-                </a-row>
-            </a-col>
-        </a-row>
-    </admin-page-filters>
 
     <admin-page-table-content>
         <AddEdit
@@ -144,6 +111,30 @@
                         bordered
                         size="middle"
                     >
+                        <template #title>
+                            <a-row justify="end" align="center" class="table-header">
+                                <a-col 
+                                    :xs="24"
+                                    :sm="18"
+                                    :md="18"
+                                    :lg="12"
+                                    :xl="8"
+                                >
+                                    <a-input-search
+                                        v-model:value="table.searchString"
+                                        show-search
+                                        @change="onTableSearch"
+                                        @search="onTableSearch"
+                                        :loading="table.filterLoading"
+                                        :placeholder="
+                                            $t('common.select_default_text', [
+                                                $t('menu.campaigns')
+                                            ])
+                                        "
+                                    />
+                                </a-col>
+                            </a-row>
+                        </template>
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.dataIndex === 'progress'">
                                 <CampaignProgress :campaign="record" @success="fetch" />
@@ -192,6 +183,10 @@
                             </template>
                             <template v-if="column.dataIndex === 'action'">
                                 <a-space>
+                                    <ExportButton
+                                        :campaignXId="record.xid"
+                                        :leadStatuses="leadStatuses"
+                                    />
                                     <AddLead
                                         :campaign="record"
                                         btnType="primary"
@@ -252,6 +247,7 @@ import crud from "../../../common/composable/crud";
 import common from "../../../common/composable/common";
 import fields from "./fields";
 import AddEdit from "./AddEdit.vue";
+import ExportButton from "./ExportButton.vue";
 import AdminPageHeader from "../../../common/layouts/AdminPageHeader.vue";
 import AddLead from "./AddLead.vue";
 import CampaignMembers from "./CampaignMembers.vue";
@@ -269,6 +265,7 @@ export default {
         AddLead,
         CampaignMembers,
         CampaignProgress,
+        ExportButton,
     },
     setup() {
         const { permsArray, appSetting, formatDateTime } = common();
@@ -282,6 +279,7 @@ export default {
             extraFilters,
         } = fields();
         const crudVariables = crud();
+        const leadStatuses = ref([]);
 
         onMounted(() => {
             setUrlData();
@@ -294,6 +292,10 @@ export default {
         });
 
         const setUrlData = () => {
+            axiosAdmin.get('lead-statuses?limit=1000').then((res) => {
+                leadStatuses.value = res.data;
+            });
+
             crudVariables.tableUrl.value = {
                 url,
                 extraFilters,
@@ -315,6 +317,7 @@ export default {
             filterableColumns,
             extraFilters,
             setUrlData,
+            leadStatuses,
         };
     },
 };

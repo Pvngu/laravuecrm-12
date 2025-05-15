@@ -2,27 +2,27 @@
     <AdminPageHeader>
         <template #header>
             <a-page-header :title="$t(`menu.leads`)" class="p-0!">
-                <template
-                    v-if="
-                        permsArray.includes('campaigns_view_all') ||
-                        permsArray.includes('admin')
-                    "
-                    #extra
-                >
-                    <a-space>
-                        <a-typography-text strong>
-                            {{ $t("campaign.view_all_campaigns") }}
-                        </a-typography-text>
-                        <a-switch
-                            v-model:checked="viewType"
-                            @change="viewTypeChanged"
-                            unCheckedValue="self"
-                            checkedValue="all"
-                            size="small"
-                        />
-                    </a-space>
-                </template>
             </a-page-header>
+        </template>
+        <template
+            v-if="
+                permsArray.includes('campaigns_view_all') ||
+                permsArray.includes('admin')
+            "
+            #actions
+        >
+            <a-space>
+                <a-typography-text strong>
+                    {{ $t("campaign.view_all_campaigns") }}
+                </a-typography-text>
+                <a-switch
+                    v-model:checked="viewType"
+                    @change="viewTypeChanged"
+                    unCheckedValue="self"
+                    checkedValue="all"
+                    size="small"
+                />
+            </a-space>
         </template>
         <template #breadcrumb>
             <a-breadcrumb separator="-" style="font-size: 12px">
@@ -42,7 +42,7 @@
     </AdminPageHeader>
 
     <admin-page-table-content>
-        <a-card class="page-content-container mt-5 mb-5">
+        <a-card class="page-content-container mt-5 mb-20">
             <a-row>
                 <a-col :span="24">
                     <a-tabs
@@ -285,7 +285,7 @@
                                 v-model:value="table.searchString"
                                 :placeholder="
                                     $t('common.select_default_text', [
-                                        $t('lead.reference_number'),
+                                        $t('lead.reference_number') + ', ' + $t('common.name') ,
                                     ])
                                 "
                                 show-search
@@ -313,17 +313,12 @@
                                 style="width: 100%"
                                 @change="setUrlData"
                             >
-                                <a-select-option key="interested" value="interested">
-                                    {{ $t("lead.interested") }}
-                                </a-select-option>
-                                <a-select-option
-                                    key="not_interested"
-                                    value="not_interested"
+                                <a-select-option 
+                                    v-for="leadStatus in leadStatuses"
+                                    :key="leadStatus.id" 
+                                    :value="leadStatus.id"
                                 >
-                                    {{ $t("lead.not_interested") }}
-                                </a-select-option>
-                                <a-select-option key="unreachable" value="unreachable">
-                                    {{ $t("lead.unreachable") }}
+                                    {{ leadStatus.name }}
                                 </a-select-option>
                             </a-select>
                         </a-col>
@@ -390,19 +385,22 @@
                                             <a-button
                                                 type="link"
                                                 class="p-0!"
-                                                @click="showViewDrawer(record)"
+                                                @click="showViewDrawer(record.individual)"
                                             >
                                                 {{
-                                                    record.reference_number != "" &&
-                                                    record.reference_number != undefined
-                                                        ? record.reference_number
+                                                    record.individual.reference_number != "" &&
+                                                    record.individual.reference_number != undefined
+                                                        ? record.individual.reference_number
                                                         : "---"
                                                 }}
                                             </a-button>
                                         </template>
 
                                         <template v-if="column.dataIndex === 'campaign'">
-                                            {{ record.campaign.name }}
+                                            {{ record.individual.campaign.name }}
+                                        </template>
+                                        <template v-if="column.dataIndex === 'full_name'">
+                                            {{ record.individual.first_name }} {{ record.individual.last_name }}
                                         </template>
                                         <template
                                             v-for="allFormFieldName in allFormFieldNames"
@@ -419,7 +417,7 @@
                                                 {{
                                                     findFieldValue(
                                                         allFormFieldName.similar_field_names,
-                                                        record.lead_data
+                                                        record.individual.lead_data
                                                     )
                                                 }}
                                             </template>
@@ -427,14 +425,14 @@
                                         <template v-if="column.dataIndex === 'action'">
                                             <a-space
                                                 v-if="
-                                                    isLeadActionValid(record.campaign.xid)
+                                                    isLeadActionValid(record.individual.campaign.xid)
                                                 "
                                             >
                                                 <a-tooltip
                                                     v-if="
                                                         record.started &&
-                                                        record.campaign &&
-                                                        record.campaign.status !=
+                                                        record.individual.campaign &&
+                                                        record.individual.campaign.status !=
                                                             'completed'
                                                     "
                                                     :title="$t('lead.go_resume_call')"
@@ -572,6 +570,7 @@ export default {
             userCampaigns,
             activeCampaignType,
             viewType,
+            leadStatuses
         } = fields();
         const crudVariables = crud();
         const filters = ref({
@@ -626,7 +625,6 @@ export default {
                     resultString = leadData.field_value;
                 }
             });
-
             return resultString;
         };
 
@@ -778,6 +776,8 @@ export default {
             isLeadActionValid,
             viewType,
             viewTypeChanged,
+
+            leadStatuses,
         };
     },
 };

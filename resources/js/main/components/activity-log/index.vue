@@ -73,7 +73,7 @@
             />
         </a-col>
     </a-row>
-    <a-row class="mt-20">
+    <a-row class="mt-5">
         <a-col :span="24">
             <div class="table-responsive" v-if="columns && columns.length > 0">
                 <a-table
@@ -195,7 +195,7 @@
                         <template v-if="column.dataIndex == 'reference_number'">
                             <a-button
                                 type="link"
-                                class="p-0"
+                                class="p-0!"
                                 @click="showViewDrawer(record.individual)"
                             >
                                 {{
@@ -513,7 +513,7 @@
                 <a-col 
                     :span="24"
                     v-for="(value, key, index) in modalData"
-                    :class="index !== 0 ? 'mt-10' : ''"
+                    :class="index !== 0 ? 'mt-2' : ''"
                 >
                     <a-typography-title :level="5">
                         {{ $t(`activity_log.${key}`) }}:

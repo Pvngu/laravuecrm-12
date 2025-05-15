@@ -1,6 +1,6 @@
 <template>
     <a-tooltip :title="$t('lead.send_email')">
-        <a-button type="primary" @click="sendEmail">
+        <a-button type="primary" :disabled="!isValidEmail(email)" @click="sendEmail">
             <template #icon>
                 <MailOutlined />
             </template>
@@ -118,27 +118,290 @@
                     </a-form-item>
                 </a-col>
             </a-row>
+            <a-typography-title :level="5">
+                {{ $t("lead.applicant") }}
+            </a-typography-title>
             <a-row
                 :gutter="16"
                 v-if="
-                    lead &&
-                    lead.campaign &&
-                    lead.campaign.form &&
-                    lead.campaign.form.form_fields &&
-                    lead.campaign.form.form_fields.length > 0
+                    leadFormData
                 "
-                class="mb-5"
+                class="mb-20"
             >
                 <a-col
                     :xs="8"
                     :sm="8"
                     :md="6"
                     :lg="4"
-                    v-for="selectedFormField in lead.campaign.form.form_fields"
+                >
+                    <a-button
+                        @click="insertFormText('first_name')"
+                        type="link"
+                        style="padding: 0px"
+                    >
+                        {{ $t('lead.first_name') }}
+                    </a-button>
+                </a-col>
+                <a-col
+                    :xs="8"
+                    :sm="8"
+                    :md="6"
+                    :lg="4"
+                >
+                    <a-button
+                        @click="insertFormText('last_name')"
+                        type="link"
+                        style="padding: 0px"
+                    >
+                        {{ $t('lead.last_name') }}
+                    </a-button>
+                </a-col>
+                <a-col
+                    :xs="8"
+                    :sm="8"
+                    :md="6"
+                    :lg="4"
+                >
+                    <a-button
+                        @click="insertFormText('SSN')"
+                        type="link"
+                        style="padding: 0px"
+                    >
+                        {{ $t('lead.SSN') }}
+                    </a-button>
+                </a-col>
+                <a-col
+                    :xs="8"
+                    :sm="8"
+                    :md="6"
+                    :lg="4"
+                >
+                    <a-button
+                        @click="insertFormText('date_of_birth')"
+                        type="link"
+                        style="padding: 0px"
+                    >
+                        {{ $t('lead.date_of_birth') }}
+                    </a-button>
+                </a-col>
+                <a-col
+                    :xs="8"
+                    :sm="8"
+                    :md="6"
+                    :lg="4"
+                >
+                    <a-button
+                        @click="insertFormText('phone_number')"
+                        type="link"
+                        style="padding: 0px"
+                    >
+                        {{ $t('lead.phone_number') }}
+                    </a-button>
+                </a-col>
+                <a-col
+                    :xs="8"
+                    :sm="8"
+                    :md="6"
+                    :lg="4"
+                >
+                    <a-button
+                        @click="insertFormText('home_phone')"
+                        type="link"
+                        style="padding: 0px"
+                    >
+                        {{ $t('lead.home_phone') }}
+                    </a-button>
+                </a-col>
+                <a-col
+                    :xs="8"
+                    :sm="8"
+                    :md="6"
+                    :lg="4"
+                >
+                    <a-button
+                        @click="insertFormText('email')"
+                        type="link"
+                        style="padding: 0px"
+                    >
+                        {{ $t('lead.email') }}
+                    </a-button>
+                </a-col>
+                <a-col
+                    :xs="8"
+                    :sm="8"
+                    :md="6"
+                    :lg="4"
+                >
+                    <a-button
+                        @click="insertFormText('language')"
+                        type="link"
+                        style="padding: 0px"
+                    >
+                        {{ $t('lead.language') }}
+                    </a-button>
+                </a-col>
+                <a-col
+                    :xs="8"
+                    :sm="8"
+                    :md="6"
+                    :lg="4"
+                >
+                    <a-button
+                        @click="insertFormText('original_profile_id')"
+                        type="link"
+                        style="padding: 0px"
+                    >
+                        {{ $t('lead.original_profile_id') }}
+                    </a-button>
+                </a-col>
+            </a-row>
+            <a-typography-title :level="5">
+                {{ $t("lead.co_applicant") }}
+            </a-typography-title>
+            <a-row
+                :gutter="16"
+                v-if="
+                    leadFormData
+                "
+                class="mb-20"
+            >
+                <a-col
+                    :xs="8"
+                    :sm="8"
+                    :md="6"
+                    :lg="4"
+                >
+                    <a-button
+                        @click="insertFormText('co_first_name')"
+                        type="link"
+                        style="padding: 0px"
+                    >
+                        {{ $t('lead.first_name') }}
+                    </a-button>
+                </a-col>
+                <a-col
+                    :xs="8"
+                    :sm="8"
+                    :md="6"
+                    :lg="4"
+                >
+                    <a-button
+                        @click="insertFormText('co_last_name')"
+                        type="link"
+                        style="padding: 0px"
+                    >
+                        {{ $t('lead.last_name') }}
+                    </a-button>
+                </a-col>
+                <a-col
+                    :xs="8"
+                    :sm="8"
+                    :md="6"
+                    :lg="4"
+                >
+                    <a-button
+                        @click="insertFormText('co_SSN')"
+                        type="link"
+                        style="padding: 0px"
+                    >
+                        {{ $t('lead.SSN') }}
+                    </a-button>
+                </a-col>
+                <a-col
+                    :xs="8"
+                    :sm="8"
+                    :md="6"
+                    :lg="4"
+                >
+                    <a-button
+                        @click="insertFormText('co_date_of_birth')"
+                        type="link"
+                        style="padding: 0px"
+                    >
+                        {{ $t('lead.date_of_birth') }}
+                    </a-button>
+                </a-col>
+                <a-col
+                    :xs="8"
+                    :sm="8"
+                    :md="6"
+                    :lg="4"
+                >
+                    <a-button
+                        @click="insertFormText('co_phone_number')"
+                        type="link"
+                        style="padding: 0px"
+                    >
+                        {{ $t('lead.phone_number') }}
+                    </a-button>
+                </a-col>
+                <a-col
+                    :xs="8"
+                    :sm="8"
+                    :md="6"
+                    :lg="4"
+                >
+                    <a-button
+                        @click="insertFormText('co_home_phone')"
+                        type="link"
+                        style="padding: 0px"
+                    >
+                        {{ $t('lead.home_phone') }}
+                    </a-button>
+                </a-col>
+                <a-col
+                    :xs="8"
+                    :sm="8"
+                    :md="6"
+                    :lg="4"
+                >
+                    <a-button
+                        @click="insertFormText('co_email')"
+                        type="link"
+                        style="padding: 0px"
+                    >
+                        {{ $t('lead.email') }}
+                    </a-button>
+                </a-col>
+                <a-col
+                    :xs="8"
+                    :sm="8"
+                    :md="6"
+                    :lg="4"
+                >
+                    <a-button
+                        @click="insertFormText('co_language')"
+                        type="link"
+                        style="padding: 0px"
+                    >
+                        {{ $t('lead.language') }}
+                    </a-button>
+                </a-col>
+            </a-row>
+            <a-typography-title :level="5">
+                {{ $t("email_template.additionals") }}
+            </a-typography-title>
+            <a-row
+                :gutter="16"
+                v-if="
+                    leadFormData &&
+                    leadFormData.campaign &&
+                    leadFormData.campaign.form &&
+                    leadFormData.campaign.form.form_fields &&
+                    leadFormData.campaign.form.form_fields.length > 0
+                "
+                class="mb-20"
+            >
+                <a-col
+                    :xs="8"
+                    :sm="8"
+                    :md="6"
+                    :lg="4"
+                    v-for="selectedFormField in leadFormData.campaign.form.form_fields"
                     :key="selectedFormField.id"
                 >
                     <a-button
-                        @click="insertFormText(selectedFormField.name)"
+                        @click="insertFormText(selectedFormField.name, true)"
                         type="link"
                         style="padding: 0px"
                     >
@@ -181,14 +444,17 @@ import EmailTemplateAddButton from "../messaging/email-templates/AddButton.vue";
 
 export default defineComponent({
     props: {
-        lead: {
+        leadFormData: {
             default: {},
         },
-        leadFormData: {
+        extraLeadFormData: {
             default: {},
         },
         email: {
             default: null,
+        },
+        allEmailTemplates: {
+            default: [],
         },
     },
     emits: ["success"],
@@ -199,12 +465,18 @@ export default defineComponent({
         EmailTemplateAddButton,
         QuillEditor,
     },
+    methods: {
+        isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        },
+    },
     setup(props, { emit }) {
         const { t } = useI18n();
         const { addEditRequestAdmin, loading, rules } = apiAdmin();
         const visible = ref(false);
         const formData = ref({
-            lead_id: props.lead.xid,
+            lead_id: props.leadFormData.xid,
             email_template_id: undefined,
             email: props.email,
             subject: "",
@@ -215,27 +487,39 @@ export default defineComponent({
         const textEditor = ref(null);
 
         onMounted(() => {
-            const emailTemplatesPromise = axiosAdmin.get(emailTemplateUrl);
+            if(props.allEmailTemplates.length > 0) {
+                allEmailTemplates.value = props.allEmailTemplates;
+            } else {
+                const emailTemplatesPromise = axiosAdmin.get(emailTemplateUrl);
 
-            Promise.all([emailTemplatesPromise]).then(([emailTemplatesResponse]) => {
-                allEmailTemplates.value = emailTemplatesResponse.data.email_templates;
+                Promise.all([emailTemplatesPromise]).then(([emailTemplatesResponse]) => {
+                    allEmailTemplates.value = emailTemplatesResponse.data.email_templates;
 
-                resetToCampaignEmailTemplate();
-                emailTemplateChanged();
-            });
+                    resetToCampaignEmailTemplate();
+                    emailTemplateChanged();
+                });
+            }
         });
 
         const editor = computed(() => {
             return textEditor.value.getQuill();
         });
 
-        const insertFormText = (mergeFieldText) => {
+        const insertFormText = (mergeFieldText, extraForm) => {
+            
             const selectedPointArray = editor.value.getSelection(true);
 
-            var leadDataInleadDataField = find(props.leadFormData.lead_data, [
+            if(extraForm) {
+                var leadDataInleadDataField = find(props.leadFormData.lead_data, [
                 "field_name",
                 mergeFieldText,
             ]);
+            } else {
+                var leadDataInleadDataField = find(props.extraLeadFormData.lead_data, [
+                "field_name",
+                mergeFieldText,
+            ]);
+            }
 
             if (
                 leadDataInleadDataField != undefined &&
@@ -259,14 +543,13 @@ export default defineComponent({
 
         const resetToCampaignEmailTemplate = () => {
             if (
-                props.lead &&
-                props.lead.campaign &&
-                props.lead.campaign.email_template &&
-                props.lead.campaign.email_template.xid
+                props.leadFormData &&
+                props.leadFormData.campaign &&
+                props.leadFormData.campaign.email_template_xid
             ) {
                 formData.value = {
                     ...formData.value,
-                    email_template_id: props.lead.campaign.email_template.xid,
+                    email_template_id: props.leadFormData.campaign.email_template_xid,
                 };
             }
         };
@@ -281,6 +564,19 @@ export default defineComponent({
                 var bodyMessage = selectedEmailTemplate.body;
 
                 forEach(props.leadFormData.lead_data, (leadDataValue, leadDataKey) => {
+                    if (
+                        leadDataValue.field_value != undefined &&
+                        leadDataValue.field_value != ""
+                    ) {
+                        bodyMessage = replace(
+                            bodyMessage,
+                            `##${leadDataValue.field_name}##`,
+                            leadDataValue.field_value
+                        );
+                    }
+                });
+
+                forEach(props.extraLeadFormData.lead_data, (leadDataValue, leadDataKey) => {
                     if (
                         leadDataValue.field_value != undefined &&
                         leadDataValue.field_value != ""

@@ -1090,7 +1090,7 @@ When creating a new index file, ensure the following:
 4. **Define filters structure if it is required**:
 
     ```vue
-    <a-row class="mt-20">
+    <a-row class="mt-5">
             <a-col :span="24">
                 <a-tabs
                     v-model:activeKey="filters.status" 
@@ -1750,7 +1750,7 @@ Example
 1. **Add the following code above the row containing the table**
 
     ```vue
-    <a-row class="mt-20">
+    <a-row class="mt-5">
          <a-col :span="24">
               <a-tabs
               v-model:activeKey="filters.filter_1" 
@@ -1777,7 +1777,7 @@ Example
     `vue
         <admin-page-table-content>
             <AddEdit/>
-            <a-row class="mt-20">
+            <a-row class="mt-5">
                 <a-col :span="24">
                         <a-tabs
                         v-model:activeKey="filters.status" 

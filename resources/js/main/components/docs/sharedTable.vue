@@ -35,7 +35,7 @@
                     </span>
                     <a-popover :title="$t('docs.signers')" v-if="record.signers">
                         <template #content>
-                            <a-row v-for="signer in record.signers" class="mt-10">
+                            <a-row v-for="signer in record.signers" class="mt-2">
                                 <a-col :span="3">
                                     <UserOutlined style="font-size: 1.1rem;" :class="signer.status" />
                                 </a-col>

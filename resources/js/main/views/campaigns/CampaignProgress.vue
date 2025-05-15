@@ -3,7 +3,7 @@
         <AddLead
             v-if="permsArray.includes('leads_create') || permsArray.includes('admin')"
             :campaign="campaign"
-            btnclass="p-0!"
+            btnClass="p-0!"
             btnType="link"
             @success="leadAdded"
         >

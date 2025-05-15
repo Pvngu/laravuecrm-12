@@ -97,7 +97,6 @@
                             name="form_id"
                             :help="rules.form_id ? rules.form_id.message : null"
                             :validateStatus="rules.form_id ? 'error' : null"
-                            class="required"
                         >
                             <span style="display: flex">
                                 <a-select
@@ -453,7 +452,6 @@ export default defineComponent({
                 if (
                     props.formData.name == "" ||
                     props.formData.user_id.length == 0 ||
-                    props.formData.form_id == undefined ||
                     props.formData.email_template_id == undefined ||
                     (props.formData.allow_reference_prefix &&
                         props.formData.reference_prefix == "")

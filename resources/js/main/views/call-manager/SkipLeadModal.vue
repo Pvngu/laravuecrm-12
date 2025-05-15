@@ -58,7 +58,7 @@
                         </a-popconfirm>
                     </a-col>
                 </a-row>
-                <a-row class="mt-10">
+                <a-row class="mt-2">
                     <a-col :xs="24" :sm="24" :md="24" :lg="24">
                         <a-button
                             @click="closeModal"

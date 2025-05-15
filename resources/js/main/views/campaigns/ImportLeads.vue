@@ -119,6 +119,21 @@
             </a-table>
         </a-col>
     </a-row>
+    <a-row v-if="parsedFileData.length == 0" :gutter="16" class="mt-5">
+        <a-col :xs="24" :sm="24" :md="24" :lg="24">
+            <a-typography-paragraph>
+                <ul>
+                    <li>
+                        <a-typography-link :href="sampleFileUrl" target="_blank">
+                            {{
+                                $t("messages.click_here_to_download_sample_file")
+                            }}
+                        </a-typography-link>
+                    </li>
+                </ul>
+            </a-typography-paragraph>
+        </a-col>
+    </a-row>
 </template>
 
 <script>
@@ -153,6 +168,7 @@ export default defineComponent({
         const formProperties = ref({});
         const currentFormFields = ref([...props.allFields]);
         const activeTabKey = ref("all");
+        const sampleFileUrl = window.config.leads_sample_file;
 
         const columns = [
             {
@@ -195,7 +211,27 @@ export default defineComponent({
 
                     newValues[filterValue] = isFieldFind ? filterValue : undefined;
                 });
+                
                 formProperties.value = newValues;
+
+                const formPropertyMap = {
+                    'Reference Number': 'Reference Number',
+                    'First Name': 'First Name',
+                    'Last Name': 'Last Name',
+                    'SSN': 'SSN',
+                    'Date of Birth': 'Date of Birth',
+                    'Home Phone': 'Home Phone',
+                    'Phone Number': 'Phone Number',
+                    'Email': 'Email',
+                    'Language': 'Language',
+                    'Original Profile Id': 'Original Profile Id',
+                };
+
+                forEach(parsedHeader.value, (filterValue) => {
+                    if (formPropertyMap[filterValue]) {
+                        formProperties.value[filterValue] = formPropertyMap[filterValue];
+                    }
+                });
 
                 reAssignCurrentFormFields();
             };
@@ -291,6 +327,7 @@ export default defineComponent({
             tabChanged,
             tableRecords,
             size,
+            sampleFileUrl
         };
     },
 });

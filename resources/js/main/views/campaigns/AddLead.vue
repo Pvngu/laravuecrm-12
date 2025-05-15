@@ -20,6 +20,77 @@
         >
             <a-form layout="vertical">
                 <a-row :gutter="16">
+                    <a-col :xs="24" :sm="24" :md="12" :lg="12">
+                        <a-form-item
+                            :label="$t('lead.first_name')"
+                            name="first_name"
+                        >
+                            <a-input v-model:value="leadDetailsFormData.first_name" :placeholder="$t('common.placeholder_default_text', [$t('lead.first_name')])"></a-input>
+                        </a-form-item>
+                    </a-col>
+                    <a-col :xs="24" :sm="24" :md="12" :lg="12">
+                        <a-form-item
+                            :label="$t('lead.last_name')"
+                            name="last_name"
+                        >
+                            <a-input v-model:value="leadDetailsFormData.last_name" :placeholder="$t('common.placeholder_default_text', [$t('lead.last_name')])"></a-input>
+                        </a-form-item>
+                    </a-col>
+                </a-row>
+                <a-row :gutter="16">
+                    <a-col :xs="24" :sm="24" :md="12" :lg="12">
+                        <a-form-item :label="$t('lead.SSN')" name="SSN">
+                            <a-input v-model:value="leadDetailsFormData.SSN" :placeholder="$t('common.placeholder_default_text', [$t('lead.SSN')])"></a-input>
+                        </a-form-item>
+                    </a-col>
+                    <a-col :xs="24" :sm="24" :md="12" :lg="12">
+                        <a-form-item :label="$t('lead.date_of_birth')" name="date_of_birth">
+                            <a-date-picker v-model:value="leadDetailsFormData.date_of_birth" :placeholder="$t('common.placeholder_default_text', [$t('lead.date_of_birth')])" style="width: 100%"></a-date-picker>
+                        </a-form-item>
+                    </a-col>
+                </a-row>
+                <a-row :gutter="16">
+                    <a-col :xs="24" :sm="24" :md="12" :lg="12">
+                        <a-form-item :label="$t('lead.phone_number')" name="phone_number">
+                            <a-input v-model:value="leadDetailsFormData.phone_number" :placeholder="$t('common.placeholder_default_text', [$t('lead.phone_number')])"></a-input>
+                        </a-form-item>
+                    </a-col>
+                    <a-col :xs="24" :sm="24" :md="12" :lg="12">
+                        <a-form-item :label="$t('lead.home_phone')" name="home_phone">
+                            <a-input v-model:value="leadDetailsFormData.home_phone" :placeholder="$t('common.placeholder_default_text', [$t('lead.home_phone')])"></a-input>
+                        </a-form-item>
+                    </a-col>
+                </a-row>
+                <a-row :gutter="16">
+                    <a-col :xs="24" :sm="24" :md="12" :lg="12">
+                        <a-form-item :label="$t('lead.email')" name="email">
+                            <a-input v-model:value="leadDetailsFormData.email" :placeholder="$t('common.placeholder_default_text', [$t('lead.email')])"></a-input>
+                        </a-form-item>
+                    </a-col>
+                    <a-col :xs="24" :sm="24" :md="12" :lg="12">
+                        <a-form-item :label="$t('lead.language')" name="language">
+                            <a-select
+                                v-model:value="leadDetailsFormData.language"
+                                show-search
+                                :placeholder="
+                                    $t(
+                                        'common.placeholder_default_text',
+                                        [$t('lead.language')]
+                                    )"
+                                :options="optionLanguages"
+                            ></a-select>
+                        </a-form-item>
+                    </a-col>
+                </a-row>
+                <a-row :gutter="16">
+                    <a-col :xs="24" :sm="24" :md="12" :lg="12">
+                        <a-form-item :label="$t('lead.original_profile_id')" name="original_profile_id">
+                            <a-input v-model:value="leadDetailsFormData.original_profile_id" :placeholder="$t('common.placeholder_default_text', [$t('lead.original_profile_id')])"></a-input>
+                        </a-form-item>
+                    </a-col>
+                </a-row>
+
+                <a-row :gutter="16">
                     <a-col
                         v-for="leadData in formData.lead_data"
                         :key="leadData.id"
@@ -95,11 +166,16 @@ export default defineComponent({
         SaveOutlined,
     },
     setup(props, { emit }) {
-        const { permsArray } = common();
+        const { permsArray, optionLanguages } = common();
         const { addEditRequestAdmin, loading, rules } = apiAdmin();
         const visible = ref(false);
         const formData = ref({});
         const { t } = useI18n();
+        const referenceNumber = ref("");
+        const leadDetailsFormData = ref({
+            first_name: "",
+            last_name: "",
+        });
 
         onMounted(() => {
             resetFormData();
@@ -135,7 +211,18 @@ export default defineComponent({
         const onSubmit = () => {
             addEditRequestAdmin({
                 url: "leads/create-lead",
-                data: formData.value,
+                data: {
+                    ...formData.value,
+                    first_name: leadDetailsFormData.value.first_name,
+                    last_name: leadDetailsFormData.value.last_name,
+                    SSN: leadDetailsFormData.value.SSN,
+                    date_of_birth: leadDetailsFormData.value.date_of_birth,
+                    phone_number: leadDetailsFormData.value.phone_number,
+                    home_phone: leadDetailsFormData.value.home_phone,
+                    email: leadDetailsFormData.value.email,
+                    language: leadDetailsFormData.value.language,
+                    original_profile_id: leadDetailsFormData.value.original_profile_id,
+                },
                 successMessage: t("lead.created"),
                 success: (res) => {
                     emit("success");
@@ -159,6 +246,10 @@ export default defineComponent({
             onSubmit,
             onClose,
             showAdd,
+
+            referenceNumber,
+            leadDetailsFormData,
+            optionLanguages,
 
             drawerWidth: window.innerWidth <= 991 ? "90%" : "45%",
         };

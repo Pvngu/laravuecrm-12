@@ -7,7 +7,7 @@
         }"
         :class="{ 'callmanager-details' : !isSale }"
     >
-        <a-form layout="vertical" class="mt-20">
+        <a-form layout="vertical" class="mt-5">
             <a-row :gutter="16" justify="end" v-if="isSale">
                 <a-col :xs="24" :sm="24" :md="6" :lg="6">
                     <a-form-item

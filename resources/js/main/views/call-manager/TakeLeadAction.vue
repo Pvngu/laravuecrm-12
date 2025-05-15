@@ -5,7 +5,7 @@
     >
         <a-row>
             <a-col :span="24">
-                <a-page-header @back="saveAndExit()" class="p-0">
+                <a-page-header @back="saveAndExit()" class="p-0!">
                     <template #title>
                         {{
                             leadDetails.individual &&
@@ -102,7 +102,7 @@
                                 </a-typography-title>
                             </a-col>
                         </a-row>
-                        <a-row class="mt-10">
+                        <a-row class="mt-2">
                             <a-col :span="24">
                                 <a-space>
                                     <BookingModal
@@ -151,7 +151,7 @@
                             swipeEasing: true,
                             suppressScrollX: true,
                         }"
-                        class="mt-10"
+                        class="mt-2"
                     >
                         <a-collapse v-model:activeKey="activeLeftPanelKey" :bordered="false">
                             <a-collapse-panel
@@ -197,7 +197,7 @@
                                         </a-col>
                                     </a-row>
 
-                                    <a-row class="mt-20">
+                                    <a-row class="mt-5">
                                         <a-col :span="24">
                                             <a-typography-text strong>
                                                 {{ $t("lead.email") }}
@@ -252,7 +252,7 @@
                                         </a-col>
                                     </a-row>
 
-                                    <a-row class="mt-20">
+                                    <a-row class="mt-5">
                                         <a-col :span="24">
                                             <a-typography-text strong>
                                                 {{ $t("lead.address") }}
@@ -270,7 +270,7 @@
                                         </a-col>
                                     </a-row>
 
-                                    <a-row class="mt-20">
+                                    <a-row class="mt-5">
                                         <a-col :span="24">
                                             <a-typography-text strong>
                                                 {{ $t("lead_follow_up.follow_up") }}

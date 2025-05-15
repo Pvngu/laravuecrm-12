@@ -39,7 +39,7 @@
                             :language="individualData.language"
                             ref="alerts"
                         />
-                        <a-row class="mt-20">
+                        <a-row class="mt-5">
                             <a-col :span="24">
                                 <a-row :gutter="16">
                                     <a-col :span="10">
@@ -114,7 +114,7 @@
                                 </a-row>
                             </a-col>
                         </a-row>
-                        <a-row class="mt-10">
+                        <a-row class="mt-2">
                             <a-col :span="24">
                                 <a-row :gutter="16">
                                     <a-col :span="10">
@@ -144,7 +144,7 @@
                                 </a-row>
                             </a-col>
                         </a-row>
-                        <a-row class="mt-10">
+                        <a-row class="mt-2">
                             <a-col :span="24">
                                 <a-row :gutter="16">
                                     <a-col :span="10">
@@ -188,7 +188,7 @@
                                 </a-row>
                             </a-col>
                         </a-row>
-                        <a-row class="mt-20">
+                        <a-row class="mt-5">
                             <a-col :span="24">
                                 <a-row :gutter="16">
                                     <a-col :span="10">
@@ -205,7 +205,7 @@
                                 </a-row>
                             </a-col>
                         </a-row>
-                        <a-row v-if="saleEnrollment" class="mt-20 mb-20">
+                        <a-row v-if="saleEnrollment" class="mt-5 mb-20">
                             <a-typography-title :level="5">
                                 {{ $t('sales.sale_snapshot') }}
                             </a-typography-title>
@@ -270,7 +270,7 @@
                                         </a-typography-text>
                                     </a-col>
                                 </a-row>
-                                <a-row :gutter="16" class="mt-10">
+                                <a-row :gutter="16" class="mt-2">
                                     <a-col :span="10">
                                         <a-typography-text strong>
                                             {{ $t('sales.admin_services') }}:
@@ -294,7 +294,7 @@
                                         </a-typography-text>
                                     </a-col>
                                 </a-row>
-                                <a-row :gutter="16" class="mt-10">
+                                <a-row :gutter="16" class="mt-2">
                                     <a-col :span="10">
                                         <a-typography-text strong>
                                             {{ $t('sales.saving_balance') }}:

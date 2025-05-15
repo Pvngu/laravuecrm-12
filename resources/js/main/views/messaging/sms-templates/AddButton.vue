@@ -1,13 +1,13 @@
 <template>
     <div
         v-if="
-            permsArray.includes('email_templates_create') || permsArray.includes('admin')
+            permsArray.includes('sms_templates_create') || permsArray.includes('admin')
         "
     >
         <a-tooltip
             v-if="tooltip"
             placement="topLeft"
-            :title="$t('email_template.add')"
+            :title="$t('sms_template.add')"
             arrow-point-at-center
         >
             <a-button @click="showAdd" class="ml-5 no-border-radius" :type="btnType">
@@ -28,8 +28,8 @@
             @closed="onClose"
             :formData="formData"
             :data="formData"
-            :pageTitle="$t('email_template.add')"
-            :successMessage="$t('email_template.created')"
+            :pageTitle="$t('sms_template.add')"
+            :successMessage="$t('sms_template.created')"
         />
     </div>
 </template>

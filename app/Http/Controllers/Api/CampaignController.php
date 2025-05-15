@@ -2,28 +2,31 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Classes\Common;
-use App\Http\Controllers\ApiBaseController;
-use App\Http\Requests\Api\Campaign\IndexRequest;
-use App\Http\Requests\Api\Campaign\StoreRequest;
-use App\Http\Requests\Api\Campaign\UpdateRequest;
-use App\Http\Requests\Api\Campaign\DeleteRequest;
-use App\Http\Requests\Api\Campaign\CampaignLeadActionRequest;
-use App\Http\Requests\Api\Campaign\EmailTemplatesRequest;
-use App\Http\Requests\Api\Campaign\SkipDeleteLeadRequest;
-use App\Http\Requests\Api\Campaign\StopCampaignRequest;
-use App\Http\Requests\Api\Campaign\TakeLeadActionRequest;
-use App\Imports\LeadImport;
-use App\Models\Campaign;
-use App\Models\CampaignUser;
-use App\Models\EmailTemplate;
+use Carbon\Carbon;
 use App\Models\Form;
 use App\Models\Lead;
-use App\Models\LeadLog;
-use Carbon\Carbon;
-use Examyou\RestAPI\ApiResponse;
+use App\Classes\Common;
+use App\Models\Campaign;
+use App\Models\Individual;
+use App\Imports\LeadImport;
 use Illuminate\Support\Str;
+use App\Exports\LeadsExport;
+use App\Models\CampaignUser;
+use App\Models\EmailTemplate;
+use Examyou\RestAPI\ApiResponse;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Http\Controllers\ApiBaseController;
+use Examyou\RestAPI\Exceptions\ApiException;
+use App\Http\Requests\Api\Campaign\IndexRequest;
+use App\Http\Requests\Api\Campaign\StoreRequest;
+use App\Http\Requests\Api\Campaign\DeleteRequest;
+use App\Http\Requests\Api\Campaign\UpdateRequest;
+use App\Http\Requests\Api\Campaign\StopCampaignRequest;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use App\Http\Requests\Api\Campaign\EmailTemplatesRequest;
+use App\Http\Requests\Api\Campaign\SkipDeleteLeadRequest;
+use App\Http\Requests\Api\Campaign\TakeLeadActionRequest;
+use App\Http\Requests\Api\Campaign\CampaignLeadActionRequest;
 
 class CampaignController extends ApiBaseController
 {
@@ -144,7 +147,7 @@ class CampaignController extends ApiBaseController
 
         $campaign = Campaign::find($id);
         $campaign->status = 'completed';
-        $campaign->completed_on = Carbon::now();
+        $campaign->completed_on = Carbon::now()->setTimezone('America/Los_Angeles');
         $campaign->completed_by = $loggedUser->id;
         $campaign->save();
 
@@ -170,7 +173,7 @@ class CampaignController extends ApiBaseController
         }
 
         if ($campaign->started_on == null) {
-            $campaign->started_on = Carbon::now();
+            $campaign->started_on = Carbon::now()->setTimezone('America/Los_Angeles');
             $campaign->status = 'started';
         }
         $campaign->last_action_by = $loggedUser->id;
@@ -178,7 +181,6 @@ class CampaignController extends ApiBaseController
 
         // Calculating Lead Counts
         Common::recalculateCampaignLeads($campaign->id);
-
         return ApiResponse::make('Success', [
             'x_lead_id' => $lead->xid,
         ]);
@@ -190,17 +192,22 @@ class CampaignController extends ApiBaseController
 
         // Taking latest lead
         // which is not-started
-        $lead = Lead::where('campaign_id', $id)
-            ->where('started', 0)
-            ->whereNull('first_action_by')
-            ->oldest('id')
+        $lead = Lead::join('individuals', 'individuals.id', '=', 'leads.individual_id')
+            ->where('individuals.campaign_id', $id)
+            ->where('leads.started', 0)
+            ->whereNull('individuals.first_action_by')
+            ->oldest('leads.id')
+            ->select('leads.*')
             ->first();
 
         if ($lead) {
+            $individual = $lead->individual;
 
             $lead->started = 1;
-            $lead->first_action_by = $loggedUser->id;
-            $lead->last_action_by = $loggedUser->id;
+            $individual->first_action_by = $loggedUser->id;
+            $individual->last_action_by = $loggedUser->id;
+
+            $individual->save();
             $lead->save();
 
             return $lead;
@@ -214,10 +221,11 @@ class CampaignController extends ApiBaseController
         $loggedUser = user();
 
         $lead = new Lead();
-        $lead->campaign_id = $campaign->id;
+        $individual = new Individual();
+        $individual->campaign_id = $campaign->id;
         // Reference Prefix
         if ($campaign->allow_reference_prefix) {
-            $lead->reference_number = $campaign->reference_prefix . Carbon::now()->timestamp;
+            $individual->reference_number = $campaign->reference_prefix . Carbon::now()->timestamp;
         }
 
         if ($campaign->form_id && $campaign->form && $campaign->form->form_fields) {
@@ -229,13 +237,16 @@ class CampaignController extends ApiBaseController
                     'field_value' => '',
                 ];
             }
-            $lead->lead_data = $newLeadData;
+            $individual->lead_data = $newLeadData;
         }
 
         $lead->started = 1;
-        $lead->first_action_by = $loggedUser->id;
-        $lead->last_action_by = $loggedUser->id;
-        $lead->created_by = $loggedUser->id;
+        $individual->first_action_by = $loggedUser->id;
+        $individual->last_action_by = $loggedUser->id;
+        $individual->created_by = $loggedUser->id;
+
+        $individual->save();
+        $lead->individual_id = $individual->id;
         $lead->save();
 
         Common::recalculateCampaignLeads($campaign->id);
@@ -250,10 +261,9 @@ class CampaignController extends ApiBaseController
         $actionType = $request->action_type;
 
         // Saving Current Lead
-        $currentLead = Common::saveLeadData();
+        $currentLead = Common::saveIndividualData('lead');
         $leadId = $currentLead->id;
-
-        $lead = Common::takeLeadAction($actionType, $leadId, $currentLead->campaign_id);
+        $lead = Common::takeLeadAction($actionType, $leadId, $currentLead->individual->campaign_id);
 
         return ApiResponse::make('Success', [
             'lead' => $lead ? $lead : null
@@ -264,7 +274,25 @@ class CampaignController extends ApiBaseController
     // comes from TakeLeadAction.vue Page
     public function updateActionedLead()
     {
-        $lead = Common::saveLeadData();
+        $lead = Common::saveIndividualData('lead');
+
+        return ApiResponse::make('Success', [
+            'lead' => $lead
+        ]);
+    }
+
+    public function updateActionedSale()
+    {
+        $sale = Common::saveIndividualData('sale');
+
+        return ApiResponse::make('Success', [
+            'sale' => $sale
+        ]);
+    }
+
+    public function updateTimerLead()
+    {
+        $lead = Common::UpdateLeadTimer();
 
         return ApiResponse::make('Success', [
             'lead' => $lead
@@ -282,7 +310,6 @@ class CampaignController extends ApiBaseController
 
         // Calculating Lead Counts
         Common::recalculateCampaignLeads($campaignId);
-
         // Getting next lead
         $lead = Common::takeLeadAction('next', $leadId, $campaignId);
 
@@ -320,5 +347,34 @@ class CampaignController extends ApiBaseController
         return ApiResponse::make('Success', [
             'user_campaigns' => $userCampaigns
         ]);
+    }
+
+    public function exportLeads($campaignXId): BinaryFileResponse
+    {
+        $request = request();
+        $user = user();
+        
+        $columns = (array) $request->columns;
+        $format = $request->format;
+        $startDate = "";
+        $endDate = "";
+        $statusIds = $request->status;
+        $started = $request->started;
+
+        $campaignId = $this->getIdFromHash($campaignXId);
+
+        if ($request->has('dates') && $request->dates != "") {
+            $dates = $request->dates;
+            $startDate = $dates[0];
+            $endDate = $dates[1];
+        }
+
+        if(!$user->hasRole('admin') && !$user->hasPermissionTo('reports_view')) {
+            throw new ApiException("Not Allowed");
+        }
+
+        Common::storeIndividualLog(null, 'leads_export');
+
+        return Excel::download(new LeadsExport($campaignId, $columns, $startDate, $endDate, $statusIds, $started), "leads.$format");
     }
 }

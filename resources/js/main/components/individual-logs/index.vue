@@ -105,7 +105,7 @@
         </a-col>
     </a-row>
 
-    <a-row class="mt-20">
+    <a-row class="mt-5">
         <a-col :span="24">
             <div class="table-responsive" v-if="columns && columns.length > 0">
                 <a-table
@@ -146,7 +146,7 @@
                             <a-button
                                 v-if="showLeadDetails"
                                 type="link"
-                                class="p-0"
+                                class="p-0!"
                                 @click="showViewDrawer(record.individual)"
                             >
                                 {{

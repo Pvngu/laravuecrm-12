@@ -26,7 +26,7 @@
             </a-descriptions-item>
         </a-descriptions>
 
-        <a-tabs v-model:activeKey="activeTabKey" class="mt-20">
+        <a-tabs v-model:activeKey="activeTabKey" class="mt-5">
             <a-tab-pane key="lead_data">
                 <template #tab>
                     <span>
@@ -65,7 +65,7 @@
                 </a-descriptions>
 
                 <a-descriptions
-                    class="mt-10"
+                    class="mt-2"
                     v-if="lead && lead.lead_data && lead.lead_data.length > 0"
                     :title="$t('lead.additional_details')"
                 >

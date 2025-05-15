@@ -37,6 +37,7 @@
                 'download_lang_csv_url': "{{ route('api.extra.langs.download') }}",
                 'staff_member_sample_file': "{{ asset('images/sample_staff_members.csv') }}",
                 'translatioins_sample_file': "{{ asset('images/sample_translations.csv') }}",
+                'leads_sample_file': "{{ asset('images/sample_leads.csv') }}",
                 'perPage': 10,
 				'product_name': "{{ $appName }}",
 				'product_version': "{{ $appVersion }}",
