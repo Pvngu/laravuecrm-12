@@ -3,6 +3,25 @@
         <template #header>
             <a-page-header :title="$t(`menu.expenses`)" class="p-0!" />
         </template>
+        <template #actions>
+            <a-space>
+                <template v-if="permsArray.includes('expenses_create') || permsArray.includes('admin')">
+                    <a-button type="primary" @click="addItem">
+                        <PlusOutlined />
+                        {{ $t("expense.add") }}
+                    </a-button>
+                </template>
+                <a-button
+                    v-if="table.selectedRowKeys.length > 0 && (permsArray.includes('expenses_delete') || permsArray.includes('admin'))"
+                    type="primary"
+                    @click="showSelectedDeleteConfirm"
+                    danger
+                >
+                    <template #icon><DeleteOutlined /></template>
+                    {{ $t("common.delete") }}
+                </a-button>
+            </a-space>
+        </template>
         <template #breadcrumb>
             <a-breadcrumb separator="-" style="font-size: 12px">
                 <a-breadcrumb-item>
@@ -20,113 +39,6 @@
         </template>
     </AdminPageHeader>
 
-    <admin-page-filters>
-        <a-row :gutter="[16, 16]">
-            <a-col :xs="24" :sm="24" :md="12" :lg="10" :xl="10">
-                <a-space>
-                    <template
-                        v-if="
-                            permsArray.includes('expenses_create') ||
-                            permsArray.includes('admin')
-                        "
-                    >
-                        <a-button type="primary" @click="addItem">
-                            <PlusOutlined />
-                            {{ $t("expense.add") }}
-                        </a-button>
-                    </template>
-                    <a-button
-                        v-if="
-                            table.selectedRowKeys.length > 0 &&
-                            (permsArray.includes('expenses_delete') ||
-                                permsArray.includes('admin'))
-                        "
-                        type="primary"
-                        @click="showSelectedDeleteConfirm"
-                        danger
-                    >
-                        <template #icon><DeleteOutlined /></template>
-                        {{ $t("common.delete") }}
-                    </a-button>
-                </a-space>
-            </a-col>
-            <a-col :xs="24" :sm="24" :md="12" :lg="14" :xl="14">
-                <a-row :gutter="[16, 16]" justify="end">
-                    <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="8">
-                        <a-select
-                            v-model:value="filters.expense_category_id"
-                            show-search
-                            style="width: 100%"
-                            :placeholder="
-                                $t('common.select_default_text', [
-                                    $t('expense.expense_category'),
-                                ])
-                            "
-                            @change="reFetchDatatable"
-                            :allowClear="true"
-                            optionFilterProp="label"
-                        >
-                            <a-select-option
-                                v-for="expenseCategory in preFetchData.expenseCategories"
-                                :key="expenseCategory.xid"
-                                :value="expenseCategory.xid"
-                                :label="expenseCategory.name"
-                            >
-                                {{ expenseCategory.name }}
-                            </a-select-option>
-                        </a-select>
-                    </a-col>
-                    <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="8">
-                        <a-select
-                            v-model:value="filters.user_id"
-                            show-search
-                            style="width: 100%"
-                            :placeholder="
-                                $t('common.select_default_text', [$t('expense.user')])
-                            "
-                            @change="reFetchDatatable"
-                            :allowClear="true"
-                            optionFilterProp="label"
-                        >
-                            <a-select-option
-                                v-for="staffMember in preFetchData.staffMembers"
-                                :key="staffMember.xid"
-                                :value="staffMember.xid"
-                                :label="staffMember.name"
-                            >
-                                {{ staffMember.name }}
-                            </a-select-option>
-                        </a-select>
-                    </a-col>
-                    <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="8">
-                        <a-input-group compact>
-                            <a-select
-                                style="width: 25%"
-                                v-model:value="table.searchColumn"
-                                :placeholder="$t('common.select_default_text', [''])"
-                            >
-                                <a-select-option
-                                    v-for="filterableColumn in filterableColumns"
-                                    :key="filterableColumn.key"
-                                >
-                                    {{ filterableColumn.value }}
-                                </a-select-option>
-                            </a-select>
-                            <a-input-search
-                                style="width: 75%"
-                                v-model:value="table.searchString"
-                                show-search
-                                @change="onTableSearch"
-                                @search="onTableSearch"
-                                :loading="table.filterLoading"
-                            />
-                        </a-input-group>
-                    </a-col>
-                </a-row>
-            </a-col>
-        </a-row>
-    </admin-page-filters>
-
     <admin-page-table-content>
         <AddEdit
             :addEditType="addEditType"
@@ -139,7 +51,7 @@
             :pageTitle="pageTitle"
             :successMessage="successMessage"
         />
-        <a-row>
+        <a-row class="mt-5">
             <a-col :span="24">
                 <div class="table-responsive">
                     <a-table
@@ -160,6 +72,83 @@
                         bordered
                         size="middle"
                     >
+                        <template #title>
+                            <a-row justify="end" align="middle" class="table-header">
+                                <a-col :xs="24" :sm="24" :md="8" :lg="8">
+                                    <a-input-group compact>
+                                        <a-select
+                                            style="width: 30%"
+                                            v-model:value="table.searchColumn"
+                                            :placeholder="$t('common.select_default_text', [''])"
+                                        >
+                                            <a-select-option
+                                                v-for="filterableColumn in filterableColumns"
+                                                :key="filterableColumn.key"
+                                            >
+                                                {{ filterableColumn.value }}
+                                            </a-select-option>
+                                        </a-select>
+                                        <a-input-search
+                                            style="width: 70%"
+                                            v-model:value="table.searchString"
+                                            show-search
+                                            @change="onTableSearch"
+                                            @search="onTableSearch"
+                                            :loading="table.filterLoading"
+                                        />
+                                    </a-input-group>
+                                </a-col>
+                                <a-col class="ml-2">
+                                    <Filters 
+                                        @onReset="resetFilters"
+                                        :filters="filters"
+                                    >
+                                        <a-col :span="24">
+                                            <a-form-item :label="$t('expense.expense_category')">
+                                                <a-select
+                                                    v-model:value="filters.expense_category_id"
+                                                    :placeholder="$t('common.select_default_text', [$t('expense.expense_category')])"
+                                                    :allowClear="true"
+                                                    style="width: 100%"
+                                                    optionFilterProp="label"
+                                                    show-search
+                                                    @change="reFetchDatatable"
+                                                >
+                                                    <a-select-option
+                                                        v-for="expenseCategory in preFetchData.expenseCategories"
+                                                        :key="expenseCategory.xid"
+                                                        :value="expenseCategory.xid"
+                                                        :label="expenseCategory.name"
+                                                    >
+                                                        {{ expenseCategory.name }}
+                                                    </a-select-option>
+                                                </a-select>
+                                            </a-form-item>
+                                            <a-form-item :label="$t('expense.user')">
+                                                <a-select
+                                                    v-model:value="filters.user_id"
+                                                    :placeholder="$t('common.select_default_text', [$t('expense.user')])"
+                                                    :allowClear="true"
+                                                    style="width: 100%"
+                                                    optionFilterProp="label"
+                                                    show-search
+                                                    @change="reFetchDatatable"
+                                                >
+                                                    <a-select-option
+                                                        v-for="staffMember in preFetchData.staffMembers"
+                                                        :key="staffMember.xid"
+                                                        :value="staffMember.xid"
+                                                        :label="staffMember.name"
+                                                    >
+                                                        {{ staffMember.name }}
+                                                    </a-select-option>
+                                                </a-select>
+                                            </a-form-item>
+                                        </a-col>
+                                    </Filters>
+                                </a-col>
+                            </a-row>
+                        </template>
                         <template #bodyCell="{ column, text, record }">
                             <template v-if="column.dataIndex === 'expense_category_id'">
                                 {{ record.expense_category.name }}
@@ -175,10 +164,7 @@
                             </template>
                             <template v-if="column.dataIndex === 'action'">
                                 <a-button
-                                    v-if="
-                                        permsArray.includes(`expenses_edit`) ||
-                                        permsArray.includes('admin')
-                                    "
+                                    v-if="permsArray.includes(`expenses_edit`) || permsArray.includes('admin')"
                                     type="primary"
                                     @click="editItem(record)"
                                     style="margin-left: 4px"
@@ -186,10 +172,7 @@
                                     <template #icon><EditOutlined /></template>
                                 </a-button>
                                 <a-button
-                                    v-if="
-                                        permsArray.includes(`expenses_delete`) ||
-                                        permsArray.includes('admin')
-                                    "
+                                    v-if="permsArray.includes(`expenses_delete`) || permsArray.includes('admin')"
                                     type="primary"
                                     @click="showDeleteConfirm(record.xid)"
                                     style="margin-left: 4px"
@@ -206,13 +189,14 @@
 </template>
 
 <script>
-import { onMounted, watch } from "vue";
+import { onMounted } from "vue";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons-vue";
 import AddEdit from "./AddEdit.vue";
 import fields from "./fields";
 import crud from "../../../../common/composable/crud";
 import common from "../../../../common/composable/common";
 import AdminPageHeader from "../../../../common/layouts/AdminPageHeader.vue";
+import Filters from "../../../../common/components/common/select/Filters.vue";
 
 export default {
     components: {
@@ -221,6 +205,7 @@ export default {
         DeleteOutlined,
         AddEdit,
         AdminPageHeader,
+        Filters,
     },
     setup() {
         const {
@@ -260,18 +245,24 @@ export default {
             });
         };
 
+        const resetFilters = () => {
+            filters.expense_category_id = undefined;
+            filters.user_id = undefined;
+            reFetchDatatable();
+        };
+
         return {
             columns,
             appSetting,
             formatDate,
             ...crudVariables,
             filterableColumns,
-
             filters,
             preFetchData,
             reFetchDatatable,
             permsArray,
             formatAmountCurrency,
+            resetFilters,
         };
     },
 };
