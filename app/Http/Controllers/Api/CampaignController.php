@@ -40,7 +40,7 @@ class CampaignController extends ApiBaseController
         $request = request();
 
         // Checking use is user of camaign
-        if (!$user->hasRole('admin') || !$user->hasPermissionTo('campaigns_view_all')) {
+        if (!$user->hasRole('admin') && !$user->hasPermissionTo('campaigns_view_all')) {
             $query = $query->join('campaign_users', 'campaign_users.campaign_id', '=', 'campaigns.id')
                 ->where('campaign_users.user_id', $user->id);
         }

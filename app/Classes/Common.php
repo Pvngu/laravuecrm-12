@@ -2,15 +2,20 @@
 
 namespace App\Classes;
 
-use App\Models\Currency;
 use App\Models\Lang;
+use App\Models\Lead;
+use App\Classes\Common;
+use App\Models\LeadLog;
+use App\Models\Campaign;
+use App\Models\Currency;
 use App\Models\Settings;
 use App\Models\StaffMember;
-use App\Scopes\CompanyScope;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Scopes\CompanyScope;
+use App\Classes\NotificationSeed;
+use Illuminate\Support\Facades\DB;
 use Vinkla\Hashids\Facades\Hashids;
+use Illuminate\Support\Facades\Storage;
 
 class Common
 {
@@ -287,5 +292,137 @@ class Common
             // Seed for quotations
             NotificationSeed::seedAllModulesNotifications($company->id);
         }
+    }
+
+    public static function recalculateCampaignLeads($campaignId)
+    {
+        $totalLeads = Lead::where('campaign_id', $campaignId)->count();
+        $notStartedLeads = Lead::where('campaign_id', $campaignId)
+            ->where('leads.started', '=', 0)
+            ->count();
+
+        $campaign = Campaign::find($campaignId);
+        $campaign->total_leads = $totalLeads;
+        $campaign->remaining_leads = $notStartedLeads;
+        $campaign->save();
+    }
+
+    public static function saveLeadData()
+    {
+        $loggedUser = user();
+        $request = request();
+        $callLogXId = $request->call_log_id;
+        $callLogId = Common::getIdFromHash($callLogXId);
+        $timeTaken = $request->call_time;
+
+        // Lead
+        $leadXId = $request->x_lead_id;
+        $leadId = Common::getIdFromHash($leadXId);
+        $lead = Lead::find($leadId);
+
+        // Updating Call Log
+        $leadCallLog = LeadLog::where('id', $callLogId)
+            ->where('user_id', $loggedUser->id)
+            ->first();
+
+        if ($leadCallLog) {
+            $leadCallLog->time_taken = (int)$timeTaken - (int)$leadCallLog->started_on;
+            $leadCallLog->save();
+        }
+
+        // Recalculate Time Taken in Lead
+        // And insert it in lead
+        $recalculateLeadTime = LeadLog::where('lead_id', $lead->id)
+            // ->where('user_id', '=', $loggedUser->id)
+            ->where('log_type', '=', 'call_log')
+            ->sum('time_taken');
+
+        if ($request->has('lead_data')) {
+            $lead->lead_data = $request->lead_data;
+        }
+        if ($request->has('reference_number')) {
+            $lead->reference_number = $request->reference_number;
+        }
+        if ($request->has('lead_status')) {
+            $lead->lead_status = $request->has('lead_status') && $request->lead_status != '' ? $request->lead_status : null;
+        }
+        $lead->last_action_by = $loggedUser->id;
+        $lead->time_taken = $recalculateLeadTime;
+        $lead->save();
+
+        // Updating Last action by for campaign
+        $campaign = Campaign::find($lead->campaign_id);
+        $campaign->last_action_by = $loggedUser->id;
+        $campaign->save();
+
+        return $lead;
+    }
+
+    public static function takeLeadAction($actionType, $leadId, $campaignId)
+    {
+        $user = user();
+        $lead = null;
+
+        if ($actionType == 'next') {
+            // Check if next lead exists or not
+            $lead = Lead::where('id', '>', $leadId)
+                ->where('last_action_by', $user->id)
+                ->where('campaign_id', $campaignId)
+                ->orderBy('id', 'asc')
+                ->first();
+
+            if (!$lead) {
+                // Getting next not started lead
+                $lead = Lead::where('id', '>', $leadId)
+                    ->where('campaign_id', $campaignId)
+                    ->where('started', 0)
+                    ->orderBy('id', 'asc')
+                    ->first();
+
+                if ($lead) {
+                    // It is new Lead so saving first actioner
+                    $lead->first_action_by = $user->id;
+                    $lead->last_action_by = $user->id;
+                    $lead->started = 1;
+                    $lead->save();
+
+                    // Calculating Lead Counts
+                    Common::recalculateCampaignLeads($campaignId);
+                }
+            }
+        } else if ($actionType == 'previous') {
+            $lead = Lead::where('id', '<', $leadId)
+                ->where('last_action_by', $user->id)
+                ->where('campaign_id', $campaignId)
+                ->orderBy('id', 'desc')
+                ->first();
+        }
+
+        return $lead;
+    }
+
+    public static function updateBookingStatus($bookingType, $leadId, $bookingStatus)
+    {
+        $lead = null;
+
+        if ($bookingType == 'lead_follow_up' || $bookingType == 'salesman_bookings') {
+            $lead = Lead::find($leadId);
+            $logId = $bookingType == 'lead_follow_up' ? $lead->lead_follow_up_id : $lead->salesman_booking_id;
+            if ($bookingType == 'lead_follow_up') {
+                $lead->lead_follow_up_id = null;
+            } else {
+                $lead->salesman_booking_id = null;
+            }
+            $lead->save();
+
+            if (!is_null($logId)) {
+                $leadLog = LeadLog::find($logId);
+                $leadLog->booking_status = $bookingStatus;
+                $leadLog->save();
+            }
+        }
+
+
+        return $lead;
     }
 }

@@ -17,7 +17,7 @@ class CallManagerController extends ApiBaseController
         $user = user();
         $request = request();
 
-        if (!$user->hasRole('admin') || !$user->hasPermissionTo('campaigns_view_all') || !$request->has('view_type') || ($request->has('view_type') && $request->view_type == 'self')) {
+        if (!$user->hasRole('admin') && !$user->hasPermissionTo('campaigns_view_all') || !$request->has('view_type') || ($request->has('view_type') && $request->view_type == 'self')) {
             $query = $query->join('campaign_users', 'campaign_users.campaign_id', '=', 'campaigns.id')
                 ->where('campaign_users.user_id', $user->id);
         }

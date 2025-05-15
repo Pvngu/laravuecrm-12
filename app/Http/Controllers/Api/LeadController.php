@@ -90,7 +90,7 @@ class LeadController extends ApiBaseController
     {
         $user = user();
 
-        if (!$user->hasRole('admin') || !$user->hasPermissionTo('leads_create')) {
+        if (!$user->hasRole('admin') && !$user->hasPermissionTo('leads_create')) {
             throw new ApiException("Not Allowed");
         }
 
@@ -289,7 +289,7 @@ class LeadController extends ApiBaseController
         $totalDuration = Lead::join('campaigns', 'campaigns.id', '=', 'leads.campaign_id');
 
 
-        if (!$user->hasRole('admin') || !$user->hasPermissionTo('leads_view_all')) {
+        if (!$user->hasRole('admin') && !$user->hasPermissionTo('leads_view_all')) {
             $totalActiveCampaign = $totalActiveCampaign->join('campaign_users', 'campaign_users.campaign_id', '=', 'campaigns.id')
                 ->where('campaign_users.user_id', $user->id);
             $totalCompletedCampaign = $totalCompletedCampaign->join('campaign_users', 'campaign_users.campaign_id', '=', 'campaigns.id')

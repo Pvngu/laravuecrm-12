@@ -28,7 +28,7 @@ class LeadLogController extends ApiBaseController
         $query = $query->join('leads', 'leads.id', '=', 'lead_logs.lead_id')
             ->join('campaigns', 'campaigns.id', 'leads.campaign_id');
 
-        if (!$user->hasRole('admin') || !$user->hasPermissionTo('leads_view_all')) {
+        if (!$user->hasRole('admin') && !$user->hasPermissionTo('leads_view_all')) {
             if ($request->has('log_type') && $request->log_type == 'salesman_bookings') {
                 $query = $query->where('lead_logs.created_by_id', $user->id);
             } else if (

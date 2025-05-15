@@ -31,7 +31,7 @@ class LeadFollowUpController extends ApiBaseController
         if ($user->hasRole('admin') || $user->hasPermissionTo('leads_view_all') && $request->has('user_id') && $request->user_id != "") {
             $userId = $this->getIdFromHash($request->user_id);
             $query = $query->where('lead_logs.user_id', '=', $userId);
-        } else if (!$user->hasRole('admin') || !$user->hasPermissionTo('leads_view_all')) {
+        } else if (!$user->hasRole('admin') && !$user->hasPermissionTo('leads_view_all')) {
             $query = $query->where('lead_logs.user_id', '=', $user->id);
         }
 
