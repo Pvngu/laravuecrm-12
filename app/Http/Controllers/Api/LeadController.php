@@ -43,7 +43,7 @@ class LeadController extends ApiBaseController
         $query = $query->join('campaigns', 'campaigns.id', '=', 'leads.campaign_id');
 
 
-        if ($user->ability('admin', 'view_completed_campaigns')) {
+        if ($user->hasRole('admin') || $user->hasPermissionTo('view_completed_campaigns')) {
             // Filter By Campaign Status
             if ($request->has('campaign_status') && $request->campaign_status == "completed") {
                 $query = $query->where('status', '=', 'completed');
@@ -73,7 +73,7 @@ class LeadController extends ApiBaseController
         // If user either not admin or have leads_view_all permissions
         // then lead last_action_by must be logged in user
         // and only leads started will be visible
-        if ($user->ability('admin', 'leads_view_all')) {
+        if ($user->hasRole('admin') || $user->hasPermissionTo('leads_view_all')) {
             if ($started) {
                 $userId = $request->has('user_id') && $request->user_id != "" ? $request->user_id : $user->id;
                 $query = $query->where('leads.last_action_by', $userId);
@@ -90,7 +90,7 @@ class LeadController extends ApiBaseController
     {
         $user = user();
 
-        if (!$user->ability('admin', 'leads_create')) {
+        if (!$user->hasRole('admin') || !$user->hasPermissionTo('leads_create')) {
             throw new ApiException("Not Allowed");
         }
 
@@ -289,7 +289,7 @@ class LeadController extends ApiBaseController
         $totalDuration = Lead::join('campaigns', 'campaigns.id', '=', 'leads.campaign_id');
 
 
-        if (!$user->ability('admin', 'leads_view_all')) {
+        if (!$user->hasRole('admin') || !$user->hasPermissionTo('leads_view_all')) {
             $totalActiveCampaign = $totalActiveCampaign->join('campaign_users', 'campaign_users.campaign_id', '=', 'campaigns.id')
                 ->where('campaign_users.user_id', $user->id);
             $totalCompletedCampaign = $totalCompletedCampaign->join('campaign_users', 'campaign_users.campaign_id', '=', 'campaigns.id')

@@ -28,10 +28,10 @@ class LeadFollowUpController extends ApiBaseController
             ->whereNotNull('leads.lead_follow_up_id');
 
         // For user filter
-        if ($user->ability('admin', 'leads_view_all') && $request->has('user_id') && $request->user_id != "") {
+        if ($user->hasRole('admin') || $user->hasPermissionTo('leads_view_all') && $request->has('user_id') && $request->user_id != "") {
             $userId = $this->getIdFromHash($request->user_id);
             $query = $query->where('lead_logs.user_id', '=', $userId);
-        } else if (!$user->ability('admin', 'leads_view_all')) {
+        } else if (!$user->hasRole('admin') || !$user->hasPermissionTo('leads_view_all')) {
             $query = $query->where('lead_logs.user_id', '=', $user->id);
         }
 

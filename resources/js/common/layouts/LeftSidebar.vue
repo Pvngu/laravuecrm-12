@@ -84,6 +84,70 @@
                         <span>{{ $t("menu.dashboard") }}</span>
                     </a-menu-item>
 
+                    <a-menu-item
+                        v-if="
+                            (permsArray.includes('products_view') ||
+                                permsArray.includes('admin'))
+                        "
+                        @click="
+                            () => {
+                                menuSelected();
+                                $router.push({ name: 'admin.products.index' });
+                            }
+                        "
+                        key="products"
+                    >
+                        <CopyrightCircleOutlined />
+                        <span>{{ $t("menu.products") }}</span>
+                    </a-menu-item>
+                    <a-sub-menu
+                        key="expense_manager"
+                        v-if="
+                            (permsArray.includes('expense_categories_view') ||
+                                permsArray.includes('expenses_view') ||
+                                permsArray.includes('admin'))
+                        "
+                    >
+                        <template #title>
+                            <span>
+                                <WalletOutlined />
+                                <span>{{ $t("menu.expense_manager") }}</span>
+                            </span>
+                        </template>
+                        <a-menu-item
+                            @click="
+                                () => {
+                                    menuSelected();
+                                    $router.push({
+                                        name: 'admin.expense_categories.index',
+                                    });
+                                }
+                            "
+                            key="expense_categories"
+                            v-if="
+                                permsArray.includes('expense_categories_view') ||
+                                permsArray.includes('admin')
+                            "
+                        >
+                            {{ $t("menu.expense_categories") }}
+                        </a-menu-item>
+                        <a-menu-item
+                            @click="
+                                () => {
+                                    menuSelected();
+                                    $router.push({ name: 'admin.expenses.index' });
+                                }
+                            "
+                            key="expenses"
+                            v-if="
+                                permsArray.includes('expenses_view') ||
+                                permsArray.includes('admin')
+                            "
+                        >
+                            {{ $t("menu.expenses") }}
+                        </a-menu-item>
+                    </a-sub-menu>
+
                     <LeftSideBarMainHeading
                         v-if="
                             permsArray.includes('users_view') ||
@@ -110,10 +174,164 @@
                         <span>{{ $t("menu.staff_members") }}</span>
                     </a-menu-item>
 
+                    <a-sub-menu
+                        v-if="
+                            (permsArray.includes('salesmans_view') ||
+                                permsArray.includes('admin'))
+                        "
+                        key="salesmans"
+                    >
+                        <template #title>
+                            <span>
+                                <ApartmentOutlined />
+                                <span>{{ $t("menu.salesmans") }}</span>
+                            </span>
+                        </template>
+                        <a-menu-item
+                            @click="
+                                () => {
+                                    menuSelected();
+                                    $router.push({ name: 'admin.salesman.index' });
+                                }
+                            "
+                            key="salesmans"
+                        >
+                            <TeamOutlined />
+                            <span>{{ $t("menu.salesmans") }}</span>
+                        </a-menu-item>
+                        <a-menu-item
+                            @click="
+                                () => {
+                                    menuSelected();
+                                    $router.push({
+                                        name: 'admin.bookings.salesman_bookings.index',
+                                    });
+                                }
+                            "
+                            key="salesman_bookings"
+                        >
+                            <ShoppingCartOutlined />
+                            <span>{{ $t("menu.salesman_bookings") }}</span>
+                        </a-menu-item>
+                    </a-sub-menu>
+
+                    <LeftSideBarMainHeading
+                        :title="$t('menu.lead_management')"
+                        :visible="menuCollapsed"
+                    />
+
+                    <a-menu-item
+                        @click="
+                            () => {
+                                menuSelected();
+                                $router.push({ name: 'admin.call_manager.index' });
+                            }
+                        "
+                        key="call_manager"
+                    >
+                        <AppstoreOutlined />
+                        <span>{{ $t("menu.call_manager") }}</span>
+                    </a-menu-item>
+
+                    <a-menu-item
+                        v-if="
+                            permsArray.includes('campaigns_view') ||
+                            permsArray.includes('admin')
+                        "
+                        @click="
+                            () => {
+                                menuSelected();
+                                $router.push({ name: 'admin.campaigns.index' });
+                            }
+                        "
+                        key="campaigns"
+                    >
+                        <CopyrightCircleOutlined />
+                        <span>{{ $t("menu.campaigns") }}</span>
+                    </a-menu-item>
+
+                    <a-sub-menu key="leads">
+                        <template #title>
+                            <span>
+                                <ApartmentOutlined />
+                                <span>{{ $t("menu.leads_calls") }}</span>
+                            </span>
+                        </template>
+                        <a-menu-item
+                            @click="
+                                () => {
+                                    menuSelected();
+                                    $router.push({ name: 'admin.leads.index' });
+                                }
+                            "
+                            key="leads"
+                        >
+                            <SoundOutlined />
+                            <span>{{ $t("menu.leads") }}</span>
+                        </a-menu-item>
+                        <a-menu-item
+                            @click="
+                                () => {
+                                    menuSelected();
+                                    $router.push({ name: 'admin.call_logs.index' });
+                                }
+                            "
+                            key="call_logs"
+                        >
+                            <PhoneOutlined />
+                            <span>{{ $t("menu.call_logs") }}</span>
+                        </a-menu-item>
+                        <a-menu-item
+                            @click="
+                                () => {
+                                    menuSelected();
+                                    $router.push({ name: 'admin.lead_notes.index' });
+                                }
+                            "
+                            key="lead_notes"
+                        >
+                            <FileTextOutlined />
+                            <span>{{ $t("menu.lead_notes") }}</span>
+                        </a-menu-item>
+                    </a-sub-menu>
+                    <a-menu-item
+                        @click="
+                            () => {
+                                menuSelected();
+                                $router.push({
+                                    name: 'admin.bookings.lead_follow_up.index',
+                                });
+                            }
+                        "
+                        key="lead_follow_up"
+                    >
+                        <ScheduleOutlined />
+                        <span>{{ $t("menu.lead_follow_up") }}</span>
+                    </a-menu-item>
+
                     <LeftSideBarMainHeading
                         :title="$t('menu.settings')"
                         :visible="menuCollapsed"
                     />
+
+                    <a-menu-item
+                        v-if="
+                            permsArray.includes('form_field_names_view') ||
+                            permsArray.includes('admin')
+                        "
+                        @click="
+                            () => {
+                                menuSelected();
+                                $router.push({
+                                    name: 'admin.form_field_names.index',
+                                });
+                            }
+                        "
+                        key="form_field_names"
+                    >
+                        <InsertRowBelowOutlined />
+                        <span>{{ $t("menu.form_field_names") }}</span>
+                    </a-menu-item>
 
                     <a-sub-menu
                         key="messaging"
@@ -145,6 +363,23 @@
                             <span>{{ $t("menu.email_templates") }}</span>
                         </a-menu-item>
                     </a-sub-menu>
+
+                    <a-menu-item
+                        v-if="
+                            permsArray.includes('forms_view') ||
+                            permsArray.includes('admin')
+                        "
+                        @click="
+                            () => {
+                                menuSelected();
+                                $router.push({ name: 'admin.forms.index' });
+                            }
+                        "
+                        key="forms"
+                    >
+                        <FolderOpenOutlined />
+                        <span>{{ $t("menu.forms") }}</span>
+                    </a-menu-item>
 
                     <component
                         v-for="(appModule, index) in appModules"
@@ -201,6 +436,7 @@ import {
     RocketOutlined,
     LaptopOutlined,
     CarOutlined,
+    DollarCircleOutlined,
     CopyrightCircleOutlined,
     IeOutlined,
     PhoneOutlined,
@@ -242,7 +478,8 @@ export default defineComponent({
         BankOutlined,
         RocketOutlined,
         LaptopOutlined,
-        CarOutlined,        
+        CarOutlined,
+        DollarCircleOutlined,
         CopyrightCircleOutlined,
         IeOutlined,
         FolderOpenOutlined,
@@ -263,11 +500,12 @@ export default defineComponent({
             permsArray,
             appModules,
             menuCollapsed,
-            willSubscriptionModuleVisible,
         } = common();
         const rootSubmenuKeys = [
             "dashboard",
+            "leads",
             "users",
+            "salesmans",
             "forms",
             "form_field_names",
             "settings",
@@ -385,7 +623,6 @@ export default defineComponent({
             user,
             permsArray,
             appModules,
-            willSubscriptionModuleVisible,
         };
     },
 });

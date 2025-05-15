@@ -38,7 +38,7 @@ class PermsSeed
         'form_field_names_create',
         'form_field_names_edit',
         'form_field_names_delete',
-         'expense_categories_view',
+        'expense_categories_view',
         'expense_categories_create',
         'expense_categories_edit',
         'expense_categories_delete',
@@ -46,8 +46,6 @@ class PermsSeed
         'expenses_create',
         'expenses_edit',
         'expenses_delete',
-
-        // Product
         'products_view',
         'products_create',
         'products_edit',

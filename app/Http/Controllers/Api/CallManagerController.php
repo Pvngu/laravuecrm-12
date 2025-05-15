@@ -17,13 +17,13 @@ class CallManagerController extends ApiBaseController
         $user = user();
         $request = request();
 
-        if (!$user->ability('admin', 'campaigns_view_all') || !$request->has('view_type') || ($request->has('view_type') && $request->view_type == 'self')) {
+        if (!$user->hasRole('admin') || !$user->hasPermissionTo('campaigns_view_all') || !$request->has('view_type') || ($request->has('view_type') && $request->view_type == 'self')) {
             $query = $query->join('campaign_users', 'campaign_users.campaign_id', '=', 'campaigns.id')
                 ->where('campaign_users.user_id', $user->id);
         }
 
         // Filter By Campaign Status
-        if ($user->ability('admin', 'view_completed_campaigns')) {
+        if ($user->hasRole('admin') || $user->hasPermissionTo('view_completed_campaigns')) {
             if ($request->has('campaign_status') && $request->campaign_status == "completed") {
                 $query = $query->where('status', '=', 'completed');
             } else {

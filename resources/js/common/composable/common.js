@@ -2,7 +2,7 @@ import { computed } from "vue";
 import moment from "moment";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
-import { forEach, includes } from "lodash-es";
+import { forEach, get, includes } from "lodash-es";
 import { checkUserPermission } from "../scripts/functions";
 import dayjs from 'dayjs';
 
@@ -202,12 +202,20 @@ const common = () => {
         return amount < 0 ? amount * -1 : amount;
     }
 
-    const willSubscriptionModuleVisible = (moduleName) => {
-        if (appSetting.value.subscription_plan && appSetting.value.subscription_plan.modules) {
-            return includes(appSetting.value.subscription_plan.modules, moduleName);
-        } else {
-            return false;
+    const getCampaignUrl = (campaignStatus = 'active', viewType = 'self') => {
+        var campaignsUrl = `call-managers?fields=id,xid,name,status,form_id,x_form_id,form{id,xid,name,form_fields}&campaign_status=${campaignStatus}&view_type=${viewType}&limit=10000`;
+
+        return campaignsUrl;
+    }
+
+    const getCampaignStatsUrl = (campaignStatus = 'active', campaignId = undefined) => {
+        var campaignStatsUrl = `leads/campaign-stats?campaign_status=${campaignStatus}`;
+
+        if (campaignId != undefined) {
+            campaignStatsUrl += `&campaign_id=${campaignId}`;
         }
+
+        return campaignStatsUrl;
     }
 
     return {
@@ -242,9 +250,11 @@ const common = () => {
         cssSettings,
         globalSetting,
 
-        willSubscriptionModuleVisible,
         visibleSubscriptionModules,
         formatTimeDuration,
+
+        getCampaignUrl,
+        getCampaignStatsUrl,
     };
 }
 
