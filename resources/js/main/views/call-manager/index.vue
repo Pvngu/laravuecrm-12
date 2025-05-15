@@ -42,7 +42,7 @@
                     </a-empty>
                 </a-col>
             </a-row>
-            <a-row v-else :gutter="[15, 15]" class="mt-5 mb-5">
+            <a-row v-else :gutter="[15, 15]" class="mt-1 mb-1">
                 <a-col
                     v-for="allCampaign in allCampaigns"
                     :key="allCampaign.xid"
@@ -55,7 +55,7 @@
                     <a-card :title="allCampaign.name" hoverable>
                         <a-card-meta>
                             <template #description>
-                                <a-row :gutter="16" class="mt-10">
+                                <a-row :gutter="16" class="mt-3">
                                     <a-col :span="8">{{ $t("campaign.members") }}</a-col>
                                     <a-col :span="16">
                                         <CampaignMembers
@@ -64,7 +64,7 @@
                                     </a-col>
                                 </a-row>
 
-                                <a-row :gutter="16" class="mt-10">
+                                <a-row :gutter="16" class="mt-3">
                                     <a-col :span="8">{{ $t("campaign.progress") }}</a-col>
                                     <a-col :span="16">
                                         <CampaignProgress
@@ -74,7 +74,7 @@
                                     </a-col>
                                 </a-row>
 
-                                <a-row :gutter="16" class="mt-20">
+                                <a-row :gutter="16" class="mt-5">
                                     <a-col :span="8">
                                         {{ $t("campaign.last_actioner") }}
                                     </a-col>
@@ -88,7 +88,7 @@
                                     </a-col>
                                 </a-row>
 
-                                <a-row :gutter="16" class="mt-25">
+                                <a-row :gutter="16" class="mt-6">
                                     <a-col :span="8">
                                         {{ $t("campaign.started_on") }}
                                     </a-col>

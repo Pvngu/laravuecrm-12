@@ -34,7 +34,7 @@
             </a-descriptions-item>
         </a-descriptions>
 
-        <a-tabs v-model:activeKey="activeTabKey" class="mt-20">
+        <a-tabs v-model:activeKey="activeTabKey" class="mt-5">
             <a-tab-pane key="lead_data">
                 <template #tab>
                     <span>

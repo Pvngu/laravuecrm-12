@@ -41,7 +41,7 @@
             permsArray.includes('admin')
         "
         :gutter="[15, 15]"
-        class="mb-20"
+        class="mb-5"
     >
         <a-col v-if="showTableSearch" :xs="24" :sm="24" :md="12" :lg="6" :xl="6">
             <a-select
@@ -117,7 +117,7 @@
         </a-col>
     </a-row>
 
-    <a-row class="mt-20">
+    <a-row class="mt-5">
         <a-col :span="24">
             <div class="table-responsive" v-if="columns && columns.length > 0">
                 <a-table

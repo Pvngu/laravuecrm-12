@@ -279,7 +279,7 @@
                             }"
                         >
                             <a-skeleton v-if="newPageLoad" active />
-                            <a-form v-else layout="vertical" class="mt-20">
+                            <a-form v-else layout="vertical" class="mt-5">
                                 <a-row :gutter="16">
                                     <a-col :xs="24" :sm="24" :md="12" :lg="12">
                                         <a-form-item

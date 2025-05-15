@@ -42,7 +42,7 @@
     </AdminPageHeader>
 
     <admin-page-table-content>
-        <a-card class="page-content-container mt-20 mb-20">
+        <a-card class="page-content-container mt-5 mb-5">
             <a-row>
                 <a-col :span="24">
                     <a-tabs
@@ -369,7 +369,7 @@
                         </template>
                     </a-row>
 
-                    <a-row class="mt-20">
+                    <a-row class="mt-5">
                         <a-col :span="24">
                             <div
                                 class="table-responsive"

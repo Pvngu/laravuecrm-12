@@ -127,7 +127,7 @@
                     lead.campaign.form.form_fields &&
                     lead.campaign.form.form_fields.length > 0
                 "
-                class="mb-20"
+                class="mb-5"
             >
                 <a-col
                     :xs="8"

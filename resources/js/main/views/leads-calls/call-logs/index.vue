@@ -21,7 +21,7 @@
     </AdminPageHeader>
 
     <admin-page-table-content>
-        <a-card class="page-content-container mt-20 mb-20">
+        <a-card class="page-content-container mt-5 mb-5">
             <CallLogTable :showAction="false" :showCampaignStatus="true" />
         </a-card>
     </admin-page-table-content>

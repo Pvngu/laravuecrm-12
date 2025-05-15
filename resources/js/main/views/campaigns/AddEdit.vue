@@ -35,7 +35,7 @@
             <a-divider />
 
             <template v-if="currentStep == 0">
-                <a-row :gutter="16" class="mt-20">
+                <a-row :gutter="16" class="mt-5">
                     <a-col :xs="24" :sm="24" :md="24" :lg="24">
                         <a-form-item
                             :label="$t('campaign.name')"
@@ -161,7 +161,7 @@
                     </a-col>
                 </a-row>
 
-                <a-row :gutter="16" class="mt-20">
+                <a-row :gutter="16" class="mt-5">
                     <a-col :xs="24" :sm="24" :md="8" :lg="8">
                         <a-form-item
                             :label="$t('campaign.allow_reference_prefix')"
@@ -220,7 +220,7 @@
                         !formData.detail_fields ||
                         (formData.detail_fields && formData.detail_fields.length == 0)
                     "
-                    class="mt-20"
+                    class="mt-5"
                     :description="$t('campaign.add_detail_field_description')"
                     type="info"
                     show-icon
@@ -232,13 +232,13 @@
                         formData.detail_fields.length > 0 &&
                         addFieldsButtonStatus
                     "
-                    class="mt-20"
+                    class="mt-5"
                     :description="$t('campaign.add_detail_field_error')"
                     type="error"
                     show-icon
                 />
 
-                <div class="mt-20">
+                <div class="mt-5">
                     <a-row
                         :gutter="16"
                         v-for="(detailField, index) in formData.detail_fields"

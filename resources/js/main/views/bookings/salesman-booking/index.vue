@@ -103,7 +103,7 @@
     </admin-page-filters>
 
     <admin-page-table-content>
-        <a-row class="mt-20">
+        <a-row class="mt-5">
             <a-col :span="24">
                 <div class="table-responsive">
                     <a-table
