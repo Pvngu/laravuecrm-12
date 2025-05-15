@@ -2,28 +2,29 @@
 
 namespace App\Http\Controllers\Api;
 
+use Carbon\Carbon;
+use App\Models\Lead;
 use App\Classes\Common;
+use App\Models\Campaign;
+use App\Models\Salesman;
+use App\Models\Settings;
+use App\Models\Individual;
+use App\Models\CampaignUser;
+use App\Scopes\CompanyScope;
+use App\Models\IndividualLog;
+use Examyou\RestAPI\ApiResponse;
+use App\Notifications\SendLeadMail;
 use App\Http\Controllers\ApiBaseController;
 use App\Http\Requests\Api\Lead\IndexRequest;
 use App\Http\Requests\Api\Lead\StoreRequest;
-use App\Http\Requests\Api\Lead\UpdateRequest;
-use App\Http\Requests\Api\Lead\DeleteRequest;
-use App\Http\Requests\Api\Lead\CreateLeadRequest;
-use App\Http\Requests\Api\Lead\CreateBookingRequest;
-use App\Http\Requests\Api\Lead\SendEmailRequest;
-use App\Http\Requests\Api\Lead\StartFollowRequest;
-use App\Models\Campaign;
-use App\Models\CampaignUser;
-use App\Models\Lead;
-use App\Models\LeadLog;
-use App\Models\Salesman;
-use App\Models\Settings;
-use App\Notifications\SendLeadMail;
-use App\Scopes\CompanyScope;
-use Carbon\Carbon;
-use Examyou\RestAPI\ApiResponse;
 use Examyou\RestAPI\Exceptions\ApiException;
 use Illuminate\Support\Facades\Notification;
+use App\Http\Requests\Api\Lead\DeleteRequest;
+use App\Http\Requests\Api\Lead\UpdateRequest;
+use App\Http\Requests\Api\Lead\SendEmailRequest;
+use App\Http\Requests\Api\Lead\CreateLeadRequest;
+use App\Http\Requests\Api\Lead\StartFollowRequest;
+use App\Http\Requests\Api\Lead\CreateBookingRequest;
 
 class LeadController extends ApiBaseController
 {
@@ -40,7 +41,8 @@ class LeadController extends ApiBaseController
         $user = user();
 
         // Extra Filter For campaign Type
-        $query = $query->join('campaigns', 'campaigns.id', '=', 'leads.campaign_id');
+        $query = $query->join('individuals', 'individuals.id', '=', 'leads.individual_id')
+            ->join('campaigns', 'campaigns.id', '=', 'individuals.campaign_id');
 
 
         if ($user->hasRole('admin') || $user->hasPermissionTo('view_completed_campaigns')) {
@@ -76,10 +78,10 @@ class LeadController extends ApiBaseController
         if ($user->hasRole('admin') || $user->hasPermissionTo('leads_view_all')) {
             if ($started) {
                 $userId = $request->has('user_id') && $request->user_id != "" ? $request->user_id : $user->id;
-                $query = $query->where('leads.last_action_by', $userId);
+                $query = $query->where('individuals.last_action_by', $userId);
             }
         } else {
-            $query = $query->where('leads.last_action_by', $user->id)
+            $query = $query->where('individuals.last_action_by', $user->id)
                 ->where('leads.started', 1);
         }
 
@@ -107,16 +109,42 @@ class LeadController extends ApiBaseController
         }
 
         $lead = new Lead();
-        $lead->campaign_id = $campaignId;
+        $individual = new Individual();
+
+        $individual->campaign_id = $campaignId;
 
         // Reference Prefix
         if ($campaign->allow_reference_prefix) {
-            $lead->reference_number = $campaign->reference_prefix . Carbon::now()->timestamp;
+            $individual->reference_number = $campaign->reference_prefix . Carbon::now()->timestamp;
         }
 
-        $lead->lead_data = $request->lead_data;
-        $lead->created_by = $loggedUser->id;
+        $fields = [
+            'first_name',
+            'last_name',
+            'SSN',
+            'date_of_birth',
+            'phone_number',
+            'home_phone',
+            'email',
+            'language',
+            'original_profile_id',
+        ];
+
+        foreach ($fields as $field) {
+            if ($request->has($field)) {
+                $value = $request->$field;
+                $individual->$field = in_array($field, ['first_name', 'last_name']) ? ucwords($value) : $value;
+            }
+        };
+
+        if($request->has('lead_data')) {
+            $individual->lead_data = $request->lead_data;
+        }
+        
+        $individual->created_by = $loggedUser->id;
         $lead->lead_hash = md5($leadHashString . $campaignId);
+        $individual->save();
+        $lead->individual_id = $individual->id;
         $lead->save();
 
         // Calculating Lead Counts
@@ -127,32 +155,33 @@ class LeadController extends ApiBaseController
 
     public function createLeadCallLog($leadXId)
     {
-        $id = $this->getIdFromHash($leadXId);
+        $id = $this->getIdFromHash(hash: $leadXId);
         $loggedUser = user();
 
         $lead = Lead::find($id);
+        $individual = Individual::find($lead->individual_id);
 
         // Recalculate Time Taken in Lead
         // And insert it in lead
-        $recalculateLeadTime = LeadLog::where('lead_id', $lead->id)
+        $recalculateIndividualTime = IndividualLog::where('individual_id', $individual->id)
             // ->where('user_id', '=', $loggedUser->id)
             ->where('log_type', '=', 'call_log')
             ->sum('time_taken');
-        $lead->time_taken = $recalculateLeadTime;
-        $lead->save();
+        $individual->time_taken = $recalculateIndividualTime;
+        $individual->save();
 
-        // TODO - Check if any other user is not attending this lead
-        $callLog = new LeadLog();
-        $callLog->lead_id = $lead->id;
+        // TODO - Check if any other user is not attending this individual
+        $callLog = new IndividualLog();
+        $callLog->individual_id = $individual->id;
         $callLog->log_type = 'call_log';
         $callLog->user_id = $loggedUser->id;
-        $callLog->started_on = (int)$lead->time_taken;
+        $callLog->started_on = (int)$individual->time_taken;
         $callLog->time_taken = 0;
-        $callLog->date_time = Carbon::now();
+        $callLog->date_time = Carbon::now()->setTimezone('America/Los_Angeles');
         $callLog->save();
 
-        $leadNumber = Lead::where('id', '<=', $lead->id)
-            ->where('campaign_id', $lead->campaign_id)
+        $leadNumber = Individual::where('id', '<=', $individual->id)
+            ->where('campaign_id', $individual->campaign_id)
             ->count();
 
 
@@ -166,25 +195,25 @@ class LeadController extends ApiBaseController
     {
         $request = request();
         $bookingType = $request->booking_type;
-        $leadXId = $request->lead_id;
-        $id = $this->getIdFromHash($leadXId);
+        $individualXId = $request->individual_id;
+        $id = $this->getIdFromHash($individualXId);
 
-        $lead = Lead::find($id);
+        $individual = Individual::find($id);
 
         // TODO - Check if any other user is not attending this lead
 
-        $bookingId = $bookingType == 'lead_follow_up' ? $lead->lead_follow_up_id : $lead->salesman_booking_id;
+        $bookingId = $bookingType == 'lead_follow_up' ? $individual->individual_follow_up_id : $individual->salesman_booking_id;
 
         if (!is_null($bookingId)) {
-            $booking = LeadLog::where('log_type', $bookingType)
+            $booking = IndividualLog::where('log_type', $bookingType)
                 ->where('id', $bookingId)
                 ->first();
         }
 
 
         if (is_null($bookingId) || (!is_null($bookingId) && !$booking)) {
-            $booking = new LeadLog();
-            $booking->lead_id = $lead->id;
+            $booking = new IndividualLog();
+            $booking->individual_id = $individual->id;
             $booking->log_type = $bookingType;
         }
 
@@ -194,13 +223,13 @@ class LeadController extends ApiBaseController
         $booking->save();
 
         if ($bookingType == 'lead_follow_up') {
-            $lead->lead_follow_up_id = $booking->id;
+            $individual->individual_follow_up_id = $booking->id;
         } else {
-            $lead->salesman_booking_id = $booking->id;
+            $individual->salesman_booking_id = $booking->id;
         }
-        $lead->save();
+        $individual->save();
 
-        $bookingData = LeadLog::select('id', 'date_time', 'user_id')
+        $bookingData = IndividualLog::select('id', 'date_time', 'user_id')
             ->with(['user' => function ($query) {
                 $query->select('id', 'name');
             }])
@@ -215,10 +244,10 @@ class LeadController extends ApiBaseController
     {
         $request = request();
         $bookingType = $request->booking_type;
-        $leadXId = $request->lead_id;
-        $id = $this->getIdFromHash($leadXId);
+        $individualXId = $request->individual_id;
+        $id = $this->getIdFromHash($individualXId);
 
-        $lead = Lead::select('id', 'campaign_id')->find($id);
+        $individual = Individual::select('id', 'campaign_id')->find($id);
 
         // TODO - Check if any other user is not attending this lead
 
@@ -227,7 +256,7 @@ class LeadController extends ApiBaseController
         if ($bookingType == 'lead_follow_up') {
             $users = CampaignUser::select('users.id', 'users.name')
                 ->join('users', 'users.id', '=', 'campaign_users.user_id')
-                ->where('campaign_users.campaign_id', $lead->campaign_id)
+                ->where('campaign_users.campaign_id', $individual->campaign_id)
                 ->get();
         } else if ($bookingType == 'salesman_bookings') {
             $users = Salesman::select('id', 'name')->get();
@@ -249,12 +278,12 @@ class LeadController extends ApiBaseController
 
         // TODO - Check if any other user is not attending this lead
 
-        $booking = LeadLog::where('log_type', $bookingType)
+        $booking = IndividualLog::where('log_type', $bookingType)
             ->where('lead_id', $lead->id)
             ->first();
 
         if (!$booking) {
-            $booking = new LeadLog();
+            $booking = new IndividualLog();
             $booking->lead_id = $lead->id;
             $booking->log_type = $bookingType;
         }
@@ -264,7 +293,7 @@ class LeadController extends ApiBaseController
         $booking->notes = $request->notes;
         $booking->save();
 
-        $bookingData = LeadLog::select('id', 'date_time', 'user_id')
+        $bookingData = IndividualLog::select('id', 'date_time', 'user_id')
             ->with(['user' => function ($query) {
                 $query->select('id', 'name');
             }])
@@ -283,10 +312,12 @@ class LeadController extends ApiBaseController
         $totalCompletedCampaign = Campaign::where('campaigns.status', '=', 'completed');
 
         // Total Leads
-        $totalLeads = Lead::join('campaigns', 'campaigns.id', '=', 'leads.campaign_id');
-        $callMade = Lead::join('campaigns', 'campaigns.id', '=', 'leads.campaign_id')
-            ->where('started', 1);
-        $totalDuration = Lead::join('campaigns', 'campaigns.id', '=', 'leads.campaign_id');
+        $totalLeads = Lead::join('individuals', 'individuals.id', '=', 'leads.individual_id')
+                          ->join('campaigns', 'campaigns.id', '=', 'individuals.campaign_id');
+        $callMade = Individual::join('leads', 'leads.individual_id', '=', 'individuals.id')
+                              ->join('campaigns', 'campaigns.id', '=', 'individuals.campaign_id')
+                              ->where('started', 1);
+        $totalDuration = Individual::join('campaigns', 'campaigns.id', '=', 'individuals.campaign_id');
 
 
         if (!$user->hasRole('admin') && !$user->hasPermissionTo('leads_view_all')) {
@@ -295,8 +326,8 @@ class LeadController extends ApiBaseController
             $totalCompletedCampaign = $totalCompletedCampaign->join('campaign_users', 'campaign_users.campaign_id', '=', 'campaigns.id')
                 ->where('campaign_users.user_id', $user->id);
 
-            $callMade = $callMade->where('leads.last_action_by', $user->id);
-            $totalDuration = $totalDuration->where('leads.last_action_by', $user->id);
+            $callMade = $callMade->where('individuals.last_action_by', $user->id);
+            $totalDuration = $totalDuration->where('individuals.last_action_by', $user->id);
         }
 
         if ($request->has('campaign_status') && $request->campaign_status == 'completed') {
@@ -359,17 +390,17 @@ class LeadController extends ApiBaseController
 
             // TODO - insert mail
             if ($mailSent) {
-                $leadLog = new LeadLog();
-                $leadLog->lead_id = $leadId;
-                $leadLog->log_type = 'email';
-                $leadLog->user_id = $user->id;
-                $leadLog->date_time = Carbon::now();
-                $leadLog->notes = json_encode([
+                $IndividualLog = new IndividualLog();
+                $IndividualLog->lead_id = $leadId;
+                $IndividualLog->log_type = 'email';
+                $IndividualLog->user_id = $user->id;
+                $IndividualLog->date_time = Carbon::now()->setTimezone('America/Los_Angeles');
+                $IndividualLog->notes = json_encode([
                     'email' => $email,
                     'subject' => $subject,
                     'message' => $message,
                 ]);
-                $leadLog->save();
+                $IndividualLog->save();
             }
 
             $success = true;

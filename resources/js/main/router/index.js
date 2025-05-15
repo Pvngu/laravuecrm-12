@@ -14,6 +14,7 @@ import FormRoutes from './forms';
 import LeadCallRoutes from './leadsCalls';
 import SettingRoutes from './settings';
 import BookingRoutes from './bookings';
+import SaleRoutes from './sales';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -33,6 +34,7 @@ const router = createRouter({
         ...BookingRoutes,
         ...ExpensesRoutes,
         ...ProductsRoutes,
+        ...SaleRoutes,
     ],
     scrollBehavior: () => ({ left: 0, top: 0 }),
 });

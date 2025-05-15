@@ -41,7 +41,7 @@
             permsArray.includes('admin')
         "
         :gutter="[15, 15]"
-        class="mb-5"
+        class="mb-20"
     >
         <a-col v-if="showTableSearch" :xs="24" :sm="24" :md="12" :lg="6" :xl="6">
             <a-select
@@ -75,24 +75,12 @@
             :lg="6"
             :xl="6"
         >
-            <a-select
-                v-model:value="filters.user_id"
-                :placeholder="$t('common.select_default_text', [$t('user.user')])"
-                :allowClear="true"
-                style="width: 100%"
-                optionFilterProp="title"
-                show-search
-                @change="setUrlData"
-            >
-                <a-select-option
-                    v-for="allUsers in allUsers"
-                    :key="allUsers.xid"
-                    :title="allUsers.name"
-                    :value="allUsers.xid"
-                >
-                    {{ allUsers.name }}
-                </a-select-option>
-            </a-select>
+            <UserSelect
+                @onChange="(id) => {
+                    filters.user_id = id;
+                    setUrlData();
+                }"
+            />
         </a-col>
         <a-col
             v-if="
@@ -117,7 +105,7 @@
         </a-col>
     </a-row>
 
-    <a-row class="mt-5">
+    <a-row class="mt-20">
         <a-col :span="24">
             <div class="table-responsive" v-if="columns && columns.length > 0">
                 <a-table
@@ -143,7 +131,7 @@
                                 {{
                                     findFieldValue(
                                         allFormFieldName.similar_field_names,
-                                        record.lead.lead_data
+                                        record.individual.lead_data
                                     )
                                 }}
                             </template>
@@ -158,13 +146,13 @@
                             <a-button
                                 v-if="showLeadDetails"
                                 type="link"
-                                class="p-0!"
-                                @click="showViewDrawer(record.lead)"
+                                class="p-0"
+                                @click="showViewDrawer(record.individual)"
                             >
                                 {{
-                                    record.lead.reference_number != "" &&
-                                    record.lead.reference_number != undefined
-                                        ? record.lead.reference_number
+                                    record.individual.reference_number != "" &&
+                                    record.individual.reference_number != undefined
+                                        ? record.individual.reference_number
                                         : "---"
                                 }}
                             </a-button>
@@ -172,10 +160,10 @@
                         </template>
                         <template v-if="column.dataIndex === 'campaign'">
                             {{
-                                record.lead &&
-                                record.lead.campaign &&
-                                record.lead.campaign.name
-                                    ? record.lead.campaign.name
+                                record.individual &&
+                                record.individual.campaign &&
+                                record.individual.campaign.name
+                                    ? record.individual.campaign.name
                                     : "-"
                             }}
                         </template>
@@ -208,13 +196,14 @@ import common from "../../../common/composable/common";
 import viewDrawer from "../../../common/composable/viewDrawer";
 import fields from "./fields";
 import DateRangePicker from "../../../common/components/common/calendar/DateRangePicker.vue";
+import UserSelect from "../../../common/components/common/select/UserSelect.vue";
 
 export default {
     props: {
         pageName: {
             default: "index",
         },
-        leadId: {
+        individualId: {
             default: undefined,
         },
         showCampaignStatus: {
@@ -250,6 +239,7 @@ export default {
         StopOutlined,
 
         DateRangePicker,
+        UserSelect,
     },
     setup(props) {
         const {
@@ -270,14 +260,13 @@ export default {
             allFormFieldNames,
             hashableColumns,
             allCampaigns,
-            allUsers,
             getPrefetchData,
         } = fields(props);
         const extraFilters = ref({
             campaign_id: undefined,
             page_name: props.pageName,
             campaign_status: "active",
-            lead_id: props.leadId != undefined ? props.leadId : undefined,
+            individual_id: props.individualId != undefined ? props.individualId : undefined,
             log_type: props.logType,
             dates: [],
         });
@@ -360,7 +349,6 @@ export default {
             convertStringToKey,
             findFieldValue,
             allCampaigns,
-            allUsers,
             filters,
             extraFilters,
             setUrlData,

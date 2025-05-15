@@ -76,8 +76,6 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
         ApiRoute::get('form-field-names/all', ['as' => 'api.form-field-names.all', 'uses' => 'FormFieldNameController@allFormFieldNames']);
         ApiRoute::resource('form-field-names', 'FormFieldNameController', $options);
 
-        ApiRoute::resource('lead-logs', 'LeadLogController', $options);
-
         // Create Menu Update
         ApiRoute::post('companies/update-create-menu', ['as' => 'api.companies.update-create-menu', 'uses' => 'CompanyController@updateCreateMenu']);
 
@@ -89,5 +87,18 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
         ApiRoute::resource('companies', 'CompanyController', ['as' => 'api', 'only' => ['update']]);
         ApiRoute::resource('permissions', 'PermissionController', ['as' => 'api', 'only' => ['index']]);
         ApiRoute::resource('roles', 'RolesController', $options);
+
+        // New Routes
+        ApiRoute::resource('lead-statuses', 'LeadStatusController', $options);
+        ApiRoute::resource('sale-statuses', 'SaleStatusController', $options);
+
+        // Sales
+        ApiRoute::post('sales/transfer', ['as' => 'api.sales.transfer', 'uses' => 'SaleController@transferSales']);
+        ApiRoute::post('sales/create-sale', ['as' => 'api.sales.create-sale', 'uses' => 'SaleController@createSale']);
+        ApiRoute::get('sales/export', ['as' => 'api.sales.export', 'uses' => 'SaleController@export']);
+        ApiRoute::resource('sales', 'SaleController', ['as' => 'api', 'only' => ['index', 'show', 'destroy']]);
+
+        ApiRoute::post('addresses/save', ['as' => 'api.address.saveAddressData', 'uses' => 'AddressController@addEdit']);
+        ApiRoute::resource('individuals', 'IndividualController', ['as' => 'api', 'only' => ['index', 'show']]);
     });
 });

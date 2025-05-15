@@ -250,6 +250,23 @@
                         <span>{{ $t("menu.campaigns") }}</span>
                     </a-menu-item>
 
+                    <a-menu-item
+                        v-if="
+                            permsArray.includes('sales_view') ||
+                            permsArray.includes('admin')
+                        "
+                        @click="
+                            () => {
+                                menuSelected();
+                                $router.push({ name: 'admin.sales.index' });
+                            }
+                        "
+                        key="sales"
+                    >
+                        <TeamOutlined />
+                        <span>{{ $t("menu.sales") }}</span>
+                    </a-menu-item>
+
                     <a-sub-menu key="leads">
                         <template #title>
                             <span>

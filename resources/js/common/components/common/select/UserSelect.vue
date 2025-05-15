@@ -9,24 +9,22 @@
         show-search
         @change="onChange"
         :disabled="disabled"
-        :mode="mode"
     >
         <a-select-opt-group v-for="( users, role ) in allUsers" :key="role" :label="role">
             <a-select-option
                 v-for="user in users"
                 :key="user.xid"
-                :title="`${user.lastname1} ${user.lastname2} ${user.name}`"
+                :title="user.name"
                 :value="user.xid"
                 :disabled="disableDisabledUsers && user.status === 'disabled' || user.xid === currentUserId"
-                :class="{ warningSelect: showDisabledUserWarning && user.status === 'disabled' }"
+                :class="{ warningSelect: showDisabledUserWarning && user.assigned_sales_count > 0 && user.status === 'disabled' }"
             >
-                <a-row :gutter="12">
-                    <a-col flex="20px">
+                <a-row>
+                    <a-col>
                         <a-avatar :src="user.profile_image_url" :size="20" />
                     </a-col>
-                    <a-col flex="1" class="ellipsis" style="width: 100%;">
-                        {{ user.lastname1 }} {{ user.lastname2 }} {{ user.name }}
-                        <!--    {{ (showUnidad && user.unidad_administrativa) ? `(${user.unidad_administrativa})` : '' }} -->
+                    <a-col class="ml-5">
+                        {{ user.name }} <span v-if="showAssignedSalesCount">({{ user.assigned_sales_count }})</span>
                     </a-col>
                 </a-row>
             </a-select-option>
@@ -48,30 +46,24 @@ export default defineComponent({
         showDisabledUserWarning: {
             default: false
         },
+        showAssignedSalesCount: {
+            default: false
+        },
         disableDisabledUsers: {
             default: false
         },
         currentUserId: {
             default: undefined
         },
+        fetchUserData: {
+            default: true
+        },
         data: {
             default: null
-        },
-        mode: {
-            default: null
-        },
-        roles: {
-            default: ""
-        },
-        showUnidad: {
-            default: false
-        },
-        userType: {
-            default: ""
         }
     },
     setup(props, { emit }) {
-        const usersUrl = 'all-users';
+        const usersUrl = 'all-users?log_type=staff_members';
         const allUsers = ref({});
         const selectOption = ref(null);
 
@@ -84,16 +76,12 @@ export default defineComponent({
                 selectOption.value = props.value;
             }
 
-            if(props.data) {
-                allUsers.value = props.data;
-            } else {
-                console.log('Fetching users from API');
-                console.log(props.userType)           
-                const url = usersUrl + (props.roles ? `?roles=${props.roles}` : '') + (props.userType ? `?user_type=${props.userType}` : '');
-
-                axiosAdmin.get(url).then((res) => {
+            if(props.fetchUserData) {
+                axiosAdmin.get(usersUrl).then((res) => {
                     allUsers.value = res.data.users;
                 })
+            } else if (Object.keys(props.data).length > 0) {
+                allUsers.value = props.data;
             }
         })
 
@@ -110,12 +98,6 @@ export default defineComponent({
             }
         })
 
-        watch(() => props.value, (newValue) => {
-            if(newValue) {
-                selectOption.value = newValue;
-            }
-        })
-
         return {
             allUsers,
             onChange,
@@ -129,10 +111,5 @@ export default defineComponent({
     .warningSelect {
         background-color: #fffbe6;
         color: #faad14 !important
-    }
-    .ellipsis {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
     }
 </style>

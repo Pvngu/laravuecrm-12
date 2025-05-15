@@ -5,27 +5,24 @@ import common from "../../../common/composable/common";
 
 const fields = (props) => {
     const { convertStringToKey, getCampaignUrl, user } = common();
-    const leadUrl = "lead{id,xid,reference_number,lead_data,started,campaign_id,x_campaign_id,time_taken,first_action_by,x_first_action_by,last_action_by,x_last_action_by},lead:campaign{id,xid,name,status},lead:firstActioner{id,xid,name},lead:lastActioner{id,xid,name}";
+    const leadUrl = "individual{id,xid,campaign_id,x_campaign_id,first_name,last_name,email,home_phone,phone_number,language,SSN,date_of_birth,original_profile_id,time_taken,first_action_by,x_first_action_by,last_action_by,x_last_action_by},individual:campaign{id,xid,name,status},individual:firstActioner{id,xid,name},individual:lastActioner{id,xid,name}";
     const formFieldNamesUrl = "form-field-names/all";
-    const url = `lead-logs?fields=id,xid,log_type,time_taken,date_time,user_id,x_user_id,user{id,xid,name,profile_image,profile_image_url},lead_id,x_lead_id,${leadUrl}`;
+    const url = `individual-logs?fields=id,xid,time_taken,individual{reference_number,lead_data},log_type,date_time,user_id,x_user_id,user{id,xid,name,profile_image,profile_image_url},individual_id,x_individual_id,${leadUrl}`;
     const allFormFieldNames = ref([]);
-    const hashableColumns = ['lead_id', 'campaign_id', 'user_id'];
+    const hashableColumns = ['individual_id', 'campaign_id', 'user_id'];
     const { t } = useI18n();
     const columns = ref([]);
     const allCampaigns = ref([]);
-    const allUsers = ref([]);
     const filterableColumns = [];
 
     const getPrefetchData = () => {
         const campaignsUrl = getCampaignUrl();
         const campaignsPromise = axiosAdmin.get(campaignsUrl);
         const formFieldNamesPromise = axiosAdmin.get(formFieldNamesUrl);
-        const staffMembersPromise = axiosAdmin.get(`all-users?log_type=${props.logType}`);
 
-        return Promise.all([formFieldNamesPromise, campaignsPromise, staffMembersPromise]).then(([formFieldNamesResponse, campaignsResponse, staffMembersResponse]) => {
+        return Promise.all([formFieldNamesPromise, campaignsPromise]).then(([formFieldNamesResponse, campaignsResponse]) => {
             allFormFieldNames.value = formFieldNamesResponse.data.data;
             allCampaigns.value = campaignsResponse.data;
-            allUsers.value = staffMembersResponse.data.users;
 
             var newColumnsArray = [];
 
@@ -116,7 +113,6 @@ const fields = (props) => {
         hashableColumns,
         allFormFieldNames,
         allCampaigns,
-        allUsers,
         getPrefetchData,
     }
 }

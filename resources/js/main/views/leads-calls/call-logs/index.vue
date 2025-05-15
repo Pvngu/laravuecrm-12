@@ -1,7 +1,7 @@
 <template>
     <AdminPageHeader>
         <template #header>
-            <a-page-header :title="$t(`menu.call_logs`)" class="p-0!" />
+            <a-page-header :title="$t(`menu.call_logs`)" class="p-0" />
         </template>
         <template #breadcrumb>
             <a-breadcrumb separator="-" style="font-size: 12px">
@@ -21,7 +21,7 @@
     </AdminPageHeader>
 
     <admin-page-table-content>
-        <a-card class="page-content-container mt-5 mb-5">
+        <a-card class="page-content-container mt-20 mb-20">
             <CallLogTable :showAction="false" :showCampaignStatus="true" />
         </a-card>
     </admin-page-table-content>
@@ -30,7 +30,7 @@
 <script>
 import { EyeOutlined, PlayCircleOutlined, DownOutlined } from "@ant-design/icons-vue";
 import AdminPageHeader from "../../../../common/layouts/AdminPageHeader.vue";
-import CallLogTable from "../../../components/lead-logs/index.vue";
+import CallLogTable from "../../../components/individual-logs/index.vue";
 
 export default {
     components: {

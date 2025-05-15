@@ -10,31 +10,23 @@
     >
         <a-descriptions :title="$t('common.basic_details')">
             <a-descriptions-item :label="$t('lead.reference_number')">
-                {{ lead && lead.reference_number ? lead.reference_number : "-" }}
+                <span>{{ lead && lead.reference_number ? lead.reference_number : "-" }}</span>
             </a-descriptions-item>
             <a-descriptions-item :label="$t('lead.campaign')">
-                {{ lead && lead.campaign ? lead.campaign.name : "-" }}
+                <span>{{ lead && lead.campaign ? lead.campaign.name : "-" }}</span>
             </a-descriptions-item>
             <a-descriptions-item :label="$t('campaign.first_actioner')">
-                {{
-                    lead && lead.first_actioner && lead.first_actioner.name
-                        ? lead.first_actioner.name
-                        : "-"
-                }}
+                <span>{{ lead && lead.first_actioner && lead.first_actioner.name ? lead.first_actioner.name : "-" }}</span>
             </a-descriptions-item>
             <a-descriptions-item :label="$t('campaign.last_actioner')">
-                {{
-                    lead && lead.last_actioner && lead.last_actioner.name
-                        ? lead.last_actioner.name
-                        : "-"
-                }}
+                <span>{{ lead && lead.last_actioner && lead.last_actioner.name ? lead.last_actioner.name : "-" }}</span>
             </a-descriptions-item>
             <a-descriptions-item :label="$t('lead.call_duration')">
-                {{ lead && lead.time_taken ? formatTimeDuration(lead.time_taken) : "-" }}
+                <span>{{ lead && lead.time_taken ? formatTimeDuration(lead.time_taken) : "-" }}</span>
             </a-descriptions-item>
         </a-descriptions>
 
-        <a-tabs v-model:activeKey="activeTabKey" class="mt-5">
+        <a-tabs v-model:activeKey="activeTabKey" class="mt-20">
             <a-tab-pane key="lead_data">
                 <template #tab>
                     <span>
@@ -43,8 +35,39 @@
                     </span>
                 </template>
                 <a-descriptions
+                    v-if="lead"
+                    :title="$t('lead.basic_details')"
+                >
+                    <a-descriptions-item :label="$t('lead.full_name')">
+                        <span>{{ lead.first_name }} {{ lead.last_name }}</span>
+                    </a-descriptions-item>
+                    <a-descriptions-item :label="$t('lead.SSN')">
+                        <span>{{ lead && lead.SSN ? lead.SSN : "-" }}</span>
+                    </a-descriptions-item>
+                    <a-descriptions-item :label="$t('lead.date_of_birth')">
+                        <span>{{ lead && lead.date_of_birth ? formatDate(lead.date_of_birth) : "-" }}</span>
+                    </a-descriptions-item>
+                    <a-descriptions-item :label="$t('lead.home_phone')">
+                        <span>{{ lead && lead.home_phone ? lead.home_phone : "-" }}</span>
+                    </a-descriptions-item>
+                    <a-descriptions-item :label="$t('lead.phone_number')">
+                        <span>{{ lead && lead.phone_number ? lead.phone_number : "-" }}</span>
+                    </a-descriptions-item>
+                    <a-descriptions-item :label="$t('lead.email')">
+                        <span>{{ lead && lead.email ? lead.email : "-" }}</span>
+                    </a-descriptions-item>
+                    <a-descriptions-item :label="$t('lead.language')">
+                        <span>{{ lead && lead.language ? lead.language : "-" }}</span>
+                    </a-descriptions-item>
+                    <a-descriptions-item :label="$t('lead.original_profile_id')">
+                        <span>{{ lead && lead.original_profile_id ? lead.original_profile_id : "-" }}</span>
+                    </a-descriptions-item>
+                </a-descriptions>
+
+                <a-descriptions
                     class="mt-10"
                     v-if="lead && lead.lead_data && lead.lead_data.length > 0"
+                    :title="$t('lead.additional_details')"
                 >
                     <a-descriptions-item
                         v-for="leadData in lead.lead_data"
@@ -62,9 +85,9 @@
                         {{ $t("menu.call_logs") }}
                     </span>
                 </template>
-
-                <LeadLogTable
-                    :leadId="lead.x_lead_id"
+                <IndividualLogTable
+                    v-if="lead"
+                    :individualId="lead.xid"
                     :showLeadDetails="false"
                     :showTableSearch="false"
                     :showAction="false"
@@ -78,7 +101,8 @@
                     </span>
                 </template>
                 <LeadNotesTable
-                    :leadId="lead.xid"
+                    v-if="lead"
+                    :individualId="lead.xid"
                     :showAddButton="
                         lead && lead.campaign && lead.campaign.status != 'completed'
                             ? true
@@ -98,7 +122,7 @@ import {
     FileTextOutlined,
 } from "@ant-design/icons-vue";
 import common from "../../../../common/composable/common";
-import LeadLogTable from "../../../components/lead-logs/index.vue";
+import IndividualLogTable from "../../../components/individual-logs/index.vue";
 import LeadNotesTable from "../../../components/lead-notes/index.vue";
 
 export default defineComponent({
@@ -119,11 +143,11 @@ export default defineComponent({
         PhoneOutlined,
         FileTextOutlined,
 
-        LeadLogTable,
+        IndividualLogTable,
         LeadNotesTable,
     },
     setup(props, { emit }) {
-        const { formatTimeDuration } = common();
+        const { formatTimeDuration, formatDate } = common();
         const { t } = useI18n();
         const drawerTitle = ref(t("lead.lead_details"));
         const activeTabKey = ref("lead_data");
@@ -137,6 +161,7 @@ export default defineComponent({
             drawerTitle,
             formatTimeDuration,
             activeTabKey,
+            formatDate,
 
             onClose,
             drawerWidth: window.innerWidth <= 991 ? "90%" : "60%",

@@ -15,6 +15,7 @@ use App\Models\Settings;
 use App\Models\EmailTemplate;
 use App\Models\FormFieldName;
 use App\Models\ExpenseCategory;
+use App\Models\IndividualLog;
 use App\Observers\FormObserver;
 use App\Observers\UserObserver;
 use App\Observers\CompanyObserver;
@@ -41,6 +42,7 @@ class AppServiceProvider extends ServiceProvider
         User::observe(UserObserver::class);
         Form::observe(FormObserver::class);
         LeadLog::observe(LeadLogObserver::class);
+        IndividualLog::observe(GeneralObserver::class);
         
         // Add company scope to models
         foreach ([

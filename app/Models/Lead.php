@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Casts\Hash;
 use App\Models\BaseModel;
 use App\Scopes\CompanyScope;
+use App\Events\LeadStatusChanged;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Lead extends BaseModel
@@ -13,32 +14,22 @@ class Lead extends BaseModel
 
     protected $table = 'leads';
 
-    protected $default = ['xid', 'reference_number'];
+    protected $default = ['xid', 'reference_number', 'language'];
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    protected $hidden = ['id', 'company_id', 'campaign_id', 'first_action_by', 'last_action_by', 'lead_follow_up_id', 'salesman_booking_id'];
+    protected $hidden = ['id', 'company_id'];
 
-    protected $appends = ['xid', 'x_company_id', 'x_campaign_id', 'x_first_action_by', 'x_last_action_by', 'x_lead_follow_up_id', 'x_salesman_booking_id'];
+    protected $appends = ['xid', 'x_company_id'];
 
-    protected $filterable = ['reference_number', 'campaign_id', 'lead_status'];
+    protected $filterable = ['reference_number','first_name','last_name', 'campaign_id', 'individual_status'];
 
     protected $hashableGetterFunctions = [
         'getXCompanyIdAttribute' => 'company_id',
-        'getXCampaignIdAttribute' => 'campaign_id',
-        'getXFirstActionByAttribute' => 'first_action_by',
-        'getXLastActionByAttribute' => 'last_action_by',
-        'getXLeadFollowUpIdAttribute' => 'lead_follow_up_id',
-        'getXSalesmanBookingIdAttribute' => 'salesman_booking_id',
     ];
 
     protected $casts = [
         'company_id' => Hash::class . ':hash',
-        'campaign_id' => Hash::class . ':hash',
-        'first_action_by' => Hash::class . ':hash',
-        'last_action_by' => Hash::class . ':hash',
-        'lead_follow_up_id' => Hash::class . ':hash',
-        'salesman_booking_id' => Hash::class . ':hash',
         'lead_data' => 'array',
         'time_taken' => 'integer',
         'started' => 'integer',
@@ -49,30 +40,17 @@ class Lead extends BaseModel
         parent::boot();
 
         static::addGlobalScope(new CompanyScope);
+
+        static::updated(function ($lead) { event(new LeadStatusChanged($lead)); });
     }
 
-    public function campaign()
+    public function leadStatus()
     {
-        return $this->belongsTo(Campaign::class);
+        return $this->belongsTo(LeadStatus::class, 'lead_status');
     }
 
-    public function firstActioner()
+    public function individual()
     {
-        return $this->belongsTo(User::class, 'first_action_by', 'id');
-    }
-
-    public function lastActioner()
-    {
-        return $this->belongsTo(User::class, 'last_action_by', 'id');
-    }
-
-    public function leadFollowUp()
-    {
-        return $this->belongsTo(LeadLog::class, 'lead_follow_up_id', 'id');
-    }
-
-    public function salesmanBooking()
-    {
-        return $this->belongsTo(LeadLog::class, 'salesman_booking_id', 'id');
+        return $this->belongsTo(Individual::class);
     }
 }

@@ -5,16 +5,17 @@ import common from "../../../common/composable/common";
 
 const fields = (props) => {
     const { convertStringToKey, getCampaignUrl, user } = common();
-    const leadUrl = "lead{id,xid,reference_number,lead_data,started,campaign_id,x_campaign_id,time_taken,first_action_by,x_first_action_by,last_action_by,x_last_action_by},lead:campaign{id,xid,name,status},lead:firstActioner{id,xid,name},lead:lastActioner{id,xid,name}";
+    const leadUrl = "individual{id,xid,reference_number,lead_data,first_name,last_name,email,home_phone,phone_number,language,SSN,date_of_birth,original_profile_id,campaign_id,x_campaign_id,time_taken,first_action_by,x_first_action_by,last_action_by,x_last_action_by},individual:campaign{id,xid,name,status},individual:firstActioner{id,xid,name},individual:lastActioner{id,xid,name}";
     const formFieldNamesUrl = "form-field-names/all";
-    const url = `lead-logs?fields=id,xid,log_type,time_taken,date_time,user_id,x_user_id,notes,user{id,xid,name,profile_image,profile_image_url},lead_id,x_lead_id,${leadUrl}`;
+    const url = `notes?fields=id,xid,alert_type,created_at,created_by_id,x_created_by_id,content,creator{id,xid,name,profile_image,profile_image_url},${leadUrl}`;
     const allFormFieldNames = ref([]);
-    const addEditUrl = "lead-logs";
-    const hashableColumns = ['lead_id', 'campaign_id', 'user_id'];
+    const addEditUrl = "notes";
+    const hashableColumns = ['individual_id', 'campaign_id', 'created_by_id'];
     const { t } = useI18n();
     const initData = {
-        notes: "",
-        log_type: "notes",
+        content: "",
+        note_type: "notes",
+        alert_type: "",
     };
     const columns = ref([]);
     const allCampaigns = ref([]);

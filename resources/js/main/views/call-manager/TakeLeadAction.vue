@@ -5,15 +5,17 @@
     >
         <a-row>
             <a-col :span="24">
-                <a-page-header @back="saveAndExit" class="p-0!">
+                <a-page-header @back="saveAndExit()" class="p-0">
                     <template #title>
                         {{
-                            leadDetails &&
-                            leadDetails.campaign &&
-                            leadDetails.campaign.name
-                                ? referenceNumber != undefined && referenceNumber != ""
-                                    ? `${leadDetails.campaign.name} (${referenceNumber})`
-                                    : leadDetails.campaign.name
+                            leadDetails.individual &&
+                            leadDetails.individual.campaign &&
+                            leadDetails.individual.campaign.name ? leadDetails.individual.campaign.name : ""
+                        }}
+                        {{
+                            leadDetails.individual &&
+                            leadDetails.individual.reference_number
+                                ? ` (${leadDetails.individual.reference_number})`
                                 : ""
                         }}
                     </template>
@@ -51,10 +53,10 @@
                     </a-breadcrumb-item>
                     <a-breadcrumb-item>
                         {{
-                            leadDetails &&
-                            leadDetails.campaign &&
-                            leadDetails.campaign.name
-                                ? leadDetails.campaign.name
+                            leadDetails.individual &&
+                            leadDetails.individual.campaign &&
+                            leadDetails.individual.campaign.name
+                                ? leadDetails.individual.campaign.name
                                 : ""
                         }}
                     </a-breadcrumb-item>
@@ -69,199 +71,284 @@
         style="margin: 10px"
         v-if="leadDetails && leadDetails.xid"
     >
+    <!-- timer, lead details, campaing details -->
         <a-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6" class="bg-setting-sidebar">
-            <div class="callmanager-left-sidebar">
-                <a-card :bordered="false" :bodyStyle="{ paddingBottom: '0px' }">
-                    <a-row>
-                        <a-col :span="24" class="text-center">
-                            <a-typography-title :level="2">
-                                <ClockCircleOutlined />
-                                {{
-                                    timer.hours.value < 10
-                                        ? `0${timer.hours.value}`
-                                        : timer.hours
-                                }}:{{
-                                    timer.minutes.value < 10
-                                        ? `0${timer.minutes.value}`
-                                        : timer.minutes
-                                }}:{{
-                                    timer.seconds.value < 10
-                                        ? `0${timer.seconds.value}`
-                                        : timer.seconds
-                                }}
-                            </a-typography-title>
-                        </a-col>
-                    </a-row>
-
-                    <a-row class="mt-10">
-                        <a-col :span="24">
-                            <a-space>
-                                <BookingModal
-                                    v-if="leadDetails && leadDetails.xid"
-                                    key="lead_follow_up"
-                                    :leadId="leadDetails.xid"
-                                    bookingType="lead_follow_up"
-                                    @success="
-                                        (resultValue) => {
-                                            leadFollowUp = resultValue;
-                                            refreshTimeLine = true;
-                                        }
-                                    "
-                                >
-                                    <ScheduleOutlined />
-                                    {{ $t("menu.lead_follow_up") }}
-                                </BookingModal>
-
-                                <BookingModal
-                                    v-if="leadDetails && leadDetails.xid"
-                                    key="salesman_bookings"
-                                    :leadId="leadDetails.xid"
-                                    bookingType="salesman_bookings"
-                                    @success="
-                                        (resultValue) => {
-                                            salesmanBooking = resultValue;
-                                            refreshTimeLine = true;
-                                        }
-                                    "
-                                >
-                                    <ShoppingCartOutlined />
-                                    {{ $t("menu.salesman_bookings") }}
-                                </BookingModal>
-                            </a-space>
-                        </a-col>
-                    </a-row>
-
-                    <a-divider />
-                </a-card>
-
-                <perfect-scrollbar
+            <perfect-scrollbar
                     :options="{
                         wheelSpeed: 1,
                         swipeEasing: true,
                         suppressScrollX: true,
                     }"
-                >
-                    <a-collapse v-model:activeKey="activeLeftPanelKey" :bordered="false">
-                        <a-collapse-panel
-                            key="lead_details"
-                            :style="{ background: 'white' }"
-                        >
-                            <template #header>
-                                <a-typography-title :level="5">
-                                    {{ $t("lead.lead_details") }}
+            >
+                <div class="callmanager-left-sidebar">
+                    <a-card :bordered="false" :bodyStyle="{ paddingBottom: '0px' }">
+                        <a-row>
+                            <a-col :span="24" class="text-center">
+                                <a-typography-title :level="2">
+                                    <ClockCircleOutlined />
+                                    {{
+                                        timer.hours.value < 10
+                                            ? `0${timer.hours.value}`
+                                            : timer.hours
+                                    }}:{{
+                                        timer.minutes.value < 10
+                                            ? `0${timer.minutes.value}`
+                                            : timer.minutes
+                                    }}:{{
+                                        timer.seconds.value < 10
+                                            ? `0${timer.seconds.value}`
+                                            : timer.seconds
+                                    }}
                                 </a-typography-title>
-                            </template>
-                            <a-skeleton v-if="newPageLoad" active />
-                            <template v-else>
-                                <a-row>
-                                    <a-col :span="24">
-                                        <a-typography-text strong>
-                                            {{ $t("lead.lead_number") }}
-                                        </a-typography-text>
-                                    </a-col>
-                                    <a-col :span="24" class="mt-5">
-                                        <a-typography-text>
-                                            {{ leadNumber }} /
-                                            {{ leadDetails.campaign.total_leads }}
-                                        </a-typography-text>
-                                    </a-col>
-                                </a-row>
-                                <a-row class="mt-5">
-                                    <a-col :span="24">
-                                        <a-typography-text strong>
-                                            {{ $t("campaign.last_actioner") }}
-                                        </a-typography-text>
-                                    </a-col>
-                                    <a-col :span="24" class="mt-5">
-                                        <a-typography-text>
-                                            {{
-                                                leadDetails.campaign.last_actioner &&
-                                                leadDetails.campaign.last_actioner.name
-                                                    ? leadDetails.campaign.last_actioner
-                                                          .name
-                                                    : "-"
-                                            }}
-                                        </a-typography-text>
-                                    </a-col>
-                                </a-row>
-                                <a-row class="mt-5">
-                                    <a-col :span="24">
-                                        <a-typography-text strong>
-                                            {{ $t("lead_follow_up.follow_up") }}
-                                        </a-typography-text>
-                                    </a-col>
-                                    <a-col :span="24" class="mt-5">
-                                        <a-typography-text
-                                            v-if="
-                                                leadFollowUp &&
-                                                leadFollowUp.user &&
-                                                leadFollowUp.user.name
-                                            "
-                                        >
-                                            {{ leadFollowUp.user.name }} on
-                                            {{ formatDateTime(leadFollowUp.date_time) }}
-                                        </a-typography-text>
-                                        <span v-else>-</span>
-                                    </a-col>
-                                </a-row>
-                                <a-row class="mt-5">
-                                    <a-col :span="24">
-                                        <a-typography-text strong>
-                                            {{ $t("salesman_booking.salesman_booking") }}
-                                        </a-typography-text>
-                                    </a-col>
-                                    <a-col :span="24" class="mt-5">
-                                        <a-typography-text
-                                            v-if="
-                                                salesmanBooking &&
-                                                salesmanBooking.user &&
-                                                salesmanBooking.user.name
-                                            "
-                                        >
-                                            {{ salesmanBooking.user.name }} on
-                                            {{
-                                                formatDateTime(salesmanBooking.date_time)
-                                            }}
-                                        </a-typography-text>
-                                        <span v-else>-</span>
-                                    </a-col>
-                                </a-row>
-                            </template>
-                        </a-collapse-panel>
-                        <a-collapse-panel
-                            key="campaign_details"
-                            :style="{ background: 'white' }"
-                        >
-                            <template #header>
-                                <a-typography-title :level="5">
-                                    {{ $t("campaign.campaign_details") }}
-                                </a-typography-title>
-                            </template>
-                            <a-row
-                                v-for="(
-                                    campaignDetails, campaignDetailsKey
-                                ) in leadDetails.campaign.detail_fields"
-                                :key="campaignDetails.id"
-                                :gutter="16"
-                                :class="{ 'mt-25': campaignDetailsKey > 0 }"
+                            </a-col>
+                        </a-row>
+                        <a-row class="mt-10">
+                            <a-col :span="24">
+                                <a-space>
+                                    <BookingModal
+                                        v-if="leadDetails && leadDetails.xid"
+                                        key="lead_follow_up"
+                                        :individualId="leadDetails.individual.xid"
+                                        :lastActionerId="leadDetails.individual.last_actioner.xid"
+                                        bookingType="lead_follow_up"
+                                        @success="
+                                            (resultValue) => {
+                                                leadFollowUp = resultValue;
+                                                refreshTimeLine = true;
+                                            }
+                                        "
+                                    >
+                                        {{ $t("menu.lead_follow_up") }}
+                                    </BookingModal>
+
+                                    <BookingModal
+                                        v-if="leadDetails && leadDetails.xid"
+                                        key="salesman_bookings"
+                                        :individualId="leadDetails.individual.xid"
+                                        bookingType="salesman_bookings"
+                                        @success="
+                                            (resultValue) => {
+                                                salesmanBooking = resultValue;
+                                                refreshTimeLine = true;
+                                            }
+                                        "
+                                    >
+                                        {{ $t("menu.salesman_bookings") }}
+                                    </BookingModal>
+                                </a-space>
+                            </a-col>
+                        </a-row>
+
+                        <a-divider />
+                    </a-card>
+                    <Alerts
+                        :individualId="leadDetails.individual.xid"
+                        :language="individualData.language"
+                    />
+                    <perfect-scrollbar
+                        :options="{
+                            wheelSpeed: 1,
+                            swipeEasing: true,
+                            suppressScrollX: true,
+                        }"
+                        class="mt-10"
+                    >
+                        <a-collapse v-model:activeKey="activeLeftPanelKey" :bordered="false">
+                            <a-collapse-panel
+                                key="lead_details"
+                                :style="{ background: 'white' }"
                             >
-                                <a-col :span="24">
-                                    <a-typography-text strong>
-                                        {{ campaignDetails.field_name }}
-                                    </a-typography-text>
-                                </a-col>
-                                <a-col :span="24" class="mt-5">
-                                    <a-typography-text>
-                                        {{ campaignDetails.field_value }}
-                                    </a-typography-text>
-                                </a-col>
-                            </a-row>
-                        </a-collapse-panel>
-                    </a-collapse>
-                </perfect-scrollbar>
-            </div>
+                                <template #header>
+                                    <a-typography-title :level="5">
+                                        {{ $t("lead.lead_details") }}
+                                    </a-typography-title>
+                                </template>
+                                <a-skeleton v-if="newPageLoad" active />
+                                <template v-else>
+                                    <a-row>
+                                        <a-col :span="24">
+                                            <a-typography-text strong>
+                                                {{ $t("lead.lead_number") }}
+                                            </a-typography-text>
+                                        </a-col>
+                                        <a-col :span="24" class="mt-5">
+                                            <a-typography-text>
+                                                {{ leadNumber }} /
+                                                {{ leadDetails.individual.campaign.total_leads }}
+                                            </a-typography-text>
+                                        </a-col>
+                                    </a-row>
+                                    <a-row class="mt-5">
+                                        <a-col :span="24">
+                                            <a-typography-text strong>
+                                                {{ $t("campaign.last_actioner") }}
+                                            </a-typography-text>
+                                        </a-col>
+                                        <a-col :span="24" class="mt-5">
+                                            <a-typography-text>
+                                                {{
+                                                    leadDetails.individual.campaign.last_actioner &&
+                                                    leadDetails.individual.campaign.last_actioner.name
+                                                        ? leadDetails.individual.campaign.last_actioner
+                                                            .name
+                                                        : "-"
+                                                }}
+                                            </a-typography-text>
+                                        </a-col>
+                                    </a-row>
+
+                                    <a-row class="mt-20">
+                                        <a-col :span="24">
+                                            <a-typography-text strong>
+                                                {{ $t("lead.email") }}
+                                            </a-typography-text>
+                                        </a-col>
+                                        <a-col :span="24" class="mt-5">
+                                            <a-typography-text
+                                                v-if="
+                                                    individualData &&
+                                                    individualData.email
+                                                "
+                                            >
+                                                {{ individualData.email }}
+                                            </a-typography-text>
+                                            <span v-else>-</span>
+                                        </a-col>
+                                    </a-row>
+                                    <a-row class="mt-5">
+                                        <a-col :span="24">
+                                            <a-typography-text strong>
+                                                {{ $t("lead.home_phone") }}
+                                            </a-typography-text>
+                                        </a-col>
+                                        <a-col :span="24" class="mt-5">
+                                            <a-typography-text
+                                                v-if="
+                                                    individualData &&
+                                                    individualData.home_phone
+                                                "
+                                            >
+                                                {{ individualData.home_phone }}
+                                            </a-typography-text>
+                                            <span v-else>-</span>
+                                        </a-col>
+                                    </a-row>
+                                    <a-row class="mt-5">
+                                        <a-col :span="24">
+                                            <a-typography-text strong>
+                                                {{ $t("lead.phone_number") }}
+                                            </a-typography-text>
+                                        </a-col>
+                                        <a-col :span="24" class="mt-5">
+                                            <a-typography-text
+                                                v-if="
+                                                    individualData &&
+                                                    individualData.phone_number
+                                                "
+                                            >
+                                                {{ individualData.phone_number }}
+                                            </a-typography-text>
+                                            <span v-else>-</span>
+                                        </a-col>
+                                    </a-row>
+
+                                    <a-row class="mt-20">
+                                        <a-col :span="24">
+                                            <a-typography-text strong>
+                                                {{ $t("lead.address") }}
+                                            </a-typography-text>
+                                        </a-col>
+                                        <a-col :span="24" class="mt-5">
+                                            <a-typography-text
+                                                v-if="
+                                                    addressesFormData.full_address
+                                                "
+                                            >
+                                                {{ addressesFormData.full_address }}
+                                            </a-typography-text>
+                                            <span v-else>-</span>
+                                        </a-col>
+                                    </a-row>
+
+                                    <a-row class="mt-20">
+                                        <a-col :span="24">
+                                            <a-typography-text strong>
+                                                {{ $t("lead_follow_up.follow_up") }}
+                                            </a-typography-text>
+                                        </a-col>
+                                        <a-col :span="24" class="mt-5">
+                                            <a-typography-text
+                                                v-if="
+                                                    leadFollowUp &&
+                                                    leadFollowUp.user &&
+                                                    leadFollowUp.user.name
+                                                "
+                                            >
+                                                {{ leadFollowUp.user.name }} on
+                                                {{ formatDateTime(leadFollowUp.date_time) }}
+                                            </a-typography-text>
+                                            <span v-else>-</span>
+                                        </a-col>
+                                    </a-row>
+                                    <a-row class="mt-5">
+                                        <a-col :span="24">
+                                            <a-typography-text strong>
+                                                {{ $t("salesman_booking.salesman_booking") }}
+                                            </a-typography-text>
+                                        </a-col>
+                                        <a-col :span="24" class="mt-5">
+                                            <a-typography-text
+                                                v-if="
+                                                    salesmanBooking &&
+                                                    salesmanBooking.user &&
+                                                    salesmanBooking.user.name
+                                                "
+                                            >
+                                                {{ salesmanBooking.user.name }} on
+                                                {{
+                                                    formatDateTime(salesmanBooking.date_time)
+                                                }}
+                                            </a-typography-text>
+                                            <span v-else>-</span>
+                                        </a-col>
+                                    </a-row>
+                                </template>
+                            </a-collapse-panel>
+                            <a-collapse-panel
+                                key="campaign_details"
+                                :style="{ background: 'white' }"
+                            >
+                                <template #header>
+                                    <a-typography-title :level="5">
+                                        {{ $t("campaign.campaign_details") }}
+                                    </a-typography-title>
+                                </template>
+                                <a-row
+                                    v-for="(
+                                        campaignDetails, campaignDetailsKey
+                                    ) in leadDetails.individual.campaign.detail_fields"
+                                    :key="campaignDetails.id"
+                                    :gutter="16"
+                                    :class="{ 'mt-25': campaignDetailsKey > 0 }"
+                                >
+                                    <a-col :span="24">
+                                        <a-typography-text strong>
+                                            {{ campaignDetails.field_name }}
+                                        </a-typography-text>
+                                    </a-col>
+                                    <a-col :span="24" class="mt-5">
+                                        <a-typography-text>
+                                            {{ campaignDetails.field_value }}
+                                        </a-typography-text>
+                                    </a-col>
+                                </a-row>
+                            </a-collapse-panel>
+                        </a-collapse>
+                    </perfect-scrollbar>
+                </div>
+            </perfect-scrollbar>
         </a-col>
-        <a-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
+        <a-col :xs="24" :sm="24" :md="24" :lg="colSizes.lg" :xl="colSizes.xl">
             <a-card class="callmanager-middle-sidebar">
                 <a-tabs v-model:activeKey="activeKey">
                     <a-tab-pane key="lead_details">
@@ -271,221 +358,22 @@
                                 {{ $t("lead.lead_details") }}
                             </span>
                         </template>
-                        <perfect-scrollbar
-                            :options="{
-                                wheelSpeed: 1,
-                                swipeEasing: true,
-                                suppressScrollX: true,
-                            }"
-                        >
-                            <a-skeleton v-if="newPageLoad" active />
-                            <a-form v-else layout="vertical" class="mt-5">
-                                <a-row :gutter="16">
-                                    <a-col :xs="24" :sm="24" :md="12" :lg="12">
-                                        <a-form-item
-                                            :label="$t('lead.reference_number')"
-                                            name="reference_number"
-                                            :help="
-                                                rules.reference_number
-                                                    ? rules.reference_number.message
-                                                    : null
-                                            "
-                                            :validateStatus="
-                                                rules.reference_number ? 'error' : null
-                                            "
-                                            class="required"
-                                        >
-                                            <a-input
-                                                v-model:value="referenceNumber"
-                                                :placeholder="
-                                                    $t(
-                                                        'common.placeholder_default_text',
-                                                        [$t('lead.reference_number')]
-                                                    )
-                                                "
-                                            />
-                                        </a-form-item>
-                                    </a-col>
-                                    <a-col :xs="24" :sm="24" :md="12" :lg="12">
-                                        <a-form-item
-                                            :label="$t('lead.lead_status')"
-                                            name="lead_status"
-                                            :help="
-                                                rules.lead_status
-                                                    ? rules.lead_status.message
-                                                    : null
-                                            "
-                                            :validateStatus="
-                                                rules.lead_status ? 'error' : null
-                                            "
-                                        >
-                                            <a-select
-                                                v-model:value="leadStatus"
-                                                :placeholder="
-                                                    $t('common.select_default_text', [
-                                                        $t('lead.lead_status'),
-                                                    ])
-                                                "
-                                            >
-                                                <a-select-option
-                                                    key="interested"
-                                                    value="interested"
-                                                >
-                                                    {{ $t("lead.interested") }}
-                                                </a-select-option>
-                                                <a-select-option
-                                                    key="not_interested"
-                                                    value="not_interested"
-                                                >
-                                                    {{ $t("lead.not_interested") }}
-                                                </a-select-option>
-                                                <a-select-option
-                                                    key="unreachable"
-                                                    value="unreachable"
-                                                >
-                                                    {{ $t("lead.unreachable") }}
-                                                </a-select-option>
-                                            </a-select>
-                                        </a-form-item>
-                                    </a-col>
-                                </a-row>
-                                <a-row :gutter="16">
-                                    <a-col
-                                        v-for="leadData in leadFormData.lead_data"
-                                        :key="leadData.id"
-                                        :xs="24"
-                                        :sm="24"
-                                        :md="12"
-                                        :lg="12"
-                                    >
-                                        <a-form-item
-                                            :label="leadData.field_name"
-                                            :name="leadData.field_name"
-                                            :help="rules.name ? rules.name.message : null"
-                                            :validateStatus="rules.name ? 'error' : null"
-                                        >
-                                            <a-input-group compact>
-                                                <a-input
-                                                    v-model:value="leadData.field_value"
-                                                    :placeholder="
-                                                        $t(
-                                                            'common.placeholder_default_text',
-                                                            [leadData.field_name]
-                                                        )
-                                                    "
-                                                    :style="{
-                                                        width:
-                                                            getLeadDataFieldType(
-                                                                leadData.field_name
-                                                            ) == 'email' ||
-                                                            getLeadDataFieldType(
-                                                                leadData.field_name
-                                                            ) == 'phone'
-                                                                ? 'calc(100% - 32px)'
-                                                                : '100%',
-                                                    }"
-                                                />
-                                                <SendMail
-                                                    v-if="
-                                                        getLeadDataFieldType(
-                                                            leadData.field_name
-                                                        ) == 'email'
-                                                    "
-                                                    :email="leadData.field_value"
-                                                    :lead="leadDetails"
-                                                    :leadFormData="leadFormData"
-                                                    @success="
-                                                        () => (refreshTimeLine = true)
-                                                    "
-                                                />
-                                                <a-button
-                                                    v-if="
-                                                        getLeadDataFieldType(
-                                                            leadData.field_name
-                                                        ) == 'phone'
-                                                    "
-                                                    :href="
-                                                        leadData.field_value
-                                                            ? `tel:${leadData.field_value}`
-                                                            : 'javascript:void(0)'
-                                                    "
-                                                    type="primary"
-                                                >
-                                                    <template #icon>
-                                                        <MobileOutlined />
-                                                    </template>
-                                                </a-button>
-                                            </a-input-group>
-                                        </a-form-item>
-                                    </a-col>
-                                </a-row>
-                            </a-form>
-                        </perfect-scrollbar>
-                        <div
-                            :style="{
-                                position: 'absolute',
-                                right: 0,
-                                bottom: 0,
-                                width: '100%',
-                                borderTop: '1px solid #e9e9e9',
-                                padding: '10px 16px',
-                                background: '#fff',
-                                zIndex: 1,
-                            }"
-                        >
-                            <a-row :gutter="16">
-                                <a-col :xs="24" :sm="24" :md="20" :lg="20">
-                                    <a-space>
-                                        <a-button
-                                            type="primary"
-                                            :loading="saveLoading"
-                                            @click="saveLead('save')"
-                                        >
-                                            <template #icon>
-                                                <SaveOutlined />
-                                            </template>
-                                            {{ $t("common.save") }}
-                                        </a-button>
-                                        <a-button
-                                            type="primary"
-                                            :loading="saveExitLoading"
-                                            @click="saveAndExit"
-                                        >
-                                            <template #icon>
-                                                <DeliveredProcedureOutlined />
-                                            </template>
-                                            {{ $t("campaign.save_exit") }}
-                                        </a-button>
-                                        <!-- <a-button
-                                            :style="{
-                                                background: '#ff4d4f',
-                                                borderColor: '#ff4d4f',
-                                            }"
-                                            type="primary"
-                                            @click="skipLead"
-                                        >
-                                            {{ $t("campaign.skip_lead") }}
-                                            <DoubleRightOutlined />
-                                        </a-button> -->
-                                    </a-space>
-                                </a-col>
-                                <a-col :xs="24" :sm="24" :md="4" :lg="4">
-                                    <a-button
-                                        v-if="autoSaved"
-                                        type="text"
-                                        :style="{
-                                            background: 'transparent',
-                                            borderColor: 'transparent',
-                                        }"
-                                    >
-                                        <a-typography-text type="secondary">
-                                            <CheckOutlined />
-                                            Auto Saved
-                                        </a-typography-text>
-                                    </a-button>
-                                </a-col>
-                            </a-row>
-                        </div>
+                        <a-tabs v-model:activeKeyLead="activeKeyLead" type="card" class="address">
+                            <a-tab-pane key="details" tab="Details">
+                                <Details
+                                    :formData="individualData"
+                                    :id="leadXid"
+                                    @success="() => (refreshTimeLine = true)"
+                                />
+                            </a-tab-pane>
+                            <a-tab-pane key="address" tab="Address">
+                                <Address
+                                    :formData="addressesFormData"
+                                    :states="states"
+                                    @success="() => (refreshTimeLine = true)"
+                                />
+                            </a-tab-pane>
+                        </a-tabs>
                     </a-tab-pane>
                     <a-tab-pane key="call_logs">
                         <template #tab>
@@ -494,11 +382,11 @@
                                 {{ $t("menu.call_logs") }}
                             </span>
                         </template>
-                        <LeadLogTable
-                            key="lead_logs"
+                        <IndividualLogTable
+                            key="individual_logs"
                             pageName="lead_action"
                             logType="call_log"
-                            :leadId="leadDetails.xid"
+                            :individualId="leadDetails.individual.xid"
                             :showTableSearch="false"
                             :showLeadDetails="false"
                             :showAction="false"
@@ -514,22 +402,82 @@
                         </template>
                         <LeadNotesTable
                             pageName="lead_action"
-                            :leadId="leadDetails.xid"
+                            :individualId="leadDetails.individual.xid"
                             :scrollStyle="{ y: 'calc(100vh - 320px)' }"
-                            @success="() => (refreshTimeLine = true)"
+                            @success="() => {
+                                refreshTimeLine = true;
+                                refreshNotes = true;
+                            }"
                             :showAddButton="
                                 leadDetails &&
-                                leadDetails.campaign &&
-                                leadDetails.campaign.status == 'completed'
+                                leadDetails.individual.campaign &&
+                                leadDetails.individual.campaign.status == 'completed'
                                     ? false
                                     : true
                             "
                         />
                     </a-tab-pane>
+                    <a-tab-pane key="docs" v-if="leadStatus == '1'">
+                        <template #tab>
+                            <span>
+                                <FileOutlined />
+                                {{ $t("common.docs") }}
+                            </span>
+                        </template>
+                        <DocsTable
+                            pageName="documents"
+                            :individualId="leadDetails.individual.xid"
+                            :scrollStyle="{ y: 'calc(100vh - 320px)' }"
+                            @success="() => (refreshTimeLine = true)"
+                            :individualDetails="leadDetails"
+                        />
+                    </a-tab-pane>
+                    <a-tab-pane key="credit_card" v-if="individualData.lead_status == '1'">
+                        <template #tab>
+                            <span>
+                                <CreditCardOutlined />
+                                {{ $t("common.credit_card") }}
+                            </span>
+                        </template>
+                        <CreditCardForm
+                            pageName="credit_card"
+                            :states="states"
+                            :individualId="leadDetails.individual.xid"
+                            @success="() => (refreshTimeLine = true)"
+                        />
+                    </a-tab-pane>
+                    <a-tab-pane key="bank_account" v-if="individualData.lead_status == '1'">
+                        <template #tab>
+                            <span>
+                                <BankOutlined />
+                                {{ $t("common.bank_account") }}
+                            </span>
+                        </template>
+                        <BankAccountForm
+                            pageName="bank_account"
+                            :states="states"
+                            :individualId="leadDetails.individual.xid"
+                            @success="() => (refreshTimeLine = true)"
+                        />
+                    </a-tab-pane>
+                    <a-tab-pane key="debts" v-if="individualData.lead_status == '1'">
+                        <template #tab>
+                            <span>
+                                <DollarOutlined />
+                                {{ $t("common.debts") }}
+                            </span>
+                        </template>
+                        <DebtTable
+                            pageName="debts"
+                            :individualId="leadDetails.individual.xid"
+                            :scrollStyle="{ x: 1500, y: 'calc(100vh - 540px)' }"
+                            @success="() => (refreshTimeLine = true)"
+                        />
+                    </a-tab-pane>
                 </a-tabs>
             </a-card>
         </a-col>
-        <a-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6" class="bg-setting-sidebar">
+        <a-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6" v-if="activeKey !== 'debts'" class="bg-setting-sidebar">
             <a-card
                 :bordered="false"
                 class="callmanager-right-sidebar"
@@ -543,7 +491,7 @@
                 <a-skeleton v-if="newPageLoad" active />
                 <LogTimeline
                     v-else
-                    :leadId="leadDetails.xid"
+                    :individualId="leadDetails.individual.xid"
                     :refresh="refreshTimeLine"
                     @dataFetched="() => (refreshTimeLine = false)"
                 />
@@ -562,23 +510,20 @@
 </template>
 
 <script>
-import { onMounted, ref, createVNode, watch } from "vue";
+import { onMounted, ref, createVNode, watch, computed } from "vue";
 import {
-    SaveOutlined,
-    DoubleRightOutlined,
     ArrowRightOutlined,
     ArrowLeftOutlined,
-    SearchOutlined,
     ClockCircleOutlined,
-    ScheduleOutlined,
     FileTextOutlined,
+    BankOutlined,
+    CreditCardOutlined,
+    FileOutlined,
+    MessageOutlined,
+    DollarOutlined,
     PhoneOutlined,
-    ShoppingCartOutlined,
     ExclamationCircleOutlined,
-    CheckOutlined,
-    DeliveredProcedureOutlined,
-    MailOutlined,
-    MobileOutlined,
+    ExclamationCircleFilled
 } from "@ant-design/icons-vue";
 import { Modal, notification } from "ant-design-vue";
 import { useRoute, useRouter } from "vue-router";
@@ -589,61 +534,134 @@ import { useStore } from "vuex";
 import apiAdmin from "../../../common/composable/apiAdmin";
 import common from "../../../common/composable/common";
 import BookingModal from "../bookings/BookingModal.vue";
-import LeadLogTable from "../../components/lead-logs/index.vue";
-import LogTimeline from "../../components/lead-logs/LogTimeline.vue";
+import IndividualLogTable from "../../components/individual-logs/index.vue";
+import LogTimeline from "../../components/individual-logs/LogTimeline.vue";
 import LeadNotesTable from "../../components/lead-notes/index.vue";
+import DocsTable from "../../components/docs/index.vue";
 import SkipLeadModal from "./SkipLeadModal.vue";
-import SendMail from "./SendMail.vue";
+import Alerts from "../../components/individual/Alerts.vue";
+import Address from "../../components/individual/Address.vue";
+import Details from "../../components/individual/Details.vue";
 
 export default {
     components: {
-        SaveOutlined,
-        DoubleRightOutlined,
         ArrowRightOutlined,
         ArrowLeftOutlined,
-        ScheduleOutlined,
         FileTextOutlined,
+        BankOutlined,
+        CreditCardOutlined,
+        FileOutlined,
+        MessageOutlined,
+        DollarOutlined,
         PhoneOutlined,
-        ShoppingCartOutlined,
         ExclamationCircleOutlined,
-        CheckOutlined,
-        DeliveredProcedureOutlined,
-        MailOutlined,
-        MobileOutlined,
-
         ClockCircleOutlined,
-        SearchOutlined,
+
         BookingModal,
-        LeadLogTable,
+        IndividualLogTable,
         LeadNotesTable,
+        DocsTable,
         LogTimeline,
         SkipLeadModal,
-        SendMail,
+        ExclamationCircleFilled,
+        Alerts,
+        Address,
+        Details
+    },
+    computed: {
+        colSizes() {
+            if(this.activeKey !== 'debts') {
+                return {
+                    xs: 24,
+                    sm: 24,
+                    md: 24,
+                    lg: 12,
+                    xl: 12
+                }
+            }
+            else {
+                return {
+                    xs: 24,
+                    sm: 24,
+                    md: 24,
+                    lg: 18,
+                    xl: 18
+                }
+            }
+        }
     },
     setup() {
         const { formatDateTime } = common();
-        const { addEditRequestAdmin, loading, rules } = apiAdmin();
+        const { addEditRequestAdmin } = apiAdmin();
         const route = useRoute();
         const router = useRouter();
         const store = useStore();
         const leadDetails = ref({});
         const leadCallLogDetails = ref({});
         const activeKey = ref("lead_details");
+        const activeKeyLead = ref("details");
         const activeLeftPanelKey = ref("lead_details");
         const leadFormData = ref({});
+        const extraLeadFormData = ref({});
         const timer = useStopwatch(0, true);
         const { t } = useI18n();
-        const referenceNumber = ref("");
         const leadFollowUp = ref({});
         const salesmanBooking = ref({});
         const leadStatus = ref(undefined);
         const leadNumber = ref(0);
         const newPageLoad = ref(true);
         const refreshTimeLine = ref(false);
+        const refreshNotes = ref(false);
         const autoSaved = ref(false);
         const saveLoading = ref(false);
         const saveExitLoading = ref(false);
         const showSkipModal = ref(false);
+        const leadXid = ref("");
+        const individualData = ref({
+            campaign: {
+                email_template_xid: null,
+                form: {
+                    name: null,
+                    form_fields: {},
+                }
+            },
+            lead_status: "",
+            reference_number: "",
+            first_name: "",
+            last_name: "",
+            SSN: "",
+            date_of_birth: "",
+            phone_number: "",
+            home_phone: "",
+            email: "",
+            language: "",
+            original_profile_id: "",
+            lead_status: "",
+            co_first_name: "",
+            co_last_name: "",
+            co_SSN: "",
+            co_date_of_birth: "",
+            co_phone_number: "",
+            co_home_phone: "",
+            co_email: "",
+            co_language: "",
+        });
+        const addressesFormData = ref({
+            address_line1: "",
+            address_line2: "",
+            city: "",
+            state_id: "",
+            zip_code: "",
+            full_address: "",
+            co_address_line1: "",
+            co_address_line2: "",
+            co_city: "",
+            co_state_id: "",
+            co_zip_code: "",
+            individual_id: undefined,
+        });
+        const states = ref([]);
+        const individualId = ref("");
 
         onMounted(() => {
             fetchInitData();
@@ -651,35 +669,74 @@ export default {
 
         const fetchInitData = () => {
             const leadId = route.params.id;
-            const campaignUrl =
-                "campaign{id,xid,name,status,remaining_leads,total_leads,form_id,x_form_id,email_template_id,x_email_template_id,detail_fields,last_action_by,x_last_action_by,completed_by,x_completed_by,started_on,completed_on,upcoming_lead_action},campaign:campaignUsers{id,xid,user_id,x_user_id,campaign_id,x_campaign_id},campaign:campaignUsers:user{id,xid,name,profile_image,profile_image_url},campaign:emailTemplate{id,xid,name},campaign:form{id,xid,name,form_fields},campaign:lastActioner{id,xid,name},campaign:completedBy{id,xid,name}";
-            const leadDetailsUrl = `leads/${leadId}?fields=id,xid,reference_number,lead_data,started,lead_status,time_taken,last_action_by,x_last_action_by,lastActioner{id,xid,name},campaign_id,x_campaign_id,${campaignUrl},leadFollowUp{id,xid,log_type,user_id,x_user_id,date_time,notes},leadFollowUp:user{id,xid,name},salesmanBooking{id,xid,log_type,user_id,x_user_id,date_time,notes},salesmanBooking:user{id,xid,name}`;
+            const campaignUrl = "individual:campaign{id,xid,name,status,remaining_leads,total_leads,form_id,x_form_id,email_template_id,x_email_template_id,detail_fields,last_action_by,x_last_action_by,completed_by,x_completed_by,started_on,completed_on,upcoming_lead_action},individual:campaign:campaignUsers{id,xid,user_id,x_user_id,campaign_id,x_campaign_id},individual:campaign:campaignUsers:user{id,xid,name,profile_image,profile_image_url},individual:campaign:emailTemplate{id,xid,name},individual:campaign:form{id,xid,name,form_fields},individual:campaign:lastActioner{id,xid,name},individual:campaign:completedBy{id,xid,name}";
+            const leadDetailsUrl = `leads/${leadId}?fields=id,xid,individual{id,xid,reference_number,first_name,last_name,SSN,date_of_birth,home_phone,phone_number,email,original_profile_id,language,lead_data,time_taken,last_action_by,x_last_action_by,x_campaign_id},individual:address{id,xid,address_line1,address_line2,city,state_id,zip_code,full_address},individual:coApplicant{id,xid,first_name,last_name,SSN,date_of_birth,home_phone,phone_number,email,language},individual:coApplicant:address{id,xid,address_line1,address_line2,city,state_id,zip_code},started,lead_status,individual:lastActioner{id,xid,name},${campaignUrl},individual:individualFollowUp{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:individualFollowUp:user{id,xid,name},individual:salesmanBooking{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:salesmanBooking:user{id,xid,name}`;
             leadDetails.value = {};
             leadCallLogDetails.value = {};
             activeKey.value = "lead_details";
+            activeKeyLead.value = "details";
             activeLeftPanelKey.value = "lead_details";
             leadFormData.value = {};
+            extraLeadFormData.value = {};
             leadFollowUp.value = {};
             salesmanBooking.value = {};
-            referenceNumber.value = "";
+            leadXid.value = "";
+            individualData.value.reference_number = "";
+            individualData.value.first_name = "";
+            individualData.value.last_name = "";
+            individualData.value.SSN = "";
+            individualData.value.date_of_birth = "";
+            individualData.value.home_phone = "";
+            individualData.value.phone_number = "";
+            individualData.value.email = "";
+            individualData.value.original_profile_id = "";
+            individualData.value.language = undefined;
+
+            individualData.value.co_first_name = "";
+            individualData.value.co_last_name = "";
+            individualData.value.co_SSN = "";
+            individualData.value.co_date_of_birth = "";
+            individualData.value.co_home_phone = "";
+            individualData.value.co_phone_number = "";
+            individualData.value.co_email = "";
+            individualData.value.co_language = undefined;
+            individualData.value.lead_status = undefined;
+            individualData.value.xid = "";
+
+            individualData.value.address_line1 = "";
+            individualData.value.address_line2 = "";
+            individualData.value.city = "";
+            individualData.value.state_id = undefined;
+            individualData.value.zip_code = "";
+
+            individualData.value.co_address_line1 = "";
+            individualData.value.co_address_line2 = "";
+            individualData.value.co_city = "";
+            individualData.value.co_state_id = undefined;
+            individualData.value.co_zip_code = "";
+
+            states.value = "";
+
             leadStatus.value = undefined;
             leadNumber.value = 0;
             newPageLoad.value = true;
 
             const leadDetailsPromise = axiosAdmin.get(leadDetailsUrl);
             const leadCallLogPromise = axiosAdmin.get(`leads/create-call-log/${leadId}`);
+            const statesPromise = axiosAdmin.get('states/all');
 
-            Promise.all([leadDetailsPromise, leadCallLogPromise]).then(
-                ([leadDetailsResponse, leadCallLogResponse]) => {
+            Promise.all([leadDetailsPromise, leadCallLogPromise, statesPromise]).then(
+                ([leadDetailsResponse, leadCallLogResponse, statesResponse]) => {
                     var leadResult = leadDetailsResponse.data;
+                    states.value = statesResponse.data;
 
                     leadNumber.value = leadCallLogResponse.data.lead_number;
                     leadCallLogDetails.value = leadCallLogResponse.data.call_log;
                     leadDetails.value = leadResult;
 
                     var newLeadDataArray = [];
-                    if (leadResult.lead_data && leadResult.lead_data.length > 0) {
-                        forEach(leadResult.lead_data, (fieldData) => {
+                    if (leadResult.individual.lead_data && leadResult.individual.lead_data.length > 0) {
+                        forEach(leadResult.individual.lead_data, (fieldData) => {
                             newLeadDataArray.push({
                                 id: fieldData.id,
                                 field_name: fieldData.field_name,
@@ -716,17 +773,61 @@ export default {
                         campaign_id: leadResult.x_campaign_id,
                         lead_data: newLeadDataArray,
                     };
-                    referenceNumber.value = leadResult.reference_number;
+                    leadXid.value = leadResult.xid;
+                    individualData.value.reference_number = leadResult.individual.reference_number;
+                    individualData.value.first_name = leadResult.individual.first_name;
+                    individualData.value.last_name = leadResult.individual.last_name;
+                    individualData.value.SSN = leadResult.individual.SSN;
+                    individualData.value.date_of_birth = leadResult.individual.date_of_birth;
+                    individualData.value.home_phone = leadResult.individual.home_phone;
+                    individualData.value.phone_number = leadResult.individual.phone_number;
+                    individualData.value.email = leadResult.individual.email;
+                    individualData.value.language = leadResult.individual.language;
+                    individualData.value.original_profile_id = leadResult.individual.original_profile_id;
+                    individualData.value.lead_status = leadResult.lead_status;
+                    individualId.value = leadResult.individual.xid;
 
-                    leadFollowUp.value = leadResult.lead_follow_up
-                        ? leadResult.lead_follow_up
+                    if(leadResult.individual.address) {
+                        addressesFormData.value = leadResult.individual.address;
+                    }
+                    console.log('leadResult.individual', leadResult.individual);
+
+                    if(leadResult.individual.campaign) {
+                        individualData.value.campaign.email_template_xid = leadResult.individual.campaign.xid;
+                        individualData.value.campaign.form = leadResult.individual.campaign.form;
+                    }
+
+                    if(leadResult.individual.co_applicant) {
+                        individualData.value.co_first_name = leadResult.individual.co_applicant.first_name;
+                        individualData.value.co_last_name = leadResult.individual.co_applicant.last_name;
+                        individualData.value.co_SSN = leadResult.individual.co_applicant.SSN;
+                        individualData.value.co_date_of_birth = leadResult.individual.co_applicant.date_of_birth;
+                        individualData.value.co_home_phone = leadResult.individual.co_applicant.home_phone;
+                        individualData.value.co_phone_number = leadResult.individual.co_applicant.phone_number;
+                        individualData.value.co_email = leadResult.individual.co_applicant.email;
+                        individualData.value.co_language = leadResult.individual.co_applicant.language;
+
+                        if(leadResult.individual.co_applicant.address) {
+                            addressesFormData.value.co_address_line1 = leadResult.individual.co_applicant.address.address_line1;
+                            addressesFormData.value.co_address_line2 = leadResult.individual.co_applicant.address.address_line2;
+                            addressesFormData.value.co_city = leadResult.individual.co_applicant.address.city;
+                            addressesFormData.value.co_state_id = leadResult.individual.co_applicant.address.state_id;
+                            addressesFormData.value.co_zip_code = leadResult.individual.co_applicant.address.zip_code;
+                            addressesFormData.value.full_address = leadResult.individual.co_applicant.address.full_address;
+                        }
+                    }
+
+                    addressesFormData.value.individual_id = leadResult.individual.xid;
+
+                    leadFollowUp.value = leadResult.individual.individual_follow_up
+                        ? leadResult.individual.individual_follow_up
                         : [];
-                    salesmanBooking.value = leadResult.salesman_booking
-                        ? leadResult.salesman_booking
+                    salesmanBooking.value = leadResult.individual.salesman_booking
+                        ? leadResult.individual.salesman_booking
                         : [];
                     leadStatus.value = leadResult.lead_status;
 
-                    timer.reset(leadResult.time_taken, true);
+                    timer.reset(leadResult.individual.time_taken, true);
 
                     newPageLoad.value = false;
                 }
@@ -755,7 +856,7 @@ export default {
                 okType: "danger",
                 cancelText: t("common.no"),
                 onOk() {
-                    saveLead("save_exit");
+                    saveData("save_exit")
                 },
                 onCancel() {
                     saveExitLoading.value = false;
@@ -763,26 +864,86 @@ export default {
             });
         };
 
-        const saveLead = (saveType = "auto") => {
+        const saveTime = () => {
+            let url = '';
+            let data = {};
+
+            url = `campaigns/update-lead-timer`;
+            data = {
+                call_log_id: leadCallLogDetails.value.xid,
+                call_time: calculateTotalTimeInSeconds(),
+                x_lead_id: route.params.id,
+            }
+
+            addEditRequestAdmin({
+                url: url,
+                data: data,
+                success: (res) => {
+                    autoSaved.value = true;
+                    saveLoading.value = false;
+                },
+            });
+        }
+
+        const saveData = (saveType = "auto") => {
             if (saveType == "save") {
                 saveLoading.value = true;
             } else if (saveType == "save_exit") {
                 saveExitLoading.value = true;
             }
 
+            let url = '';
+            let data = {};
+
+            url = `campaigns/update-actioned-lead`;
+            data = {
+                ...leadFormData.value,
+                lead_status: individualData.value.lead_status,
+                reference_number: individualData.value.reference_number,
+                first_name: individualData.value.first_name,
+                last_name: individualData.value.last_name,
+                SSN: individualData.value.SSN,
+                date_of_birth: individualData.value.date_of_birth,
+                home_phone: individualData.value.home_phone,
+                phone_number: individualData.value.phone_number,
+                email: individualData.value.email,
+                language: individualData.value.language,
+                original_profile_id: individualData.value.original_profile_id,
+
+                co_first_name: individualData.value.co_first_name,
+                co_last_name: individualData.value.co_last_name,
+                co_SSN: individualData.value.co_SSN,
+                co_date_of_birth: individualData.value.co_date_of_birth,
+                co_home_phone: individualData.value.co_home_phone,
+                co_phone_number: individualData.value.co_phone_number,
+                co_email: individualData.value.co_email,
+                co_language: individualData.value.co_language,
+
+                address_line1: individualData.value.address_line1,
+                address_line2: individualData.value.address_line2,
+                city: individualData.value.city,
+                state_id: individualData.value.state_id,
+                zip_code: individualData.value.zip_code,
+
+                co_address_line1: individualData.value.co_address_line1,
+                co_address_line2: individualData.value.co_address_line2,
+                co_city: individualData.value.co_city,
+                co_state_id: individualData.value.co_state_id,
+                co_zip_code: individualData.value.co_zip_code,
+
+                call_log_id: leadCallLogDetails.value.xid,
+                call_time: calculateTotalTimeInSeconds(),
+                x_sale_lead_id: route.params.id,
+                x_lead_id: route.params.id,
+            }
+
             addEditRequestAdmin({
-                url: `campaigns/update-actioned-lead`,
-                data: {
-                    ...leadFormData.value,
-                    reference_number: referenceNumber.value,
-                    lead_status: leadStatus.value,
-                    call_log_id: leadCallLogDetails.value.xid,
-                    call_time: calculateTotalTimeInSeconds(),
-                    x_lead_id: route.params.id,
-                },
+                url: url,
+                data: data,
                 success: (res) => {
                     autoSaved.value = true;
                     saveLoading.value = false;
+                    refreshTimeLine.value = true;
 
                     if (saveType == "save_exit") {
                         saveExitLoading.value = false;
@@ -792,6 +953,12 @@ export default {
                         });
 
                         // store.dispatch("auth/showNotificaiton", {});
+                    } else {
+                        notification.success({
+                            message: t("common.success"),
+                            description: t("lead.updated"),
+                            placement: "bottomRight",
+                        });
                     }
                 },
             });
@@ -832,10 +999,44 @@ export default {
                 url: `campaigns/take-lead-action`,
                 data: {
                     ...leadFormData.value,
-                    reference_number: referenceNumber.value,
+                    reference_number: individualData.value.reference_number,
+                    lead_status: individualData.value.lead_status,
+                    first_name: individualData.value.first_name,
+                    last_name: individualData.value.last_name,
+                    SSN: individualData.value.SSN,
+                    date_of_birth: individualData.value.date_of_birth,
+                    home_phone: individualData.value.home_phone,
+                    phone_number: individualData.value.phone_number,
+                    email: individualData.value.email,
+                    language: individualData.value.language,
+                    original_profile_id: individualData.value.original_profile_id,
+
+                    co_first_name: individualData.value.co_first_name,
+                    co_last_name: individualData.value.co_last_name,
+                    co_SSN: individualData.value.co_SSN,
+                    co_date_of_birth: individualData.value.co_date_of_birth,
+                    co_home_phone: individualData.value.co_home_phone,
+                    co_phone_number: individualData.value.co_phone_number,
+                    co_email: individualData.value.co_email,
+                    co_language: individualData.value.co_language,
+
+                    address_line1: individualData.value.address_line1,
+                    address_line2: individualData.value.address_line2,
+                    city: individualData.value.city,
+                    state_id: individualData.value.state_id,
+                    zip_code: individualData.value.zip_code,
+
+                    co_address_line1: individualData.value.co_address_line1,
+                    co_address_line2: individualData.value.co_address_line2,
+                    co_city: individualData.value.co_city,
+                    co_state_id: individualData.value.co_state_id,
+                    co_zip_code: individualData.value.co_zip_code,
+
+                    original_profile_id: individualData.value.original_profile_id,
                     call_log_id: leadCallLogDetails.value.xid,
                     call_time: calculateTotalTimeInSeconds(),
                     action_type: newActionName,
+                    x_sale_lead_id: route.params.id,
                     x_lead_id: route.params.id,
                 },
                 success: (res) => {
@@ -863,10 +1064,10 @@ export default {
                             okType: "danger",
                             cancelText: t("common.continue"),
                             onOk() {
-                                saveLead("save_exit");
+                                saveData("save_exit", "lead");
                             },
                             onCancel() {
-                                saveLead("save");
+                                saveData("save", "lead");
                             },
                         });
                     }
@@ -889,34 +1090,13 @@ export default {
             }
         };
 
-        const getLeadDataFieldType = (fieldName) => {
-            var fieldType = "text";
-
-            if (
-                leadDetails.value.campaign &&
-                leadDetails.value.campaign.form &&
-                leadDetails.value.campaign.form.form_fields &&
-                leadDetails.value.campaign.form.form_fields.length > 0
-            ) {
-                var newResult = find(leadDetails.value.campaign.form.form_fields, {
-                    name: fieldName,
-                });
-
-                if (newResult && newResult.type) {
-                    fieldType = newResult.type;
-                }
-            }
-
-            return fieldType;
-        };
-
         const skipLead = () => {
             showSkipModal.value = true;
         };
 
         watch(timer.seconds, (newVal, oldVal) => {
             if (timer.seconds.value % 5 == 0) {
-                saveLead();
+                saveTime();
             }
         });
 
@@ -932,16 +1112,20 @@ export default {
             }
         });
 
+        watch(refreshNotes, (newVal, oldVal) => {
+            if (newVal) {
+                refreshNotes.value = false;
+            }
+        });
+
         return {
             activeLeftPanelKey,
             leadDetails,
             activeKey,
+            activeKeyLead,
             leadFormData,
-            referenceNumber,
             leadFollowUp,
             salesmanBooking,
-            loading,
-            rules,
 
             formatDateTime,
             timer,
@@ -951,9 +1135,10 @@ export default {
 
             takeLeadAction,
             refreshTimeLine,
+            refreshNotes,
 
             saveAndExit,
-            saveLead,
+            saveData,
             saveExitLoading,
             saveLoading,
             autoSaved,
@@ -963,7 +1148,12 @@ export default {
             skipDeleteSuccess,
             skipSuccess,
 
-            getLeadDataFieldType,
+            individualData,
+            extraLeadFormData,
+            states,
+            addressesFormData,
+
+            leadXid
         };
     },
 };
@@ -971,15 +1161,15 @@ export default {
 
 <style scoped>
 .callmanager-left-sidebar {
-    height: calc(100vh - 90px);
+    height: calc(100vh - 100px);
 }
 
 .callmanager-left-sidebar .ps {
-    height: calc(100vh - 270px);
+    height: calc(100vh - 350px);
 }
 
 .callmanager-middle-sidebar {
-    height: calc(100vh - 90px);
+    height: calc(100vh - 94px);
 }
 
 .callmanager-middle-sidebar .ps {
@@ -988,5 +1178,37 @@ export default {
 
 .callmanager-right-sidebar {
     height: calc(100vh - 99px);
+}
+
+.certain-category-search-dropdown .ant-select-dropdown-menu-item-group-title {
+  color: #666;
+  font-weight: bold;
+}
+
+.certain-category-search-dropdown .ant-select-dropdown-menu-item-group {
+  border-bottom: 1px solid #f6f6f6;
+}
+
+.certain-category-search-dropdown .ant-select-dropdown-menu-item {
+  padding-left: 16px;
+}
+
+.certain-category-search-dropdown .ant-select-dropdown-menu-item.show-all {
+  text-align: center;
+  cursor: default;
+}
+
+.certain-category-search-dropdown .ant-select-dropdown-menu {
+  max-height: 300px;
+}
+</style>
+
+<style>
+.hidden-label .ant-form-item-label {
+    visibility: hidden;
+}
+
+.address .ant-tabs-nav-wrap {
+    justify-content: end;
 }
 </style>
