@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html  lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <title>{{ $company->short_name }}</title>
+		<link rel="icon" type="image/png" href="{{ $company->small_light_logo_url }}">
+		<meta name="msapplication-TileImage" href="{{ $company->small_light_logo_url }}">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700&display=swap">
+        <link rel="stylesheet" href="{{ asset('css/pre-loader.css') }}">
+        @vite('resources/css/app.css')
+    </head>
+    <body>
+        <div id="app">
+            <div class="loading-app-container">
+                <div class="ant-result ant-result-info">
+                    <div class="ant-result-title">
+                        <span style="color: rgb(0, 113, 128);">
+                            Loading
+                        </span> 
+                    </div>
+                    <div class="spinner">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            window.config = {
+                'path': '{{ url('/') }}',
+                'download_lang_csv_url': "{{ route('api.extra.langs.download') }}",
+                'staff_member_sample_file': "{{ asset('images/sample_staff_members.csv') }}",
+                'translatioins_sample_file': "{{ asset('images/sample_translations.csv') }}",
+                'perPage': 10,
+				'product_name': "{{ $appName }}",
+				'product_version': "{{ $appVersion }}",
+				'theme_mode': "{{ $themeMode }}",
+				'appChecking': true,
+				'app_version': "{{ $appVersion }}",
+				'app_env': "{{ $appEnv }}",
+            };
+        </script>
+
+        @vite('resources/js/app.js')
+    </body>
+</html>
