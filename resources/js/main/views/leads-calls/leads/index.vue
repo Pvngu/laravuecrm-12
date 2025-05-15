@@ -1,7 +1,7 @@
 <template>
     <AdminPageHeader>
         <template #header>
-            <a-page-header :title="$t(`menu.leads`)" class="p-0">
+            <a-page-header :title="$t(`menu.leads`)" class="p-0!">
                 <template
                     v-if="
                         permsArray.includes('campaigns_view_all') ||
@@ -389,7 +389,7 @@
                                         >
                                             <a-button
                                                 type="link"
-                                                class="p-0"
+                                                class="p-0!"
                                                 @click="showViewDrawer(record)"
                                             >
                                                 {{

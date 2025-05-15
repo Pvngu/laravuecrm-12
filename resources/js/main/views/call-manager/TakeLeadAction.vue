@@ -5,7 +5,7 @@
     >
         <a-row>
             <a-col :span="24">
-                <a-page-header @back="saveAndExit" class="p-0">
+                <a-page-header @back="saveAndExit" class="p-0!">
                     <template #title>
                         {{
                             leadDetails &&

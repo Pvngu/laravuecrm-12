@@ -158,7 +158,7 @@
                             <a-button
                                 v-if="showLeadDetails"
                                 type="link"
-                                class="p-0"
+                                class="p-0!"
                                 @click="showViewDrawer(record.lead)"
                             >
                                 {{
