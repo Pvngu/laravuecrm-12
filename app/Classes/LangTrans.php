@@ -82,8 +82,6 @@ class LangTrans
             'status' => 'Status',
             'active' => 'Active',
             'inactive' => 'Inactive',
-            'yes' => 'Yes',
-            'no' => 'No',
             'verified' => 'Verified',
             'configure' => 'Configure',
             'logo' => 'Logo',
@@ -105,6 +103,8 @@ class LangTrans
             'continue' => 'Continue',
             'product' => 'Product',
             'service' => 'Service',
+            'filters' => 'Filters',
+            'reset' => 'Reset',
         ],
         'menu' => [
             'dashboard' => 'Dashboard',

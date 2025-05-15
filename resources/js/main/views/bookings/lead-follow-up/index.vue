@@ -20,94 +20,6 @@
         </template>
     </AdminPageHeader>
 
-    <admin-page-filters>
-        <a-row :gutter="[16, 16]">
-            <a-col :xs="24" :sm="24" :md="12" :lg="10" :xl="10">
-                <a-button
-                    v-if="
-                        table.selectedRowKeys.length > 0 &&
-                        (permsArray.includes('leads_view_all') ||
-                            permsArray.includes('admin'))
-                    "
-                    type="primary"
-                    @click="showSelectedDeleteConfirm"
-                    danger
-                >
-                    <template #icon><DeleteOutlined /></template>
-                    {{ $t("common.delete") }}
-                </a-button>
-            </a-col>
-            <a-col :xs="24" :sm="24" :md="12" :lg="14" :xl="14">
-                <a-row :gutter="[16, 16]" justify="end">
-                    <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6">
-                        <a-select
-                            v-model:value="extraFilters.campaign_id"
-                            :placeholder="
-                                $t('common.select_default_text', [$t('lead.campaign')])
-                            "
-                            :allowClear="true"
-                            style="width: 100%"
-                            optionFilterProp="title"
-                            show-search
-                            @change="setUrlData"
-                        >
-                            <a-select-option
-                                v-for="allCampaign in allCampaigns"
-                                :key="allCampaign.xid"
-                                :title="allCampaign.name"
-                                :value="allCampaign.xid"
-                            >
-                                {{ allCampaign.name }}
-                            </a-select-option>
-                        </a-select>
-                    </a-col>
-                    <a-col
-                        v-if="
-                            permsArray.includes('leads_view_all') ||
-                            permsArray.includes('admin')
-                        "
-                        :xs="24"
-                        :sm="24"
-                        :md="12"
-                        :lg="8"
-                        :xl="6"
-                    >
-                        <a-select
-                            v-model:value="extraFilters.user_id"
-                            :placeholder="
-                                $t('common.select_default_text', [$t('user.user')])
-                            "
-                            :allowClear="true"
-                            style="width: 100%"
-                            optionFilterProp="title"
-                            show-search
-                            @change="setUrlData"
-                        >
-                            <a-select-option
-                                v-for="allUsers in allUsers"
-                                :key="allUsers.xid"
-                                :title="allUsers.name"
-                                :value="allUsers.xid"
-                            >
-                                {{ allUsers.name }}
-                            </a-select-option>
-                        </a-select>
-                    </a-col>
-                    <a-col :xs="24" :sm="24" :md="8" :lg="8" :xl="6">
-                        <DateRangePicker
-                            @dateTimeChanged="
-                                (changedDateTime) => {
-                                    extraFilters.dates = changedDateTime;
-                                    setUrlData();
-                                }
-                            "
-                        />
-                    </a-col>
-                </a-row>
-            </a-col>
-        </a-row>
-    </admin-page-filters>
-
     <admin-page-table-content>
         <a-row>
             <a-col :span="24">
@@ -130,6 +42,76 @@
                         bordered
                         size="middle"
                     >
+                        <template #title>
+                            <a-row justify="end" align="center">
+                                <a-col>
+                                    <Filters 
+                                        @onReset="resetFilters"
+                                        :filters="extraFilters"
+                                    >
+                                        <a-col :span="24">
+                                            <a-form-item :label="$t('lead.campaign')">
+                                                <a-select
+                                                    v-model:value="extraFilters.campaign_id"
+                                                    :placeholder="$t('common.select_default_text', [$t('lead.campaign')])"
+                                                    :allowClear="true"
+                                                    style="width: 100%"
+                                                    optionFilterProp="title"
+                                                    show-search
+                                                    @change="setUrlData"
+                                                >
+                                                    <a-select-option
+                                                        v-for="allCampaign in allCampaigns"
+                                                        :key="allCampaign.xid"
+                                                        :title="allCampaign.name"
+                                                        :value="allCampaign.xid"
+                                                    >
+                                                        {{ allCampaign.name }}
+                                                    </a-select-option>
+                                                </a-select>
+                                            </a-form-item>
+                                        </a-col>
+                                        <a-col
+                                            v-if="permsArray.includes('leads_view_all') || permsArray.includes('admin')"
+                                            :span="24"
+                                        >
+                                            <a-form-item :label="$t('user.user')">
+                                                <a-select
+                                                    v-model:value="extraFilters.user_id"
+                                                    :placeholder="$t('common.select_default_text', [$t('user.user')])"
+                                                    :allowClear="true"
+                                                    style="width: 100%"
+                                                    optionFilterProp="title"
+                                                    show-search
+                                                    @change="setUrlData"
+                                                >
+                                                    <a-select-option
+                                                        v-for="allUsers in allUsers"
+                                                        :key="allUsers.xid"
+                                                        :title="allUsers.name"
+                                                        :value="allUsers.xid"
+                                                    >
+                                                        {{ allUsers.name }}
+                                                    </a-select-option>
+                                                </a-select>
+                                            </a-form-item>
+                                        </a-col>
+                                        <a-col :span="24">
+                                            <a-form-item :label="$t('common.date')">
+                                                <DateRangePicker
+                                                    @dateTimeChanged="
+                                                        (changedDateTime) => {
+                                                            extraFilters.dates = changedDateTime;
+                                                            setUrlData();
+                                                        }
+                                                    "
+                                                />
+                                            </a-form-item>
+                                        </a-col>
+                                    </Filters>
+                                </a-col>
+                            </a-row>
+                        </template>
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.dataIndex === 'reference_number'">
                                 <a-button
@@ -224,6 +206,7 @@ import common from "../../../../common/composable/common";
 import viewDrawer from "../../../../common/composable/viewDrawer";
 import fields from "./fields";
 import AdminPageHeader from "../../../../common/layouts/AdminPageHeader.vue";
+import Filters from "../../../../common/components/common/select/Filters.vue";
 import DateRangePicker from "../../../../common/components/common/calendar/DateRangePicker.vue";
 import DeleteBooking from "../DeleteBooking.vue";
 
@@ -232,6 +215,7 @@ export default {
         DoubleRightOutlined,
         DeleteOutlined,
         AdminPageHeader,
+        Filters,
         DateRangePicker,
         DeleteBooking,
     },
@@ -365,6 +349,15 @@ export default {
             });
         };
 
+        const resetFilters = () => {
+            extraFilters.value = {
+                campaign_id: undefined,
+                dates: [],
+                user_id: user.value.xid,
+            };
+            setUrlData();
+        };
+
         return {
             ...newTable,
             ...leadDrawer,
@@ -381,6 +374,7 @@ export default {
             startFollowUp,
             setUrlData,
             showSelectedDeleteConfirm,
+            resetFilters,
         };
     },
 };
