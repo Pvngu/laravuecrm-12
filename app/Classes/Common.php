@@ -18,10 +18,12 @@ class Common
     {
         $paths = [
             'companyLogoPath' => 'companies',
+            'productLogoPath' => 'products',
             'userImagePath' => 'users',
             'langImagePath' => 'langs',
             'audioFilesPath' => 'audio',
             'offlineRequestDocumentPath' => 'offline-requests',
+            "expenseBillPath" => 'expense-bills',
         ];
 
         return ($type == null) ? $paths : $paths[$type];
@@ -36,12 +38,16 @@ class Common
             $folderString = "userImagePath";
         } else if ($folder == "company") {
             $folderString = "companyLogoPath";
+        } else if($folder == "product") {
+            $folderString = "productLogoPath";
         } else if ($folder == "langs") {
             $folderString = "langImagePath";
         } else if ($folder == "website") {
             $folderString = "websiteImagePath";
         } else if ($folder == "offline-requests") {
             $folderString = "offlineRequestDocumentPath";
+        } else if ($folder == "expenseBill") {
+            $folderString = "expenseBillPath";
         }
 
         $folderPath = self::getFolderPath($folderString);
