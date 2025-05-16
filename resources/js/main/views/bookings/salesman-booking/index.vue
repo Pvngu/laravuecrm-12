@@ -1,7 +1,7 @@
 <template>
     <AdminPageHeader>
         <template #header>
-            <a-page-header :title="$t(`menu.salesman_bookings`)" class="p-0" />
+            <a-page-header :title="$t(`menu.salesman_bookings`)" class="p-0!" />
         </template>
         <template #breadcrumb>
             <a-breadcrumb separator="-" style="font-size: 12px">
@@ -128,7 +128,7 @@
                             <template v-if="column.dataIndex === 'reference_number'">
                                 <a-button
                                     type="link"
-                                    class="p-0"
+                                    class="p-0!"
                                     @click="showViewDrawer(record)"
                                 >
                                     {{

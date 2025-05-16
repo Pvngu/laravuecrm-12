@@ -205,140 +205,6 @@
                                 </a-row>
                             </a-col>
                         </a-row>
-                        <a-row v-if="saleEnrollment" class="mt-5 mb-20">
-                            <a-typography-title :level="5">
-                                {{ $t('sales.sale_snapshot') }}
-                            </a-typography-title>
-                            <a-col :span="24">
-                                <a-row :gutter="16">
-                                    <a-col :span="10">
-                                        <a-typography-text strong>
-                                            {{ $t('sales.enrolled') }}:
-                                        </a-typography-text>
-                                    </a-col>
-                                    <a-col :span="14">
-                                        <a-typography-text>
-                                            {{ formatDate(saleEnrollment.created_at) }} - {{ saleEnrollment.creator.name }}
-                                        </a-typography-text>
-                                    </a-col>
-                                </a-row>
-                                <!-- <a-row :gutter="16">
-                                    <a-col :span="10">
-                                        <a-typography-text strong>
-                                            {{ $t('sales.settled_debt_average') }} %:
-                                        </a-typography-text>
-                                    </a-col>
-                                    <a-col :span="14">
-                                        <a-typography-text>
-                                            ?%
-                                        </a-typography-text>
-                                    </a-col>
-                                </a-row> -->
-                                <a-row :gutter="16">
-                                    <a-col :span="10">
-                                        <a-typography-text strong>
-                                            {{ $t('sales.debt') }}:
-                                        </a-typography-text>
-                                    </a-col>
-                                    <a-col :span="14">
-                                        <a-typography-text>
-                                            {{ saleEnrollment.next_payment ? formatAmountCurrency(saleEnrollment.next_payment.balance_amount) : formatAmountCurrency(saleEnrollment.total_debt) }}
-                                        </a-typography-text>
-                                    </a-col>
-                                </a-row>
-                                <a-row :gutter="16">
-                                    <a-col :span="10">
-                                        <a-typography-text strong>
-                                            {{ $t('sales.plan') }}:
-                                        </a-typography-text>
-                                    </a-col>
-                                    <a-col :span="14">
-                                        <a-typography-text>
-                                            {{ saleEnrollment.enrollment_plan ? saleEnrollment.enrollment_plan.name : '-' }}
-                                        </a-typography-text>
-                                    </a-col>
-                                </a-row>
-                                <a-row :gutter="16">
-                                    <a-col :span="10">
-                                        <a-typography-text strong>
-                                            {{ $t('sales.length') }}:
-                                        </a-typography-text>
-                                    </a-col>
-                                    <a-col :span="14">
-                                        <a-typography-text>
-                                            {{ saleEnrollment.enrollment_term }} Mo. ({{ $t('common.monthly') }})
-                                        </a-typography-text>
-                                    </a-col>
-                                </a-row>
-                                <a-row :gutter="16" class="mt-2">
-                                    <a-col :span="10">
-                                        <a-typography-text strong>
-                                            {{ $t('sales.admin_services') }}:
-                                        </a-typography-text>
-                                    </a-col>
-                                    <a-col :span="14">
-                                        <a-typography-text>
-                                            $250.00
-                                        </a-typography-text>
-                                    </a-col>
-                                </a-row>
-                                <a-row :gutter="16">
-                                    <a-col :span="10">
-                                        <a-typography-text strong>
-                                            {{ $t('sales.legal_fee') }}:
-                                        </a-typography-text>
-                                    </a-col>
-                                    <a-col :span="14">
-                                        <a-typography-text>
-                                            $50.00
-                                        </a-typography-text>
-                                    </a-col>
-                                </a-row>
-                                <a-row :gutter="16" class="mt-2">
-                                    <a-col :span="10">
-                                        <a-typography-text strong>
-                                            {{ $t('sales.saving_balance') }}:
-                                        </a-typography-text>
-                                    </a-col>
-                                    <a-col :span="14">
-                                        <a-typography-text>
-                                            $0.00
-                                        </a-typography-text>
-                                    </a-col>
-                                </a-row>
-                                <a-row :gutter="16">
-                                    <a-col :span="10">
-                                        <a-typography-text strong>
-                                            {{ $t('sales.next_payment') }}:
-                                        </a-typography-text>
-                                    </a-col>
-                                    <a-col :span="14">
-                                        <a-typography-text>
-                                            <span v-if="saleEnrollment.next_payment">
-                                                {{ prettyFormatDate(saleEnrollment.next_payment.due_date) }} - {{ formatAmountCurrency(Math.ceil(Number(saleEnrollment.next_payment.interest_amount) + Number(saleEnrollment.next_payment.principal_amount))) }}
-                                            </span>
-                                            <span v-else>
-                                                -
-                                            </span>
-                                        </a-typography-text>
-                                    </a-col>
-                                </a-row>
-                                <a-row :gutter="16">
-                                    <a-col :span="10">
-                                        <a-typography-text strong>
-                                            {{ $t('sales.last_payment') }}:
-                                        </a-typography-text>
-                                    </a-col>
-                                    <a-col :span="14">
-                                        <a-typography-text>
-                                            <span v-if="saleEnrollment.last_payment">
-                                                {{ saleEnrollment.last_payment ? prettyFormatDate(saleEnrollment.last_payment.due_date) : '-' }}
-                                            </span>
-                                        </a-typography-text>
-                                    </a-col>
-                                </a-row>
-                            </a-col>
-                        </a-row>
                     </a-card>
                 </div>
             </perfect-scrollbar>
@@ -526,19 +392,15 @@
                 co_zip_code: "",
                 individual_id: undefined,
             });
-            const saleEnrollment = ref({});
             const saleCallLogDetails = ref({});
             const saleFollowUp = ref({});
             const salesmanBooking = ref({});
             const refreshNotes = ref(false);
             const showSmsAlert = ref(false);
-            const saleEnrollmentXid = ref(undefined);
             const individualId = ref(undefined);
-            const isDebtsFetched = ref(false);
 
             onMounted(() => {
                 fetchInitData();
-                watchDebtsData();
             })
 
             onUnmounted(() => {
@@ -548,8 +410,7 @@
             
             const fetchInitData = () => {
                 const campaignUrl = "individual:campaign{id,xid,name},individual:campaign:emailTemplate{id,xid,name},individual:campaign:form{name,form_fields}";
-                const enrollmentUrl = 'individual:enrollment{xid,id,total_debt,enrollment_term,created_at},individual:enrollment:creator{xid,id,name},individual:enrollment:enrollmentPlan{xid,id,name},individual:enrollment:nextPayment{xid,id,due_date,principal_amount,interest_amount,balance_amount},individual:enrollment:lastPayment{xid,id,due_date}'
-                const saleDetailsUrl = `sales/${route.params.id}?fields=id,xid,sale_status_id,assigned_to,created_at,saleStatus{id,name},assignedUser{id,xid,name,email,phone},individual{id,xid,reference_number,first_name,last_name,SSN,date_of_birth,home_phone,phone_number,email,original_profile_id,language,lead_data,time_taken,last_action_by,x_last_action_by,x_campaign_id,updated_at},individual:address{id,xid,address_line1,address_line2,city,state_id,zip_code},individual:coApplicant{id,xid,first_name,last_name,SSN,date_of_birth,home_phone,phone_number,email,language},individual:coApplicant:address{id,xid,address_line1,address_line2,city,state_id,zip_code,full_address},individual:lastActioner{id,xid,name},${campaignUrl},individual:individualFollowUp{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:individualFollowUp:user{id,xid,name},individual:salesmanBooking{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:salesmanBooking:user{id,xid,name},${enrollmentUrl}`;
+                const saleDetailsUrl = `sales/${route.params.id}?fields=id,xid,sale_status_id,assigned_to,created_at,saleStatus{id,name},assignedUser{id,xid,name,email,phone},individual{id,xid,reference_number,first_name,last_name,SSN,date_of_birth,home_phone,phone_number,email,original_profile_id,language,lead_data,time_taken,last_action_by,x_last_action_by,x_campaign_id,updated_at},individual:address{id,xid,address_line1,address_line2,city,state_id,zip_code},individual:coApplicant{id,xid,first_name,last_name,SSN,date_of_birth,home_phone,phone_number,email,language},individual:coApplicant:address{id,xid,address_line1,address_line2,city,state_id,zip_code,full_address},individual:lastActioner{id,xid,name},${campaignUrl},individual:individualFollowUp{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:individualFollowUp:user{id,xid,name},individual:salesmanBooking{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:salesmanBooking:user{id,xid,name}`;
                 saleCallLogDetails.value = {};
                 activeKey.value =  route.query.tab ?? "history";
                 activeKeySale.value = "details";
@@ -564,7 +425,6 @@
                         var saleResult = saleDetailsResponse.data;
                         states.value = statesResponse.data;
 
-                        saleEnrollment.value = saleResult.individual.enrollment;
 
                         individualData.value.campaign.name = saleResult.individual.campaign.name;
                         individualData.value.campaign.status = saleResult.individual.campaign.status;
@@ -604,10 +464,6 @@
                             individualData.value.updated_at = saleResult.individual.updated_at;
 
                             individualId.value = saleResult.individual.xid;
-                        }
-
-                        if(saleResult.individual.enrollment) {
-                            saleEnrollmentXid.value = saleResult.individual.enrollment.xid;
                         }
 
                         if(saleResult.individual.address) {
@@ -654,43 +510,6 @@
                 );
             };
 
-            const debtsData = ref({
-                allDebts: [],
-                snapshot: {
-                    total_accounts: 0,
-                    debt_enrolled: 0,
-                    current_debt: 0,
-                    average: 0,
-                    current_pmts: 0,
-                    original_amount: 0,
-                },
-                debtsEnrolledIds: [],
-            });
-
-            const fetchDebtsData = () => {
-                axiosAdmin.get(`debts/individual/${individualId.value}`).then((res) => {
-                    debtsData.value.allDebts = res.data.debts;
-
-                    debtsData.value.snapshot.total_accounts = res.data.total_debts;
-                    debtsData.value.snapshot.debt_enrolled = res.data.debt_enrolled;
-                    debtsData.value.debtsEnrolledIds = res.data.debts_enrolled_ids;
-                    debtsData.value.snapshot.current_debt = res.data.current_debt;
-                    debtsData.value.snapshot.average = debtsData.value.snapshot.current_debt / debtsData.value.snapshot.debt_enrolled;
-                    debtsData.value.snapshot.current_pmts = res.data.current_pmts;
-                    debtsData.value.snapshot.original_amount = res.data.original_amount;
-
-                    isDebtsFetched.value = true;
-                });
-            }
-
-            const watchDebtsData = () => {
-                watch([activeKey, individualId], ([newActiveKey, newIndividualId]) => {
-                    if ((newActiveKey === "debts" || newActiveKey === "enrollment") && !isDebtsFetched.value && newIndividualId) {
-                        fetchDebtsData();
-                    }
-                });
-            };
-
             return {
                 activeKey,
                 activeKeySale,
@@ -701,13 +520,9 @@
                 prettyFormatDate,
                 showSmsAlert,
                 route,
-                saleEnrollment,
                 formatAmountCurrency,
-                saleEnrollmentXid,
                 addressesFormData,
                 individualData,
-                fetchDebtsData,
-                debtsData,
                 individualId
             }
         }

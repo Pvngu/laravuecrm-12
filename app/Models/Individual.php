@@ -87,24 +87,9 @@ class Individual extends BaseModel
         return $this->hasOne(Sale::class);
     }
 
-    public function bankAccount()
-    {
-        return $this->hasOne(BankAccount::class);
-    }
-
-    public function creditCard()
-    {
-        return $this->hasOne(CreditCard::class);
-    }
-
     public function document()
     {
         return $this->hasMany(Document::class);
-    }
-
-    public function smsMessages()
-    {
-        return $this->hasMany(SmsMessages::class);
     }
 
     public function address()
@@ -115,21 +100,6 @@ class Individual extends BaseModel
     public function coApplicant()
     {
         return $this->hasOne(CoApplicant::class);
-    }
-
-    public function debts()
-    {
-        return $this->hasMany(Debt::class);
-    }
-
-    public function conversation()
-    {
-        return $this->hasOne(IndividualConversation::class);
-    }
-
-    public function enrollment()
-    {
-        return $this->hasOne(Enrollment::class);
     }
 
     public function notes()
