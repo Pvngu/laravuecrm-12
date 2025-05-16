@@ -432,48 +432,6 @@
                             :individualDetails="leadDetails"
                         />
                     </a-tab-pane>
-                    <a-tab-pane key="credit_card" v-if="individualData.lead_status == '1'">
-                        <template #tab>
-                            <span>
-                                <CreditCardOutlined />
-                                {{ $t("common.credit_card") }}
-                            </span>
-                        </template>
-                        <CreditCardForm
-                            pageName="credit_card"
-                            :states="states"
-                            :individualId="leadDetails.individual.xid"
-                            @success="() => (refreshTimeLine = true)"
-                        />
-                    </a-tab-pane>
-                    <a-tab-pane key="bank_account" v-if="individualData.lead_status == '1'">
-                        <template #tab>
-                            <span>
-                                <BankOutlined />
-                                {{ $t("common.bank_account") }}
-                            </span>
-                        </template>
-                        <BankAccountForm
-                            pageName="bank_account"
-                            :states="states"
-                            :individualId="leadDetails.individual.xid"
-                            @success="() => (refreshTimeLine = true)"
-                        />
-                    </a-tab-pane>
-                    <a-tab-pane key="debts" v-if="individualData.lead_status == '1'">
-                        <template #tab>
-                            <span>
-                                <DollarOutlined />
-                                {{ $t("common.debts") }}
-                            </span>
-                        </template>
-                        <DebtTable
-                            pageName="debts"
-                            :individualId="leadDetails.individual.xid"
-                            :scrollStyle="{ x: 1500, y: 'calc(100vh - 540px)' }"
-                            @success="() => (refreshTimeLine = true)"
-                        />
-                    </a-tab-pane>
                 </a-tabs>
             </a-card>
         </a-col>

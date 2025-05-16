@@ -55,6 +55,15 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
 
         ApiRoute::post('leads/start-follow-up', ['as' => 'api.leads.start-follow-up', 'uses' => 'LeadController@startFollowUp']);
 
+        ApiRoute::delete('deleteFile/{fileName}', ['as' => 'api.document.deleteFile', 'uses' => 'DocumentController@deleteFile']);
+        ApiRoute::post('documents/generate-pdf', ['as' => 'api.documents.generate-pdf', 'uses' => 'DocumentController@generatePDF']);
+        ApiRoute::post('documents/send-envelope', ['as' => 'api.documents.send-for-signature', 'uses' => 'DocumentController@sendEnvelope']);
+        ApiRoute::get('documents/download-envelope/{id}/{status}/{certificate}', ['as' => 'api.documents.download-envelope', 'uses' => 'DocumentController@downloadEnvelope']);
+        ApiRoute::post('documents/void-envelope', ['as' => 'api.documents.void-signature', 'uses' => 'DocumentController@voidEnvelope']);
+        ApiRoute::post('documents/send-reminder', ['as' => 'api.documents.send-reminder', 'uses' => 'DocumentController@sendReminder']);
+        ApiRoute::get('documents/fetch-envelopes/{individualXid}', ['as' => 'api.documents.', 'uses' => 'DocumentController@fetchEnvelopes']);
+        ApiRoute::resource('documents', 'DocumentController', $options);
+
         ApiRoute::post('leads/send-email', ['as' => 'api.leads.send-email', 'uses' => 'LeadController@sendEmail']);
         ApiRoute::get('leads/campaign-stats', ['as' => 'api.leads.campaign-stats', 'uses' => 'LeadController@leadCampaignStats']);
         ApiRoute::get('leads/campaign-members', ['as' => 'api.leads.bookings.lead-campaign-members', 'uses' => 'LeadController@leadCampaignMembers']);

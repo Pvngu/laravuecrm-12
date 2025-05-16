@@ -11,11 +11,12 @@ use App\Models\LeadLog;
 use App\Models\Product;
 use App\Models\Campaign;
 use App\Models\Currency;
+use App\Models\Document;
 use App\Models\Settings;
 use App\Models\EmailTemplate;
 use App\Models\FormFieldName;
-use App\Models\ExpenseCategory;
 use App\Models\IndividualLog;
+use App\Models\ExpenseCategory;
 use App\Observers\FormObserver;
 use App\Observers\UserObserver;
 use App\Observers\CompanyObserver;
@@ -43,6 +44,7 @@ class AppServiceProvider extends ServiceProvider
         Form::observe(FormObserver::class);
         LeadLog::observe(LeadLogObserver::class);
         IndividualLog::observe(GeneralObserver::class);
+        Document::observe(GeneralObserver::class);
         
         // Add company scope to models
         foreach ([

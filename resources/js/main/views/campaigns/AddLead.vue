@@ -81,7 +81,7 @@
                                 <a-select-option
                                     v-for="option in optionLanguages"
                                     :key="option.id"
-                                    :value="option.value"
+                                    :value="language.key"
                                 >
                                     {{ $t(option.key) }}
                                 </a-select-option>
