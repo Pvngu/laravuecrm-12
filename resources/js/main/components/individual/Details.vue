@@ -275,7 +275,7 @@
                         <SendMail
                             :email="formData.email"
                             :leadFormData="formData"
-                            :extraLeadFormData="extraFormData"
+                            :extraLeadFormData="formData.template_form"
                         />
                     </a-input-group>
                     </a-form-item>
@@ -298,7 +298,7 @@
                         <SendMail
                             :email="formData.co_email"
                             :leadFormData="formData"
-                            :extraLeadFormData="extraFormData"
+                            :extraLeadFormData="formData.template_form"
                         />
                     </a-input-group>
                     </a-form-item>
@@ -394,7 +394,7 @@
                                 v-if="getLeadDataFieldType(leadData.field_name) == 'email'"
                                 :email="leadData.field_value"
                                 :leadFormData="formData"
-                                :extraLeadFormData="extraFormData"
+                                :extraLeadFormData="formData.template_form"
                             />
                             <a-button
                                 v-if="getLeadDataFieldType(leadData.field_name) == 'phone'"
@@ -424,12 +424,11 @@
         }"
     >
         <a-row justify="end">
-            <a-col :xs="24" :sm="24" :md="6" :lg="6">
+            <a-col>
                 <a-button
                     type="primary"
                     :loading="saveLoading"
                     @click="onSubmit"
-                    block
                 >
                     <template #icon>
                         <SaveOutlined />
@@ -477,7 +476,6 @@ export default {
         const optionLanguages = ref([]);
         const statuses = ref([]);
         const { t } = useI18n();
-        const extraFormData = ref({});
 
         onMounted(() => {
             const statusesUrl = props.isSale ? "sale-statuses" : "lead-statuses";
@@ -488,88 +486,12 @@ export default {
                 optionLanguages.value = selectOptionsResponse.data;
                 statuses.value = statusesResponse.data;
             });
-
-            // Extra options for sendMail
-            const extraDataArray = [
-                {
-                    field_name: 'first_name',
-                    field_value: props.formData.first_name,
-                },
-                {
-                    field_name: 'last_name',
-                    field_value: props.formData.last_name,
-                },
-                {
-                    field_name: 'SSN',
-                    field_value: props.formData.SSN,
-                },
-                {
-                    field_name: 'date_of_birth',
-                    field_value: props.formData.date_of_birth,
-                },
-                {
-                    field_name: 'phone_number',
-                    field_value: props.formData.phone_number,
-                },
-                {
-                    field_name: 'home_phone',
-                    field_value: props.formData.home_phone,
-                },
-                {
-                    field_name: 'email',
-                    field_value: props.formData.email,
-                },
-                {
-                    field_name: 'language',
-                    field_value: props.formData.language,
-                },
-                {
-                    field_name: 'original_profile_id',
-                    field_value: props.formData.original_profile_id,
-                },
-                {
-                    field_name: 'co_first_name',
-                    field_value: props.formData.co_first_name,
-                },
-                {
-                    field_name: 'co_last_name',
-                    field_value: props.formData.co_last_name,
-                },
-                {
-                    field_name: 'co_SSN',
-                    field_value: props.formData.co_SSN,
-                },
-                {
-                    field_name: 'co_date_of_birth',
-                    field_value: props.formData.co_date_of_birth,
-                },
-                {
-                    field_name: 'co_phone_number',
-                    field_value: props.formData.co_phone_number,
-                },
-                {
-                    field_name: 'co_home_phone',
-                    field_value: props.formData.co_home_phone,
-                },
-                {
-                    field_name: 'co_email',
-                    field_value: props.formData.co_email,
-                },
-                {
-                    field_name: 'co_language',
-                    field_value: props.formData.co_language,
-                }
-            ];
-
-            extraFormData.value = {
-                lead_data: extraDataArray
-            };
         });
 
         const onSubmit = () => {
             saveLoading.value = true;
             const url = props.isSale ? "campaigns/update-actioned-sale" : "campaigns/update-actioned-lead";
-
+            console.log("formData", props.formData);
             addEditRequestAdmin({
                 url: url,
                 data:{
@@ -617,8 +539,7 @@ export default {
             statuses,
             onSubmit,
             saveLoading,
-            getLeadDataFieldType,
-            extraFormData,
+            getLeadDataFieldType
         }
     }
 }

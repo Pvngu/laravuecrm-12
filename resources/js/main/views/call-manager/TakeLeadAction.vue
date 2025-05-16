@@ -143,7 +143,7 @@
                     </a-card>
                     <Alerts
                         :individualId="leadDetails.individual.xid"
-                        :language="individualData.language"
+                        :language="leadData.individual.language"
                     />
                     <perfect-scrollbar
                         :options="{
@@ -206,11 +206,12 @@
                                         <a-col :span="24" class="mt-5">
                                             <a-typography-text
                                                 v-if="
-                                                    individualData &&
-                                                    individualData.email
+                                                    leadData &&
+                                                    leadData.individual &&
+                                                    leadData.individual.email
                                                 "
                                             >
-                                                {{ individualData.email }}
+                                                {{ leadData.individual.email }}
                                             </a-typography-text>
                                             <span v-else>-</span>
                                         </a-col>
@@ -224,11 +225,12 @@
                                         <a-col :span="24" class="mt-5">
                                             <a-typography-text
                                                 v-if="
-                                                    individualData &&
-                                                    individualData.home_phone
+                                                    leadData &&
+                                                    leadData.individual &&
+                                                    leadData.individual.home_phone
                                                 "
                                             >
-                                                {{ individualData.home_phone }}
+                                                {{ leadData.individual.home_phone }}
                                             </a-typography-text>
                                             <span v-else>-</span>
                                         </a-col>
@@ -242,11 +244,12 @@
                                         <a-col :span="24" class="mt-5">
                                             <a-typography-text
                                                 v-if="
-                                                    individualData &&
-                                                    individualData.phone_number
+                                                    leadData &&
+                                                    leadData.individual &&
+                                                    leadData.individual.phone_number
                                                 "
                                             >
-                                                {{ individualData.phone_number }}
+                                                {{ leadData.individual.phone_number }}
                                             </a-typography-text>
                                             <span v-else>-</span>
                                         </a-col>
@@ -261,10 +264,13 @@
                                         <a-col :span="24" class="mt-5">
                                             <a-typography-text
                                                 v-if="
-                                                    addressesFormData.full_address
+                                                    leadData &&
+                                                    leadData.individual &&
+                                                    leadData.individual.address &&
+                                                    leadData.individual.address.full_address
                                                 "
                                             >
-                                                {{ addressesFormData.full_address }}
+                                                {{ leadData.individual.address.full_address }}
                                             </a-typography-text>
                                             <span v-else>-</span>
                                         </a-col>
@@ -348,7 +354,7 @@
                 </div>
             </perfect-scrollbar>
         </a-col>
-        <a-col :xs="24" :sm="24" :md="24" :lg="colSizes.lg" :xl="colSizes.xl">
+        <a-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
             <a-card class="callmanager-middle-sidebar">
                 <a-tabs v-model:activeKey="activeKey">
                     <a-tab-pane key="lead_details">
@@ -361,14 +367,14 @@
                         <a-tabs v-model:activeKeyLead="activeKeyLead" type="card" class="address">
                             <a-tab-pane key="details" tab="Details">
                                 <Details
-                                    :formData="individualData"
+                                    :formData="leadData.individual"
                                     :id="leadXid"
                                     @success="() => (refreshTimeLine = true)"
                                 />
                             </a-tab-pane>
                             <a-tab-pane key="address" tab="Address">
                                 <Address
-                                    :formData="addressesFormData"
+                                    :formData="leadData.individual.address"
                                     :states="states"
                                     @success="() => (refreshTimeLine = true)"
                                 />
@@ -468,7 +474,7 @@
 </template>
 
 <script>
-import { onMounted, ref, createVNode, watch, computed } from "vue";
+import { onMounted, ref, createVNode, watch } from "vue";
 import {
     ArrowRightOutlined,
     ArrowLeftOutlined,
@@ -486,9 +492,8 @@ import {
 import { Modal, notification } from "ant-design-vue";
 import { useRoute, useRouter } from "vue-router";
 import { forEach, find } from "lodash-es";
-import { useStopwatch, useTimer } from "vue-timer-hook";
+import { useStopwatch } from "vue-timer-hook";
 import { useI18n } from "vue-i18n";
-import { useStore } from "vuex";
 import apiAdmin from "../../../common/composable/apiAdmin";
 import common from "../../../common/composable/common";
 import BookingModal from "../bookings/BookingModal.vue";
@@ -526,34 +531,11 @@ export default {
         Address,
         Details
     },
-    computed: {
-        colSizes() {
-            if(this.activeKey !== 'debts') {
-                return {
-                    xs: 24,
-                    sm: 24,
-                    md: 24,
-                    lg: 12,
-                    xl: 12
-                }
-            }
-            else {
-                return {
-                    xs: 24,
-                    sm: 24,
-                    md: 24,
-                    lg: 18,
-                    xl: 18
-                }
-            }
-        }
-    },
     setup() {
         const { formatDateTime } = common();
         const { addEditRequestAdmin } = apiAdmin();
         const route = useRoute();
         const router = useRouter();
-        const store = useStore();
         const leadDetails = ref({});
         const leadCallLogDetails = ref({});
         const activeKey = ref("lead_details");
@@ -575,35 +557,6 @@ export default {
         const saveExitLoading = ref(false);
         const showSkipModal = ref(false);
         const leadXid = ref("");
-        const individualData = ref({
-            campaign: {
-                email_template_xid: null,
-                form: {
-                    name: null,
-                    form_fields: {},
-                }
-            },
-            lead_status: "",
-            reference_number: "",
-            first_name: "",
-            last_name: "",
-            SSN: "",
-            date_of_birth: "",
-            phone_number: "",
-            home_phone: "",
-            email: "",
-            language: "",
-            original_profile_id: "",
-            lead_status: "",
-            co_first_name: "",
-            co_last_name: "",
-            co_SSN: "",
-            co_date_of_birth: "",
-            co_phone_number: "",
-            co_home_phone: "",
-            co_email: "",
-            co_language: "",
-        });
         const addressesFormData = ref({
             address_line1: "",
             address_line2: "",
@@ -619,6 +572,8 @@ export default {
             individual_id: undefined,
         });
         const states = ref([]);
+        const individualData = ref({});
+        const leadData = ref({});
         const individualId = ref("");
 
         onMounted(() => {
@@ -627,8 +582,9 @@ export default {
 
         const fetchInitData = () => {
             const leadId = route.params.id;
-            const campaignUrl = "individual:campaign{id,xid,name,status,remaining_leads,total_leads,form_id,x_form_id,email_template_id,x_email_template_id,detail_fields,last_action_by,x_last_action_by,completed_by,x_completed_by,started_on,completed_on,upcoming_lead_action},individual:campaign:campaignUsers{id,xid,user_id,x_user_id,campaign_id,x_campaign_id},individual:campaign:campaignUsers:user{id,xid,name,profile_image,profile_image_url},individual:campaign:emailTemplate{id,xid,name},individual:campaign:form{id,xid,name,form_fields},individual:campaign:lastActioner{id,xid,name},individual:campaign:completedBy{id,xid,name}";
-            const leadDetailsUrl = `leads/${leadId}?fields=id,xid,individual{id,xid,reference_number,first_name,last_name,SSN,date_of_birth,home_phone,phone_number,email,original_profile_id,language,lead_data,time_taken,last_action_by,x_last_action_by,x_campaign_id},individual:address{id,xid,address_line1,address_line2,city,state_id,zip_code,full_address},individual:coApplicant{id,xid,first_name,last_name,SSN,date_of_birth,home_phone,phone_number,email,language},individual:coApplicant:address{id,xid,address_line1,address_line2,city,state_id,zip_code},started,lead_status,individual:lastActioner{id,xid,name},${campaignUrl},individual:individualFollowUp{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:individualFollowUp:user{id,xid,name},individual:salesmanBooking{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:salesmanBooking:user{id,xid,name}`;
+            const campaignUrl = "individual:campaign,individual:campaign:campaignUsers,individual:campaign:campaignUsers:user{id,xid,name,profile_image,profile_image_url},individual:campaign:emailTemplate{id,xid,name},individual:campaign:form{id,xid,name,form_fields},individual:campaign:lastActioner{id,xid,name},individual:campaign:completedBy{id,xid,name}";
+            const leadDetailsUrl = `leads/${leadId}?fields=id,xid,individual{id,xid,reference_number,first_name,last_name,SSN,date_of_birth,home_phone,phone_number,email,original_profile_id,language,lead_data,time_taken,last_action_by,x_last_action_by,x_campaign_id,template_form},individual:address,individual:coApplicant,individual:coApplicant:address,started,lead_status,individual:lastActioner{id,xid,name},${campaignUrl},individual:individualFollowUp{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:individualFollowUp:user{id,xid,name},individual:salesmanBooking{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:salesmanBooking:user{id,xid,name}`;
+
             leadDetails.value = {};
             leadCallLogDetails.value = {};
             activeKey.value = "lead_details";
@@ -639,39 +595,6 @@ export default {
             leadFollowUp.value = {};
             salesmanBooking.value = {};
             leadXid.value = "";
-            individualData.value.reference_number = "";
-            individualData.value.first_name = "";
-            individualData.value.last_name = "";
-            individualData.value.SSN = "";
-            individualData.value.date_of_birth = "";
-            individualData.value.home_phone = "";
-            individualData.value.phone_number = "";
-            individualData.value.email = "";
-            individualData.value.original_profile_id = "";
-            individualData.value.language = undefined;
-
-            individualData.value.co_first_name = "";
-            individualData.value.co_last_name = "";
-            individualData.value.co_SSN = "";
-            individualData.value.co_date_of_birth = "";
-            individualData.value.co_home_phone = "";
-            individualData.value.co_phone_number = "";
-            individualData.value.co_email = "";
-            individualData.value.co_language = undefined;
-            individualData.value.lead_status = undefined;
-            individualData.value.xid = "";
-
-            individualData.value.address_line1 = "";
-            individualData.value.address_line2 = "";
-            individualData.value.city = "";
-            individualData.value.state_id = undefined;
-            individualData.value.zip_code = "";
-
-            individualData.value.co_address_line1 = "";
-            individualData.value.co_address_line2 = "";
-            individualData.value.co_city = "";
-            individualData.value.co_state_id = undefined;
-            individualData.value.co_zip_code = "";
 
             states.value = "";
 
@@ -691,6 +614,9 @@ export default {
                     leadNumber.value = leadCallLogResponse.data.lead_number;
                     leadCallLogDetails.value = leadCallLogResponse.data.call_log;
                     leadDetails.value = leadResult;
+
+                    leadData.value = leadResult;
+                    console.log(leadDetailsResponse.data);
 
                     var newLeadDataArray = [];
                     if (leadResult.individual.lead_data && leadResult.individual.lead_data.length > 0) {
@@ -732,38 +658,13 @@ export default {
                         lead_data: newLeadDataArray,
                     };
                     leadXid.value = leadResult.xid;
-                    individualData.value.reference_number = leadResult.individual.reference_number;
-                    individualData.value.first_name = leadResult.individual.first_name;
-                    individualData.value.last_name = leadResult.individual.last_name;
-                    individualData.value.SSN = leadResult.individual.SSN;
-                    individualData.value.date_of_birth = leadResult.individual.date_of_birth;
-                    individualData.value.home_phone = leadResult.individual.home_phone;
-                    individualData.value.phone_number = leadResult.individual.phone_number;
-                    individualData.value.email = leadResult.individual.email;
-                    individualData.value.language = leadResult.individual.language;
-                    individualData.value.original_profile_id = leadResult.individual.original_profile_id;
-                    individualData.value.lead_status = leadResult.lead_status;
                     individualId.value = leadResult.individual.xid;
 
                     if(leadResult.individual.address) {
                         addressesFormData.value = leadResult.individual.address;
                     }
-                    console.log('leadResult.individual', leadResult.individual);
-
-                    if(leadResult.individual.campaign) {
-                        individualData.value.campaign.email_template_xid = leadResult.individual.campaign.xid;
-                        individualData.value.campaign.form = leadResult.individual.campaign.form;
-                    }
 
                     if(leadResult.individual.co_applicant) {
-                        individualData.value.co_first_name = leadResult.individual.co_applicant.first_name;
-                        individualData.value.co_last_name = leadResult.individual.co_applicant.last_name;
-                        individualData.value.co_SSN = leadResult.individual.co_applicant.SSN;
-                        individualData.value.co_date_of_birth = leadResult.individual.co_applicant.date_of_birth;
-                        individualData.value.co_home_phone = leadResult.individual.co_applicant.home_phone;
-                        individualData.value.co_phone_number = leadResult.individual.co_applicant.phone_number;
-                        individualData.value.co_email = leadResult.individual.co_applicant.email;
-                        individualData.value.co_language = leadResult.individual.co_applicant.language;
 
                         if(leadResult.individual.co_applicant.address) {
                             addressesFormData.value.co_address_line1 = leadResult.individual.co_applicant.address.address_line1;
@@ -849,6 +750,8 @@ export default {
             } else if (saveType == "save_exit") {
                 saveExitLoading.value = true;
             }
+
+            console.log("leadFormData.value", leadFormData.value);
 
             let url = '';
             let data = {};
@@ -1107,6 +1010,7 @@ export default {
             skipSuccess,
 
             individualData,
+            leadData,
             extraLeadFormData,
             states,
             addressesFormData,

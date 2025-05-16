@@ -13,7 +13,25 @@ class Campaign extends BaseModel
 
     protected $table = 'campaigns';
 
-    protected $default = ['xid', 'name'];
+    protected $default = [
+        'xid',
+        'name',
+        'status',
+        'remaining_leads',
+        'total_leads',
+        'form_id',
+        'x_form_id',
+        'email_template_id',
+        'x_email_template_id',
+        'detail_fields',
+        'last_action_by',
+        'x_last_action_by',
+        'completed_by',
+        'x_completed_by',
+        'started_on',
+        'completed_on',
+        'upcoming_lead_action',
+    ];
 
     protected $guarded = ['id', 'status', 'started_on', 'completed_on', 'completed_by', 'created_by', 'updated_by', 'last_action_by', 'created_at', 'updated_at'];
 

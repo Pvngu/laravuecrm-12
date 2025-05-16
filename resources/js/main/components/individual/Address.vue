@@ -31,7 +31,11 @@
                     :validateStatus="rules.co_address_line1 ? 'error' : null"
                     class="hidden-label"
                 >
-                    <a-input v-model:value="formData.co_address_line1" :placeholder="$t('common.placeholder_default_text', [$t('lead.address_line_1')])"></a-input>
+                    <a-input 
+                        v-model:value="formData.co_address_line1" 
+                        :placeholder="$t('common.placeholder_default_text', [$t('lead.address_line_1')])"
+                        :disabled="!formData.co_applicant"
+                    ></a-input>
                 </a-form-item>
             </a-col>
         </a-row>
@@ -54,7 +58,11 @@
                     :validateStatus="rules.co_address_line2 ? 'error' : null"
                     class="hidden-label"
                 >
-                    <a-input v-model:value="formData.co_address_line2" :placeholder="$t('common.placeholder_default_text', [$t('lead.address_line_2')])"></a-input>
+                    <a-input 
+                        v-model:value="formData.co_address_line2" 
+                        :placeholder="$t('common.placeholder_default_text', [$t('lead.address_line_2')])"
+                        :disabled="!formData.co_applicant"
+                    ></a-input>
                 </a-form-item>
             </a-col>
         </a-row>
@@ -77,7 +85,11 @@
                     :validateStatus="rules.co_city ? 'error' : null"
                     class="hidden-label"
                 >
-                    <a-input v-model:value="formData.co_city" :placeholder="$t('common.placeholder_default_text', [$t('lead.city')])"></a-input>
+                    <a-input 
+                        v-model:value="formData.co_city" 
+                        :placeholder="$t('common.placeholder_default_text', [$t('lead.city')])"
+                        :disabled="!formData.co_applicant"
+                    ></a-input>
                 </a-form-item>
             </a-col>
         </a-row>
@@ -128,6 +140,7 @@
                         :allowClear="true"
                         optionFilterProp="title"
                         show-search
+                        :disabled="!formData.co_applicant"
                     >
                         <a-select-option 
                             v-for="state in states" 
@@ -159,7 +172,11 @@
                     :validateStatus="rules.co_zip_code ? 'error' : null"
                     class="hidden-label"
                 >
-                    <a-input v-model:value="formData.co_zip_code" :placeholder="$t('common.placeholder_default_text', [$t('lead.zip_code')])"></a-input>
+                    <a-input 
+                        v-model:value="formData.co_zip_code" 
+                        :placeholder="$t('common.placeholder_default_text', [$t('lead.zip_code')])"
+                        :disabled="!formData.co_applicant"
+                    ></a-input>
                 </a-form-item>
             </a-col>
         </a-row>
@@ -174,12 +191,11 @@
         }"
     >
         <a-row justify="end">
-            <a-col :xs="24" :sm="24" :md="6" :lg="6">
+            <a-col>
                 <a-button
                     type="primary"
                     :loading="saveLoading"
                     @click="onSubmit"
-                    block
                 >
                     <template #icon>
                         <SaveOutlined />
@@ -192,7 +208,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { SaveOutlined } from "@ant-design/icons-vue";
 import apiAdmin from "../../../common/composable/apiAdmin";
 import { notification } from "ant-design-vue";

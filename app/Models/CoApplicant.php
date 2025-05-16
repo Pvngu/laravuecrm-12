@@ -9,6 +9,19 @@ class CoApplicant extends BaseModel
 {
     protected $hidden = ['id'];
 
+    protected $default = [
+        'id',
+        'xid',
+        'first_name',
+        'last_name',
+        'SSN',
+        'date_of_birth',
+        'home_phone',
+        'phone_number',
+        'email',
+        'language',
+    ];
+
     protected $appends = ['xid'];
 
     protected static function boot()

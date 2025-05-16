@@ -13,13 +13,13 @@ class Individual extends BaseModel
     
     protected $table = 'individuals';
 
-    protected $default = ['xid'];
+    protected $default = ['id','xid','reference_number','first_name','last_name','SSN','date_of_birth','home_phone','phone_number','email','original_profile_id','language','lead_data','time_taken','last_action_by','x_last_action_by','x_campaign_id'];
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
     protected $hidden = ['id', 'company_id', 'campaign_id', 'first_action_by', 'last_action_by', 'individual_follow_up_id', 'salesman_booking_id'];
 
-    protected $appends = ['xid', 'x_company_id', 'x_campaign_id', 'x_first_action_by', 'x_last_action_by', 'x_individual_follow_up_id', 'x_salesman_booking_id', 'full_name'];
+    protected $appends = ['xid', 'x_company_id', 'x_campaign_id', 'x_first_action_by', 'x_last_action_by', 'x_individual_follow_up_id', 'x_salesman_booking_id', 'full_name', 'template_form'];
 
     protected $filterable = ['reference_number','first_name','last_name', 'campaign_id', 'individual_status'];
 
@@ -41,8 +41,7 @@ class Individual extends BaseModel
         'salesman_booking_id' => Hash::class . ':hash',
         'lead_data' => 'array',
         'time_taken' => 'integer',
-        'started' => 'integer',
-        'date_of_birth' => 'date',
+        'started' => 'integer'
     ];
 
     protected static function boot()
@@ -112,5 +111,55 @@ class Individual extends BaseModel
         return $this->first_name . ' ' . $this->last_name;
     }
 
-    // Accessors & Mutators
+    public function getTemplateFormAttribute()
+    {
+        $fields = [
+            'first_name',
+            'last_name',
+            'SSN',
+            'date_of_birth',
+            'phone_number',
+            'home_phone',
+            'email',
+            'language',
+            'original_profile_id',
+        ];
+
+        $template = [];
+        foreach ($fields as $field) {
+            $template[] = [
+            'field_name' => $field,
+            'field_value' => $this->$field,
+            ];
+        }
+
+        $coFields = [
+            'first_name',
+            'last_name',
+            'SSN',
+            'date_of_birth',
+            'phone_number',
+            'home_phone',
+            'email',
+            'language',
+        ];
+
+        foreach ($coFields as $coField) {
+            $template[] = [
+            'field_name' => 'co_' . $coField,
+            'field_value' => $this->coApplicant ? $this->coApplicant->$coField : '',
+            ];
+        }
+
+        if (is_array($this->lead_data)) {
+            foreach ($this->lead_data as $leadField) {
+                $template[] = [
+                    'field_name' => $leadField['field_name'] ?? '',
+                    'field_value' => $leadField['field_value'] ?? '',
+                ];
+            }
+        }
+
+        return $template;
+    }
 }

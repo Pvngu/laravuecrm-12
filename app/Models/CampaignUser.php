@@ -9,7 +9,7 @@ class CampaignUser extends BaseModel
 {
     protected $table = 'campaign_users';
 
-    protected $default = ['xid'];
+    protected $default = ['xid', 'user_id', 'x_user_id', 'campaign_id', 'x_campaign_id'];
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
 

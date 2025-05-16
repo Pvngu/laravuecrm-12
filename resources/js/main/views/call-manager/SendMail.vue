@@ -510,12 +510,12 @@ export default defineComponent({
             const selectedPointArray = editor.value.getSelection(true);
 
             if(extraForm) {
-                var leadDataInleadDataField = find(props.leadFormData.lead_data, [
+                var leadDataInleadDataField = find(props.leadFormData, [
                 "field_name",
                 mergeFieldText,
             ]);
             } else {
-                var leadDataInleadDataField = find(props.extraLeadFormData.lead_data, [
+                var leadDataInleadDataField = find(props.extraLeadFormData, [
                 "field_name",
                 mergeFieldText,
             ]);
@@ -563,7 +563,7 @@ export default defineComponent({
             if (selectedEmailTemplate && selectedEmailTemplate.body) {
                 var bodyMessage = selectedEmailTemplate.body;
 
-                forEach(props.leadFormData.lead_data, (leadDataValue, leadDataKey) => {
+                forEach(props.leadFormData, (leadDataValue, leadDataKey) => {
                     if (
                         leadDataValue.field_value != undefined &&
                         leadDataValue.field_value != ""
@@ -576,7 +576,7 @@ export default defineComponent({
                     }
                 });
 
-                forEach(props.extraLeadFormData.lead_data, (leadDataValue, leadDataKey) => {
+                forEach(props.extraLeadFormData, (leadDataValue, leadDataKey) => {
                     if (
                         leadDataValue.field_value != undefined &&
                         leadDataValue.field_value != ""
