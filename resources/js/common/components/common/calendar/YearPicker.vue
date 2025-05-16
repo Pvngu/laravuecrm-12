@@ -30,7 +30,7 @@ export default defineComponent({
     emits: ["yearChanged"],
     setup(props, { emit }) {
         const yearValue = ref(undefined);
-        const { disabledDate, formatYear, dayjs } = common();
+        const { disabledDate, formatYear, dayjs, appSetting } = common();
 
         onMounted(() => {
             if (props.year) {
@@ -40,7 +40,7 @@ export default defineComponent({
 
         const yearChanged = (newValue) => {
             const emitValue = newValue
-                ? newValue.utc().format("YYYY")
+                ? newValue.tz(appSetting.value.timezone).format("YYYY")
                 : undefined;
             emit("yearChanged", emitValue);
         };
@@ -66,5 +66,3 @@ export default defineComponent({
     },
 });
 </script>
-
-<style></style>

@@ -1,7 +1,7 @@
 <template>
     <AdminPageHeader>
         <template #header>
-            <a-page-header :title="$t(`menu.lead_follow_up`)" class="p-0!" />
+            <a-page-header :title="$t(`menu.lead_follow_up`)" class="p-0" />
         </template>
         <template #breadcrumb>
             <a-breadcrumb separator="-" style="font-size: 12px">
@@ -20,9 +20,44 @@
         </template>
     </AdminPageHeader>
 
+    <admin-page-filters>
+        <a-row :gutter="[16, 16]">
+            <a-col :xs="24" :sm="24" :md="12" :lg="10" :xl="10">
+                <a-button
+                    v-if="
+                        table.selectedRowKeys.length > 0 &&
+                        (permsArray.includes('leads_view_all') ||
+                            permsArray.includes('admin'))
+                    "
+                    type="primary"
+                    @click="showSelectedDeleteConfirm"
+                    danger
+                >
+                    <template #icon><DeleteOutlined /></template>
+                    {{ $t("common.delete") }}
+                </a-button>
+            </a-col>
+            <a-col :xs="24" :sm="24" :md="12" :lg="14" :xl="14">
+                <a-row :gutter="[16, 16]" justify="end">
+                    <a-col>
+                        <a-button 
+                            type="primary" 
+                            @click="showCalendar = !showCalendar"
+                        >
+                            <template #icon>
+                                <CalendarOutlined v-if="!showCalendar" @click="onCalendar" />
+                                <TableOutlined v-else />
+                            </template>
+                        </a-button>
+                    </a-col>
+                </a-row>
+            </a-col>
+        </a-row>
+    </admin-page-filters>
+
     <admin-page-table-content>
         <a-row>
-            <a-col :span="24">
+            <a-col :span="24" v-if="!showCalendar">
                 <div class="table-responsive">
                     <a-table
                         :row-selection="{
@@ -43,13 +78,10 @@
                         size="middle"
                     >
                         <template #title>
-                            <a-row justify="end" align="center">
+                            <a-row justify="end" align="center" class="table-header">
                                 <a-col>
-                                    <Filters 
-                                        @onReset="resetFilters"
-                                        :filters="extraFilters"
-                                    >
-                                        <a-col :span="24">
+                                    <Filters @onReset="resetFilters">
+                                        <a-col span="24">
                                             <a-form-item :label="$t('lead.campaign')">
                                                 <a-select
                                                     v-model:value="extraFilters.campaign_id"
@@ -73,31 +105,19 @@
                                         </a-col>
                                         <a-col
                                             v-if="permsArray.includes('leads_view_all') || permsArray.includes('admin')"
-                                            :span="24"
+                                            span="24"
                                         >
-                                            <a-form-item :label="$t('user.user')">
-                                                <a-select
-                                                    v-model:value="extraFilters.user_id"
-                                                    :placeholder="$t('common.select_default_text', [$t('user.user')])"
-                                                    :allowClear="true"
-                                                    style="width: 100%"
-                                                    optionFilterProp="title"
-                                                    show-search
-                                                    @change="setUrlData"
-                                                >
-                                                    <a-select-option
-                                                        v-for="allUsers in allUsers"
-                                                        :key="allUsers.xid"
-                                                        :title="allUsers.name"
-                                                        :value="allUsers.xid"
-                                                    >
-                                                        {{ allUsers.name }}
-                                                    </a-select-option>
-                                                </a-select>
+                                            <a-form-item :label="$t('lead_follow_up.assigned_to')">
+                                                <UserSelect
+                                                    @onChange="(id) => {
+                                                        extraFilters.user_id = id;
+                                                        setUrlData();
+                                                    }"
+                                                />
                                             </a-form-item>
                                         </a-col>
-                                        <a-col :span="24">
-                                            <a-form-item :label="$t('common.date')">
+                                        <a-col span="24">
+                                            <a-form-item :label="$t('common.date_range')">
                                                 <DateRangePicker
                                                     @dateTimeChanged="
                                                         (changedDateTime) => {
@@ -116,7 +136,7 @@
                             <template v-if="column.dataIndex === 'reference_number'">
                                 <a-button
                                     type="link"
-                                    class="p-0!"
+                                    class="p-0"
                                     @click="showViewDrawer(record)"
                                 >
                                     {{
@@ -128,7 +148,7 @@
                                 </a-button>
                             </template>
                             <template v-if="column.dataIndex === 'date_time'">
-                                {{ formatDateTime(record.lead_follow_up.date_time) }}
+                                {{ formatDateTime(record.individual_follow_up.date_time) }}
                             </template>
                             <template v-if="column.dataIndex === 'campaign'">
                                 {{
@@ -139,17 +159,17 @@
                             </template>
                             <template v-if="column.dataIndex === 'actioner'">
                                 {{
-                                    record.lead_follow_up &&
-                                    record.lead_follow_up.user &&
-                                    record.lead_follow_up.user.name
-                                        ? record.lead_follow_up.user.name
+                                    record.individual_follow_up &&
+                                    record.individual_follow_up.user &&
+                                    record.individual_follow_up.user.name
+                                        ? record.individual_follow_up.user.name
                                         : "-"
                                 }}
                             </template>
                             <template v-if="column.dataIndex === 'action'">
                                 <a-space>
                                     <a-tooltip
-                                        v-if="record.lead_follow_up.x_user_id == user.xid"
+                                        v-if="record.individual_follow_up.x_user_id == user.xid"
                                         :title="$t('lead_follow_up.start_follow_up')"
                                     >
                                         <a-button
@@ -168,7 +188,7 @@
                                         "
                                         bookingType="lead_follow_up"
                                         @success="setUrlData"
-                                        :xLeadId="record.xid"
+                                        :xIndividualId="record.xid"
                                         :showDeleteText="false"
                                     />
                                 </a-space>
@@ -177,8 +197,66 @@
                     </a-table>
                 </div>
             </a-col>
+            <a-col v-else span="24">
+                <a-calendar @select="onSelectCalendar">
+                    <template #dateCellRender="{ current }">
+                        <ul class="events">
+                            <li v-for="item in calendarData">
+                               <a-badge
+                                    v-if="formatDate(item.individual_follow_up.date_time) == formatDate(current)"
+                                    color="red"
+                                    :text="`${formatTime(item.individual_follow_up.date_time)} ${item.first_name} ${item.last_name}`"
+                                    @click="openFollowUpDetails(item)"
+                                    /> 
+                            </li>
+                        </ul>
+                    </template>
+                </a-calendar>
+            </a-col>
         </a-row>
     </admin-page-table-content>
+    <a-modal 
+        centered 
+        v-model:open="isFollowUpDetailOpen" 
+        :title="$t('lead_follow_up.follow_up_details')"
+        :okText="$t('lead_follow_up.start_follow_up')"
+        @ok="startFollowUp(selectedFollowUp)"
+    >
+        <a-row v-if="selectedFollowUp">
+            <a-col span="24">
+                <a-typography-title :level="5">
+                    {{ $t('lead_follow_up.name') }}:
+                </a-typography-title>
+                <a-typography-text>
+                    {{ selectedFollowUp.first_name }} {{ selectedFollowUp.last_name }}
+                </a-typography-text>
+            </a-col>
+            <a-col span="24" class="mt-20">
+                <a-typography-title :level="5">
+                    {{ $t('lead_follow_up.assigned_to') }}:
+                </a-typography-title>
+                <a-typography-text v-if="selectedFollowUp.individual_follow_up">
+                    {{ selectedFollowUp.individual_follow_up.user.name ? selectedFollowUp.individual_follow_up.user.name : '-' }}
+                </a-typography-text>
+            </a-col>
+            <a-col span="24" class="mt-20">
+                <a-typography-title :level="5">
+                    {{ $t('lead_follow_up.date') }}:
+                </a-typography-title>
+                <a-typography-text v-if="selectedFollowUp.individual_follow_up">
+                    {{ formatDateTime(selectedFollowUp.individual_follow_up.date_time) }}
+                </a-typography-text>
+            </a-col>
+            <a-col span="24" class="mt-20">
+                <a-typography-title :level="5">
+                    {{ $t('lead_follow_up.note') }}:
+                </a-typography-title>
+                <a-typography-text v-if="selectedFollowUp.individual_follow_up">
+                    {{ selectedFollowUp.individual_follow_up.notes ? selectedFollowUp.individual_follow_up.notes : '-' }}
+                </a-typography-text>
+            </a-col>
+        </a-row>
+    </a-modal>
 
     <!-- Global Compaonent -->
     <view-lead-details
@@ -189,12 +267,14 @@
 </template>
 
 <script>
-import { ref, createVNode, onMounted } from "vue";
+import { ref, createVNode, onMounted, watch } from "vue";
 import { Modal, notification } from "ant-design-vue";
 import {
     DoubleRightOutlined,
     ExclamationCircleOutlined,
     DeleteOutlined,
+    CalendarOutlined,
+    TableOutlined,
 } from "@ant-design/icons-vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -206,18 +286,36 @@ import common from "../../../../common/composable/common";
 import viewDrawer from "../../../../common/composable/viewDrawer";
 import fields from "./fields";
 import AdminPageHeader from "../../../../common/layouts/AdminPageHeader.vue";
-import Filters from "../../../../common/components/common/select/Filters.vue";
 import DateRangePicker from "../../../../common/components/common/calendar/DateRangePicker.vue";
 import DeleteBooking from "../DeleteBooking.vue";
+import dayjs from 'dayjs';
+import UserSelect from "../../../../common/components/common/select/UserSelect.vue";
+import Filters from "../../../../common/components/common/select/Filters.vue";
 
 export default {
     components: {
         DoubleRightOutlined,
         DeleteOutlined,
         AdminPageHeader,
-        Filters,
         DateRangePicker,
         DeleteBooking,
+        CalendarOutlined,
+        TableOutlined,
+        UserSelect,
+        Filters,
+    },
+    methods: {
+        openFollowUpDetails(item) {
+            this.selectedFollowUp = item;
+            this.isFollowUpDetailOpen = true;
+        }
+    },
+    watch: {
+        isFollowUpDetailOpen(val) {
+            if (!val) {
+                this.selectedFollowUp = [];
+            }
+        }
     },
     setup() {
         const { permsArray, getCampaignUrl, user, formatDateTime } = common();
@@ -235,6 +333,10 @@ export default {
         const allCampaigns = ref([]);
         const allUsers = ref([]);
         const leadDrawer = viewDrawer();
+        const showCalendar = ref(false);
+        const isFollowUpDetailOpen = ref(false);
+        const selectedFollowUp = ref([]);
+        const calendarData = ref([]);
 
         onMounted(() => {
             const campaignsUrl = getCampaignUrl();
@@ -265,6 +367,14 @@ export default {
             );
         });
 
+        const formatDate = (dateTime) => {
+            return dayjs(dateTime).format('DD MMM YYYY');
+        };
+
+        const formatTime = (dateTime) => {
+            return dayjs(dateTime).format('hh:mm A');
+        };
+
         const setUrlData = () => {
             newTable.tableUrl.value = {
                 url,
@@ -277,6 +387,29 @@ export default {
                 page: 1,
             });
         };
+
+        const onSelectCalendar = (date, { source }) => {
+            const month = (dayjs(date).month() + 1) ?? dayjs().month() + 1;
+            const year = (dayjs(date).year()) ?? dayjs().year();
+            if(source == "month" || source == "year") {
+                fetchCalendarData(month, year);
+            }
+        }
+
+        const onCalendar = () => {
+            if(calendarData.value.length == 0) {
+                const month = dayjs().month() + 1;
+                const year = dayjs().year();
+
+                fetchCalendarData(month, year);
+            }
+        }
+
+        const fetchCalendarData = (month, year) => {
+            axiosAdmin.get(`${url}&month=${month}&year=${year}&limit=1000`).then((res) => {
+                calendarData.value = res.data;
+            });
+        }
 
         const startFollowUp = (followUpDetails) => {
             Modal.confirm({
@@ -291,7 +424,8 @@ export default {
                     addEditRequestAdmin({
                         url: `lead-follow-ups/take-action`,
                         data: {
-                            x_lead_id: followUpDetails.xid,
+                            x_individual_id: followUpDetails.xid,
+                            x_lead_id: followUpDetails.lead.xid,
                             booking_type: "lead_follow_up",
                         },
                         success: (res) => {
@@ -324,7 +458,7 @@ export default {
                     forEach(newTable.table.selectedRowKeys, (selectedRow) => {
                         allDeletePromise.push(
                             axiosAdmin.post(`lead-follow-ups/delete`, {
-                                x_lead_id: selectedRow,
+                                x_individual_id: selectedRow,
                                 booking_type: "lead_follow_up",
                             })
                         );
@@ -353,7 +487,7 @@ export default {
             extraFilters.value = {
                 campaign_id: undefined,
                 dates: [],
-                user_id: user.value.xid,
+                user_id: undefined,
             };
             setUrlData();
         };
@@ -374,8 +508,30 @@ export default {
             startFollowUp,
             setUrlData,
             showSelectedDeleteConfirm,
+            showCalendar,
+            formatDate,
+            formatTime,
+            isFollowUpDetailOpen,
+            onSelectCalendar,
+            calendarData,
+            onCalendar,
             resetFilters,
         };
     },
 };
 </script>
+
+<style scoped>
+.events {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.events .ant-badge-status {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  text-overflow: ellipsis;
+  font-size: 12px;
+}
+</style>

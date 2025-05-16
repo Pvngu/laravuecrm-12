@@ -1,6 +1,10 @@
 <template>
-    <a-tooltip :title="pageTitle">
-        <a-button :type="btnType" :shape="btnShape" size="small" @click="showModal">
+    <a-tooltip :title="pageTitle" :color="tipColor">
+        <a-button :type="btnType" :shape="btnShape" :size="btnSize" @click="showModal">
+            <template #icon>
+                <ScheduleOutlined v-if="bookingType == 'lead_follow_up'" />
+                <ShoppingCartOutlined v-else />
+            </template>
             <slot></slot>
         </a-button>
     </a-tooltip>
@@ -123,7 +127,7 @@
                         getInitData();
                     }
                 "
-                :xLeadId="leadDetails.xid"
+                :xIndividualId="leadDetails.xid"
             />
             <a-button key="back" @click="hideModal">
                 {{ $t("common.cancel") }}
@@ -140,6 +144,8 @@ import {
     SaveOutlined,
     DeleteOutlined,
     ExclamationCircleOutlined,
+    ScheduleOutlined,
+    ShoppingCartOutlined
 } from "@ant-design/icons-vue";
 import { useI18n } from "vue-i18n";
 import apiAdmin from "../../../common/composable/apiAdmin";
@@ -149,7 +155,7 @@ import DeleteBooking from "./DeleteBooking.vue";
 
 export default defineComponent({
     props: {
-        leadId: {
+        individualId: {
             default: null,
         },
         bookingType: {
@@ -160,6 +166,14 @@ export default defineComponent({
         },
         btnShape: {
             default: "rectangle",
+        },btnSize: {
+            default: "small",
+        },
+        lastActionerId: {
+            default: null,
+        },
+        tipColor: {
+            default: null,
         },
     },
     emits: ["success"],
@@ -171,12 +185,14 @@ export default defineComponent({
 
         DateTimePicker,
         DeleteBooking,
+        ScheduleOutlined,
+        ShoppingCartOutlined
     },
     setup(props, { emit }) {
         const { t } = useI18n();
         const addEditType = ref("add");
         const formData = ref({
-            lead_id: props.leadId,
+            individual_id: props.individualId,
             booking_type: props.bookingType,
             date_time: undefined,
             user_id: undefined,
@@ -188,8 +204,8 @@ export default defineComponent({
         const users = ref([]);
         const leadDetailsUrl =
             props.bookingType == "salesman_bookings"
-                ? `leads/${props.leadId}?fields=id,xid,salesman_booking_id,x_salesman_booking_id,salesmanBooking{id,xid,log_type,user_id,x_user_id,date_time,notes},salesmanBooking:user{id,xid,name}`
-                : `leads/${props.leadId}?fields=id,xid,lead_follow_up_id,x_lead_follow_up_id,leadFollowUp{id,xid,log_type,user_id,x_user_id,date_time,notes},leadFollowUp:user{id,xid,name}`;
+                ? `individuals/${props.individualId}?fields=id,xid,salesman_booking_id,x_salesman_booking_id,salesmanBooking{id,xid,log_type,user_id,x_user_id,date_time,notes},salesmanBooking:user{id,xid,name}`
+                : `individuals/${props.individualId}?fields=id,xid,individual_follow_up_id,x_individual_follow_up_id,individualFollowUp{id,xid,log_type,user_id,x_user_id,date_time,notes},individualFollowUp:user{id,xid,name}`;
 
         const { addEditRequestAdmin, loading, rules } = apiAdmin();
         const { appSetting } = common();
@@ -211,7 +227,7 @@ export default defineComponent({
         const getInitData = () => {
             const leadDetailsPromise = axiosAdmin.get(leadDetailsUrl);
             const usersPromise = axiosAdmin.get(
-                `leads/campaign-members?lead_id=${props.leadId}&booking_type=${props.bookingType}`
+                `leads/campaign-members?individual_id=${props.individualId}&booking_type=${props.bookingType}`
             );
 
             Promise.all([leadDetailsPromise, usersPromise]).then(
@@ -233,14 +249,14 @@ export default defineComponent({
                         addEditType.value = "edit";
                     } else if (
                         props.bookingType == "lead_follow_up" &&
-                        responseData.lead_follow_up &&
-                        responseData.lead_follow_up.xid
+                        responseData.individual_follow_up &&
+                        responseData.individual_follow_up.xid
                     ) {
                         formData.value = {
                             ...formData.value,
-                            date_time: responseData.lead_follow_up.date_time,
-                            user_id: responseData.lead_follow_up.x_user_id,
-                            notes: responseData.lead_follow_up.notes,
+                            date_time: responseData.individual_follow_up.date_time,
+                            user_id: responseData.individual_follow_up.x_user_id,
+                            notes: responseData.individual_follow_up.notes,
                         };
 
                         addEditType.value = "edit";
@@ -248,7 +264,7 @@ export default defineComponent({
                         formData.value = {
                             ...formData.value,
                             date_time: undefined,
-                            user_id: undefined,
+                            user_id: props.lastActionerId ? props.lastActionerId : undefined,
                             notes: "",
                         };
                     }

@@ -1,7 +1,7 @@
 <template>
     <AdminPageHeader>
         <template #header>
-            <a-page-header :title="$t(`menu.salesman_bookings`)" class="p-0!" />
+            <a-page-header :title="$t(`menu.salesman_bookings`)" class="p-0" />
         </template>
         <template #breadcrumb>
             <a-breadcrumb separator="-" style="font-size: 12px">
@@ -103,7 +103,7 @@
     </admin-page-filters>
 
     <admin-page-table-content>
-        <a-row class="mt-5">
+        <a-row class="mt-20">
             <a-col :span="24">
                 <div class="table-responsive">
                     <a-table
@@ -128,7 +128,7 @@
                             <template v-if="column.dataIndex === 'reference_number'">
                                 <a-button
                                     type="link"
-                                    class="p-0!"
+                                    class="p-0"
                                     @click="showViewDrawer(record)"
                                 >
                                     {{
@@ -173,7 +173,7 @@
                                     <DeleteBooking
                                         bookingType="salesman_bookings"
                                         @success="setUrlData"
-                                        :xLeadId="record.xid"
+                                        :xIndividualId="record.xid"
                                         :showDeleteText="false"
                                     />
                                 </a-space>
@@ -326,7 +326,7 @@ export default {
                     forEach(newTable.table.selectedRowKeys, (selectedRow) => {
                         allDeletePromise.push(
                             axiosAdmin.post(`salesman-bookings`, {
-                                x_lead_id: selectedRow,
+                                x_individual_id: selectedRow,
                                 booking_type: "salesman_bookings",
                             })
                         );

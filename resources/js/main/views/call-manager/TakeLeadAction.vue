@@ -121,7 +121,7 @@
                                         {{ $t("menu.lead_follow_up") }}
                                     </BookingModal>
 
-                                    <BookingModal
+                                    <!-- <BookingModal
                                         v-if="leadDetails && leadDetails.xid"
                                         key="salesman_bookings"
                                         :individualId="leadDetails.individual.xid"
@@ -134,7 +134,7 @@
                                         "
                                     >
                                         {{ $t("menu.salesman_bookings") }}
-                                    </BookingModal>
+                                    </BookingModal> -->
                                 </a-space>
                             </a-col>
                         </a-row>

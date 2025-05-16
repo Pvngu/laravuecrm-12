@@ -47,4 +47,9 @@ class BaseModel extends ApiModel
     {
         return Hashids::encode($this->id);
     }
+
+    public function getDefaultAttribute()
+    {
+        return $this->default;
+    }
 }

@@ -39,7 +39,7 @@ export default defineComponent({
     emits: ["dateTimeChanged"],
     setup(props, { emit }) {
         const dateTimeValue = ref(undefined);
-        const { disabledDate, disabledPastDate, formatDateTime,formatDate, dayjs } = common();
+        const { disabledDate, disabledPastDate, formatDateTime,formatDate, dayjs, appSetting } = common();
 
         onMounted(() => {
             if (props.dateTime) {
@@ -57,7 +57,7 @@ export default defineComponent({
 
         const dateTimeChanged = (newValue) => {
             const emitValue = newValue
-                ? newValue.utc().format("YYYY-MM-DDTHH:mm:ssZ")
+                ? newValue.tz(appSetting.value.timezone).format("YYYY-MM-DDTHH:mm:ssZ")
                 : undefined;
             emit("dateTimeChanged", emitValue);
         };
@@ -85,5 +85,3 @@ export default defineComponent({
     },
 });
 </script>
-
-<style></style>

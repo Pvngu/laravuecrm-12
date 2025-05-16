@@ -77,8 +77,15 @@
                                         'common.placeholder_default_text',
                                         [$t('lead.language')]
                                     )"
-                                :options="optionLanguages"
-                            ></a-select>
+                            >
+                                <a-select-option
+                                    v-for="option in optionLanguages"
+                                    :key="option.id"
+                                    :value="option.value"
+                                >
+                                    {{ $t(option.key) }}
+                                </a-select-option>
+                            </a-select>
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -166,7 +173,7 @@ export default defineComponent({
         SaveOutlined,
     },
     setup(props, { emit }) {
-        const { permsArray, optionLanguages } = common();
+        const { permsArray } = common();
         const { addEditRequestAdmin, loading, rules } = apiAdmin();
         const visible = ref(false);
         const formData = ref({});
@@ -176,8 +183,13 @@ export default defineComponent({
             first_name: "",
             last_name: "",
         });
+        const optionLanguages = ref([]);
 
         onMounted(() => {
+            axiosAdmin.get('select-options/language').then((res) => {
+                optionLanguages.value = res.data;
+            })
+
             resetFormData();
         });
 

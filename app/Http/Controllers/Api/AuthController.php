@@ -2,22 +2,28 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Classes\Common;
-use App\Http\Controllers\ApiBaseController;
-use App\Http\Requests\Api\Auth\LoginRequest;
-use App\Http\Requests\Api\Auth\ProfileRequest;
-use App\Http\Requests\Api\Auth\RefreshTokenRequest;
-use App\Http\Requests\Api\Auth\UploadFileRequest;
-use App\Models\Company;
-use App\Models\Currency;
+use Carbon\Carbon;
 use App\Models\Form;
 use App\Models\Lang;
-use App\Models\Settings;
-use App\Models\StaffMember;
 use App\Models\User;
-use Carbon\Carbon;
-use Examyou\RestAPI\ApiResponse;
+use App\Classes\Common;
+use App\Models\Company;
+use App\Models\Currency;
+use App\Models\Salesman;
+use App\Models\Settings;
+use Carbon\CarbonPeriod;
+use App\Models\Individual;
+use App\Models\StaffMember;
+use App\Models\CampaignUser;
 use Illuminate\Http\Request;
+use Examyou\RestAPI\ApiResponse;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\ApiBaseController;
+use App\Http\Requests\Api\Auth\LoginRequest;
+use Examyou\RestAPI\Exceptions\ApiException;
+use App\Http\Requests\Api\Auth\ProfileRequest;
+use App\Http\Requests\Api\Auth\UploadFileRequest;
+use App\Http\Requests\Api\Auth\RefreshTokenRequest;
 
 class AuthController extends ApiBaseController
 {
@@ -257,7 +263,257 @@ class AuthController extends ApiBaseController
 
     public function dashboard(Request $request)
     {
-        // start code here
+        $user = user();
+
+        $yourCampaignCount = CampaignUser::join('campaigns', 'campaigns.id', '=', 'campaign_users.campaign_id')
+            ->where('campaign_users.user_id', '=', $user->id)
+            ->where(function ($query) {
+                return $query->where('campaigns.status', 'started')
+                    ->orWhereNull('campaigns.status');
+            })
+            ->count();
+
+        $yourLeadCount = Individual::join('campaigns', 'campaigns.id', '=', 'individuals.campaign_id')
+            ->where('individuals.last_action_by', '=', $user->id)
+            ->where(function ($query) {
+                return $query->where('campaigns.status', 'started')
+                    ->orWhereNull('campaigns.status');
+            });
+
+        $totalTimes = Individual::join('campaigns', 'campaigns.id', '=', 'individuals.campaign_id')
+            ->where('individuals.last_action_by', '=', $user->id)
+            ->where(function ($query) {
+                return $query->where('campaigns.status', 'started')
+                    ->orWhereNull('campaigns.status');
+            });
+
+        $totalFollowUps = Individual::join('campaigns', 'campaigns.id', '=', 'individuals.campaign_id')
+            ->join('individual_logs', 'individual_logs.id', '=', 'individuals.individual_follow_up_id')
+            ->where('individual_logs.user_id', '=', $user->id)
+            ->where('campaigns.status', '!=', 'completed')
+            ->whereNotNull('individuals.individual_follow_up_id');
+
+        if ($request->has('dates') && $request->dates != null && count($request->dates) > 0) {
+            $dates = $request->dates;
+            $startDate = $dates[0];
+            $endDate = $dates[1];
+
+            $yourLeadCount = $yourLeadCount->whereRaw('DATE(individuals.updated_at) >= ?', [$startDate])
+                ->whereRaw('DATE(individuals.updated_at) <= ?', [$endDate]);
+            $totalTimes = $totalTimes->whereRaw('DATE(individuals.updated_at) >= ?', [$startDate])
+                ->whereRaw('DATE(individuals.updated_at) <= ?', [$endDate]);
+            $totalFollowUps = $totalFollowUps->whereRaw('DATE(individual_logs.date_time) >= ?', [$startDate])
+                ->whereRaw('DATE(individual_logs.date_time) <= ?', [$endDate]);
+        }
+
+        $yourLeadCount = $yourLeadCount->count();
+        $totalTimes = $totalTimes->sum('time_taken');
+        $totalFollowUps = $totalFollowUps->count();
+
+
+        return ApiResponse::make('Data fetched', [
+            'actionedCampaigns' => $this->getActionedCampaigns(),
+            'callMade' => $this->getCallMade(),
+            'allAppointments' => $this->getBookedAppointments(),
+            'allFollowUps' => $this->getFollowUps(),
+            'stateData' => [
+                'campaign_count' => $yourCampaignCount,
+                'lead_count' => $yourLeadCount,
+                'total_times' => $totalTimes,
+                'total_follow_ups' => $totalFollowUps,
+            ]
+        ]);
+    }
+
+    public function getActionedCampaigns()
+    {
+        $request = request();
+        $user = user();
+
+        $allActionedCampaigns = CampaignUser::select('campaigns.id', 'campaigns.name')
+            ->join('campaigns', 'campaigns.id', '=', 'campaign_users.campaign_id')
+            ->where('campaign_users.user_id', '=', $user->id)
+            ->where(function ($query) {
+                return $query->where('campaigns.status', 'started')
+                    ->orWhereNull('campaigns.status');
+            })
+            ->get();
+
+        $actionedCampaignName = [];
+        $actionedCampaignLeads = [];
+        $actionedCampaignColors = [];
+        foreach ($allActionedCampaigns as $allActionedCampaign) {
+            $totalLeads = Individual::where('individuals.last_action_by', '=', $user->id)
+                ->where('individuals.campaign_id', '=', $allActionedCampaign->id);
+
+            if ($request->has('dates') && $request->dates != null && count($request->dates) > 0) {
+                $dates = $request->dates;
+                $startDate = $dates[0];
+                $endDate = $dates[1];
+
+                $totalLeads = $totalLeads->whereRaw('DATE(individuals.updated_at) >= ?', [$startDate])
+                    ->whereRaw('DATE(individuals.updated_at) <= ?', [$endDate]);
+            }
+
+            $totalLeads = $totalLeads->count();
+
+            $actionedCampaignName[] = $allActionedCampaign->name;
+            $actionedCampaignLeads[] = $totalLeads;
+            $actionedCampaignColors[] = '#' . str_pad(dechex(mt_rand(0, 0xFFFFFF)), 6, '0', STR_PAD_LEFT);
+        }
+
+        return [
+            'labels' => $actionedCampaignName,
+            'values' => $actionedCampaignLeads,
+            'colors' => $actionedCampaignColors,
+        ];
+    }
+
+    public function getCallMade()
+    {
+        $user = user();
+        $request = request();
+
+        if ($request->has('dates') && $request->dates != null && count($request->dates) > 0) {
+            $dates = $request->dates;
+            $startDate = $dates[0];
+            $endDate = $dates[1];
+        } else {
+            $startDate =  Carbon::now()->subDays(30)->format("Y-m-d");
+            $endDate =  Carbon::now()->format("Y-m-d");
+        }
+
+        $allLeads = Individual::select(DB::raw('date(individuals.updated_at) as date, count(individuals.id) as total_leads'))
+            ->join('campaigns', 'campaigns.id', '=', 'individuals.campaign_id')
+            ->where('individuals.last_action_by', '=', $user->id)
+            ->where(function ($query) {
+                return $query->where('campaigns.status', 'started')
+                    ->orWhereNull('campaigns.status');
+            })
+            ->whereRaw('DATE(individuals.updated_at) >= ?', [$startDate])
+            ->whereRaw('DATE(individuals.updated_at) <= ?', [$endDate])
+            ->groupByRaw('date(individuals.updated_at)')
+            ->orderByRaw("date(individuals.updated_at) asc")
+            ->pluck('total_leads', 'date');
+
+        $periodDates = CarbonPeriod::create($startDate, $endDate);
+        $datesArray = [];
+        $leadsCount = [];
+
+        // Iterate over the period
+        foreach ($periodDates as $periodDate) {
+            $currentDate =  $periodDate->format('Y-m-d');
+
+            if (isset($allLeads[$currentDate])) {
+                $datesArray[] = $currentDate;
+                $leadsCount[] = isset($allLeads[$currentDate]) ? $allLeads[$currentDate] : 0;
+            }
+        }
+
+        return [
+            'dates' => $datesArray,
+            'calls' => $leadsCount,
+        ];
+    }
+
+    public function getBookedAppointments()
+    {
+        $request = request();
+        $user = user();
+
+        $allAppointments = Individual::select('individuals.id', 'individuals.reference_number','individuals.first_name','individuals.SSN','individuals.date_of_birth', 'individuals.home_phone', 'individuals.phone_number', 'individuals.email', 'individuals.language', 'individuals.original_profile_id', 'individuals.lead_data', 'individuals.campaign_id', 'individuals.time_taken', 'individuals.first_action_by', 'individuals.last_action_by', 'individuals.salesman_booking_id')
+            ->with([
+                'campaign' => function ($query) {
+                    $query->select('id', 'name', 'status');
+                },
+                'firstActioner' => function ($query) {
+                    $query->select('id', 'name');
+                },
+                'lastActioner' => function ($query) {
+                    $query->select('id', 'name');
+                },
+                'salesmanBooking' => function ($query) {
+                    $query->select('id', 'individual_id', 'user_id', 'date_time');
+                },
+                'salesmanBooking.user' => function ($query) {
+                    $query->select('id', 'name');
+                },
+                'lead' => function ($query) {
+                    $query;
+                }
+            ])
+            ->join('campaigns', 'campaigns.id', '=', 'individuals.campaign_id')
+            ->join('individual_logs', 'individual_logs.id', '=', 'individuals.salesman_booking_id')
+            ->where('individuals.last_action_by', '=', $user->id)
+            ->where(function ($query) {
+                return $query->where('campaigns.status', 'started')
+                    ->orWhereNull('campaigns.status');
+            })
+            ->whereNotNull('salesman_booking_id');
+
+        if ($request->has('dates') && $request->dates != null && count($request->dates) > 0) {
+            $dates = $request->dates;
+            $startDate = $dates[0];
+            $endDate = $dates[1];
+
+            $allAppointments = $allAppointments->whereRaw('DATE(individual_logs.date_time) >= ?', [$startDate])
+                ->whereRaw('DATE(individual_logs.date_time) <= ?', [$endDate]);
+        }
+
+        $allAppointments = $allAppointments->take(5)->get();
+
+
+        return $allAppointments;
+    }
+
+    public function getFollowUps()
+    {
+        $request = request();
+        $user = user();
+
+        $allAppointments = Individual::select('individuals.id', 'individuals.reference_number','individuals.first_name','individuals.SSN','individuals.date_of_birth', 'individuals.home_phone', 'individuals.phone_number', 'individuals.email', 'individuals.language', 'individuals.original_profile_id', 'individuals.last_name', 'individuals.lead_data', 'individuals.campaign_id', 'individuals.time_taken', 'individuals.first_action_by', 'individuals.last_action_by', 'individuals.individual_follow_up_id')
+            ->with([
+                'campaign' => function ($query) {
+                    $query->select('id', 'name', 'status');
+                },
+                'firstActioner' => function ($query) {
+                    $query->select('id', 'name');
+                },
+                'lastActioner' => function ($query) {
+                    $query->select('id', 'name');
+                },
+                'individualFollowUp' => function ($query) {
+                    $query->select('id', 'individual_id', 'user_id', 'date_time');
+                },
+                'individualFollowUp.user' => function ($query) {
+                    $query->select('id', 'name');
+                },
+                'lead' => function ($query) {
+                    $query;
+                }
+            ])
+            ->join('campaigns', 'campaigns.id', '=', 'individuals.campaign_id')
+            ->join('individual_logs', 'individual_logs.id', '=', 'individuals.individual_follow_up_id')
+            ->where('individuals.last_action_by', '=', $user->id)
+            ->where(function ($query) {
+                return $query->where('campaigns.status', 'started')
+                    ->orWhereNull('campaigns.status');
+            })
+            ->whereNotNull('individual_follow_up_id');
+
+        if ($request->has('dates') && $request->dates != null && count($request->dates) > 0) {
+            $dates = $request->dates;
+            $startDate = $dates[0];
+            $endDate = $dates[1];
+
+            $allAppointments = $allAppointments->whereRaw('DATE(individual_logs.date_time) >= ?', [$startDate])
+                ->whereRaw('DATE(individual_logs.date_time) <= ?', [$endDate]);
+        }
+
+        $allAppointments = $allAppointments->take(5)->get();
+
+
+        return $allAppointments;
     }
 
     public function changeThemeMode(Request $request)

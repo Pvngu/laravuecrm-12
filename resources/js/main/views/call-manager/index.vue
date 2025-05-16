@@ -19,7 +19,7 @@
 
     <div class="dashboard-page-content-container">
         <div v-if="allCampaigns != undefined">
-            <a-row v-if="allCampaigns.length == 0" :gutter="[15, 15]" class="mt-30 mb-20">
+            <a-row v-if="allCampaigns.length == 0" :gutter="[15, 15]" class="mt-7 mb-5">
                 <a-col :span="24">
                     <a-empty
                         :image-style="{
@@ -42,7 +42,7 @@
                     </a-empty>
                 </a-col>
             </a-row>
-            <a-row v-else :gutter="[15, 15]" class="mt-30 mb-20">
+            <a-row v-else :gutter="[15, 15]" class="mt-7 mb-5">
                 <a-col
                     v-for="allCampaign in allCampaigns"
                     :key="allCampaign.xid"
@@ -88,7 +88,7 @@
                                     </a-col>
                                 </a-row>
 
-                                <a-row :gutter="16" class="mt-25">
+                                <a-row :gutter="16" class="mt-6">
                                     <a-col :span="8">
                                         {{ $t("campaign.started_on") }}
                                     </a-col>

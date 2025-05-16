@@ -28,7 +28,7 @@ export default defineComponent({
         bookingType: {
             default: null,
         },
-        xLeadId: {
+        xIndividualId: {
             default: null,
         },
         showDeleteIcon: {
@@ -77,7 +77,7 @@ export default defineComponent({
                     addEditRequestAdmin({
                         url: deleteUrl,
                         data: {
-                            x_lead_id: props.xLeadId,
+                            x_individual_id: props.xIndividualId,
                             booking_type: props.bookingType,
                         },
                         success: (res) => {

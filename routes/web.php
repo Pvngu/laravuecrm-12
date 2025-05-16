@@ -30,6 +30,8 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
         // Imports
         ApiRoute::post('users/import', ['as' => 'api.users.import', 'uses' => 'UsersController@import']);
 
+        ApiRoute::get('select-options/{group}', ['as' => 'api.select-options.group', 'uses' => 'SelectOptionController@getGroupOptions']);
+
         // Update Status
         ApiRoute::post('email-templates/update-status', ['as' => 'api.email-templates.update-status', 'uses' => 'EmailTemplateController@updateStatus']);
         ApiRoute::post('forms/update-status', ['as' => 'api.forms.update-status', 'uses' => 'FormController@updateStatus']);
@@ -64,6 +66,7 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
         ApiRoute::get('campaigns/email-templates', ['as' => 'api.campaigns.email-templates', 'uses' => 'CampaignController@campaignEmailTemplates']);
         ApiRoute::get('campaigns/user-campaigns', ['as' => 'api.campaigns.user-campaigns', 'uses' => 'CampaignController@userCampaigns']);
         ApiRoute::post('campaigns/skip-delete-lead', ['as' => 'api.campaigns.skip-delete-lead', 'uses' => 'CampaignController@skipAndDeleteLead']);
+        ApiRoute::post('campaigns/update-lead-timer', ['as' => 'api.campaigns.update-lead-timer', 'uses' => 'CampaignController@updateTimerLead']);
         ApiRoute::post('campaigns/update-actioned-lead', ['as' => 'api.campaigns.update-actioned-lead', 'uses' => 'CampaignController@updateActionedLead']);
         ApiRoute::post('campaigns/take-lead-action', ['as' => 'api.campaigns.take-lead-action', 'uses' => 'CampaignController@takeLeadAction']);
         ApiRoute::post('campaigns/take-action', ['as' => 'api.campaigns.take-action', 'uses' => 'CampaignController@takeAction']);
@@ -92,6 +95,8 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
         ApiRoute::resource('lead-statuses', 'LeadStatusController', $options);
         ApiRoute::resource('sale-statuses', 'SaleStatusController', $options);
 
+        ApiRoute::resource('individual-logs', 'IndividualLogController', $options);
+
         // Sales
         ApiRoute::post('sales/transfer', ['as' => 'api.sales.transfer', 'uses' => 'SaleController@transferSales']);
         ApiRoute::post('sales/create-sale', ['as' => 'api.sales.create-sale', 'uses' => 'SaleController@createSale']);
@@ -100,5 +105,9 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
 
         ApiRoute::post('addresses/save', ['as' => 'api.address.saveAddressData', 'uses' => 'AddressController@addEdit']);
         ApiRoute::resource('individuals', 'IndividualController', ['as' => 'api', 'only' => ['index', 'show']]);
+
+        ApiRoute::resource('notes', 'NoteController', $options);
+
+        ApiRoute::get('states/all', ['as' => 'api.states.all', 'uses' => 'StateController@allOptions']);
     });
 });
