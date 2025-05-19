@@ -450,7 +450,7 @@ class Common
             'co_language' => 'language',
         ];
 
-        if(isset($request->co_first_name) && isset($request->co_last_name)) {
+        if(isset($request->co_first_name) && co_applicant_required()) {
             // Check if co-applicant exists or not
             $coApplicant = $individual->coApplicant ?? new CoApplicant;
 

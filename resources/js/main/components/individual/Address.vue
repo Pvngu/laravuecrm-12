@@ -1,6 +1,6 @@
 <template>
     <a-form layout="vertical" class="mt-5">
-        <a-row :gutter="16">
+        <a-row :gutter="16" v-if="coApplicantRequired">
             <a-col :xs="24" :sm="24" :md="12" :lg="12" align="center">
                 <a-typography-text strong>
                     {{ $t("lead.applicant") }}
@@ -23,7 +23,13 @@
                     <a-input v-model:value="formData.address_line1" :placeholder="$t('common.placeholder_default_text', [$t('lead.address_line_1')])"></a-input>
                 </a-form-item>
             </a-col>
-            <a-col :xs="24" :sm="24" :md="12" :lg="12">
+            <a-col
+                :xs="24"
+                :sm="24"
+                :md="12"
+                :lg="12"
+                v-if="coApplicantRequired"
+            >
                 <a-form-item
                     :label="$t('lead.address_line_1')"
                     name="co_address_line1"
@@ -34,12 +40,10 @@
                     <a-input 
                         v-model:value="formData.co_address_line1" 
                         :placeholder="$t('common.placeholder_default_text', [$t('lead.address_line_1')])"
-                        :disabled="!formData.co_applicant"
                     ></a-input>
                 </a-form-item>
             </a-col>
-        </a-row>
-        <a-row :gutter="16">
+
             <a-col :xs="24" :sm="24" :md="12" :lg="12">
                 <a-form-item
                     :label="$t('lead.address_line_2')"
@@ -50,7 +54,13 @@
                     <a-input v-model:value="formData.address_line2" :placeholder="$t('common.placeholder_default_text', [$t('lead.address_line_2')])"></a-input>
                 </a-form-item>
             </a-col>
-            <a-col :xs="24" :sm="24" :md="12" :lg="12">
+            <a-col
+                :xs="24"
+                :sm="24"
+                :md="12"
+                :lg="12"
+                v-if="coApplicantRequired"
+            >
                 <a-form-item
                     :label="$t('lead.address_line_2')"
                     name="co_address_line2"
@@ -61,12 +71,10 @@
                     <a-input 
                         v-model:value="formData.co_address_line2" 
                         :placeholder="$t('common.placeholder_default_text', [$t('lead.address_line_2')])"
-                        :disabled="!formData.co_applicant"
                     ></a-input>
                 </a-form-item>
             </a-col>
-        </a-row>
-        <a-row :gutter="16">
+
             <a-col :xs="24" :sm="24" :md="12" :lg="12">
                 <a-form-item
                     :label="$t('lead.city')"
@@ -77,7 +85,13 @@
                     <a-input v-model:value="formData.city" :placeholder="$t('common.placeholder_default_text', [$t('lead.city')])"></a-input>
                 </a-form-item>
             </a-col>
-            <a-col :xs="24" :sm="24" :md="12" :lg="12">
+            <a-col
+                :xs="24"
+                :sm="24"
+                :md="12"
+                :lg="12"
+                v-if="coApplicantRequired"
+            >
                 <a-form-item
                     :label="$t('lead.city')"
                     name="co_city"
@@ -88,12 +102,10 @@
                     <a-input 
                         v-model:value="formData.co_city" 
                         :placeholder="$t('common.placeholder_default_text', [$t('lead.city')])"
-                        :disabled="!formData.co_applicant"
                     ></a-input>
                 </a-form-item>
             </a-col>
-        </a-row>
-        <a-row :gutter="16">
+
             <a-col :xs="24" :sm="24" :md="12" :lg="12">
                 <a-form-item
                     :label="$t('lead.state')"
@@ -122,7 +134,13 @@
                     </a-select>
                 </a-form-item>
             </a-col>
-            <a-col :xs="24" :sm="24" :md="12" :lg="12">
+            <a-col
+                :xs="24"
+                :sm="24"
+                :md="12"
+                :lg="12"
+                v-if="coApplicantRequired"
+            >
                 <a-form-item
                     :label="$t('lead.state')"
                     name="co_state_id"
@@ -140,7 +158,6 @@
                         :allowClear="true"
                         optionFilterProp="title"
                         show-search
-                        :disabled="!formData.co_applicant"
                     >
                         <a-select-option 
                             v-for="state in states" 
@@ -152,8 +169,7 @@
                     </a-select>
                 </a-form-item>
             </a-col>
-        </a-row>
-        <a-row :gutter="16" style="padding-bottom: 24px;">
+
             <a-col :xs="24" :sm="24" :md="12" :lg="12">
                 <a-form-item
                     :label="$t('lead.zip_code')"
@@ -164,7 +180,13 @@
                     <a-input v-model:value="formData.zip_code" :placeholder="$t('common.placeholder_default_text', [$t('lead.zip_code')])"></a-input>
                 </a-form-item>
             </a-col>
-            <a-col :xs="24" :sm="24" :md="12" :lg="12">
+            <a-col
+                :xs="24"
+                :sm="24"
+                :md="12"
+                :lg="12"
+                v-if="coApplicantRequired"
+            >
                 <a-form-item
                     :label="$t('lead.zip_code')"
                     name="co_zip_code"
@@ -175,7 +197,6 @@
                     <a-input 
                         v-model:value="formData.co_zip_code" 
                         :placeholder="$t('common.placeholder_default_text', [$t('lead.zip_code')])"
-                        :disabled="!formData.co_applicant"
                     ></a-input>
                 </a-form-item>
             </a-col>
@@ -208,16 +229,18 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { SaveOutlined } from "@ant-design/icons-vue";
 import apiAdmin from "../../../common/composable/apiAdmin";
 import { notification } from "ant-design-vue";
 import { useI18n } from "vue-i18n";
+import common from "../../../common/composable/common";
 
 export default {
     props: {
-        formData: {
-            default: [],
+        individualData: {
+            type: Object,
+            default: () => ({}),
         },
         states: {
             default: [],
@@ -231,12 +254,27 @@ export default {
         const { addEditRequestAdmin, rules } = apiAdmin();
         const saveLoading = ref(false);
         const { t } = useI18n();
+        const { coApplicantRequired } = common();
+
+        const formData = ref({
+            individual_id: "",
+            address_line1: "",
+            address_line2: "",
+            city: "",
+            state_id: "",
+            zip_code: "",
+            co_address_line1: "",
+            co_address_line2: "",
+            co_city: "",
+            co_state_id: "",
+            co_zip_code: "",
+        });
 
         const onSubmit = () => {
             saveLoading.value = true;
             addEditRequestAdmin({
                 url: "addresses/save",
-                data: props.formData,
+                data: formData.value,
                 success: (res) => {
                     if(res.success == true) {
                         rules.value = {};
@@ -261,10 +299,37 @@ export default {
             });
         }
 
+        watch(
+            () => props.individualData,
+            (newValue) => {
+                if(newValue) {
+                    formData.value = {
+                        individual_id: newValue.xid,
+                        ...newValue.address,
+                    }
+
+                    if(coApplicantRequired.value)
+                    formData.value = {
+                        ...formData.value,
+                        co_address_line1: newValue.co_applicant?.address?.address_line1 || "",
+                        co_address_line2: newValue.co_applicant?.address?.address_line2 || "",
+                        co_city: newValue.co_applicant?.address?.city || "",
+                        co_state_id: newValue.co_applicant?.address?.state_id || "",
+                        co_zip_code: newValue.co_applicant?.address?.zip_code || "",
+                    }
+                }
+            }, {  
+                immediate: true,
+                deep: true
+            }
+        )
+
         return {
             rules,
             onSubmit,
             saveLoading,
+            coApplicantRequired,
+            formData
         }
     }
 }

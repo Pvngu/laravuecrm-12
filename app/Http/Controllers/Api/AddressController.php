@@ -17,7 +17,6 @@ class AddressController extends ApiBaseController
     protected $model = Address::class;
 
     public function addEdit(StoreRequest $request) {
-        $loggedUser = user();
         $success = true;
 
         $individualId = $this->getIdFromHash($request->individual_id);
@@ -82,7 +81,7 @@ class AddressController extends ApiBaseController
             }
         }
 
-        if($request->has('co_address_line1') && $request->co_address_line1 !== null && $individual->coApplicant !== null) {
+        if($request->has('co_address_line1') && $request->co_address_line1 !== null && $individual->coApplicant !== null && co_applicant_required()) {
             $coAddressFields = [
                 'address_line1' => 'co_address_line1',
                 'address_line2' => 'co_address_line2',

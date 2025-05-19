@@ -13,7 +13,6 @@ Route::get('{path}', function () {
     $company = Company::first();
     $appVersion = File::get('version.txt');
     $appVersion = preg_replace("/\r|\n/", "", $appVersion);
-    $lang = $company && $company->lang_id && $company->lang_id != null ? Lang::find($company->lang_id) : Lang::first();
 
     return view('welcome', [
         'appName' => $appName,
@@ -23,5 +22,6 @@ Route::get('{path}', function () {
         'appEnv' => env('APP_ENV'),
         'appType' => 'non-saas',
         'loadingImage' => $company->light_logo_url,
+        'coApplicantRequired' => env('CO_APPLICANT_REQUIRED')
     ]);
 })->where('path', '^(?!api.*$).*')->name('main');

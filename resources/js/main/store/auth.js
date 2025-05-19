@@ -16,7 +16,6 @@ const CSS_SETTINGS = 'css_settings';
 const ADD_MENUS = 'add_menus';
 const EMAIL_SETTING_VERIFIED = 'email_setting_verified';
 const VISIBLE_SUBSCRIPTION_MODULES = 'visible_subscription_modules';
-const CO_APPLICANT_REQUIRED = 'co_applicant_required';
 
 moment.suppressDeprecationWarnings = true;
 
@@ -53,7 +52,6 @@ export default {
                 leftRightPadding: '50px',
                 headerMenuMode: 'vertical'
             },
-            coApplicantRequired: getJSONFromLocalStorage(CO_APPLICANT_REQUIRED) || false,
             appChecking: true,
             emailSettingVerified: window.localStorage.getItem(EMAIL_SETTING_VERIFIED) || false,
             menuCollapsed: window.innerWidth <= 991 ? true : false,

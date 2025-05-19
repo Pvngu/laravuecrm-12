@@ -374,7 +374,7 @@
                             </a-tab-pane>
                             <a-tab-pane key="address" tab="Address">
                                 <Address
-                                    :formData="leadData.individual"
+                                    :individualData="leadData.individual"
                                     :states="states"
                                     @success="() => (refreshTimeLine = true)"
                                 />
@@ -557,23 +557,8 @@ export default {
         const saveExitLoading = ref(false);
         const showSkipModal = ref(false);
         const leadXid = ref("");
-        const addressesFormData = ref({
-            address_line1: "",
-            address_line2: "",
-            city: "",
-            state_id: "",
-            zip_code: "",
-            full_address: "",
-            co_address_line1: "",
-            co_address_line2: "",
-            co_city: "",
-            co_state_id: "",
-            co_zip_code: "",
-            individual_id: undefined,
-        });
         const states = ref([]);
         const leadData = ref({});
-        const individualId = ref("");
 
         onMounted(() => {
             fetchInitData();
@@ -657,9 +642,6 @@ export default {
                         lead_data: newLeadDataArray,
                     };
                     leadXid.value = leadResult.xid;
-                    individualId.value = leadResult.individual.xid;
-
-                    addressesFormData.value.individual_id = leadResult.individual.xid;
 
                     leadFollowUp.value = leadResult.individual.individual_follow_up
                         ? leadResult.individual.individual_follow_up
@@ -930,7 +912,6 @@ export default {
             leadData,
             extraLeadFormData,
             states,
-            addressesFormData,
 
             leadXid
         };

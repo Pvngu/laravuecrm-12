@@ -617,7 +617,7 @@ export default {
 
         // Watch for changes in formData.co_applicant and update formData.co_ fields accordingly
         watch(
-            () => props.formData.co_applicant,
+            () => props.formData.co_applicant && coApplicantFormData.value,
             (newVal) => {
                 if (newVal && typeof newVal === "object") {
                     Object.keys(newVal).forEach((key) => {
