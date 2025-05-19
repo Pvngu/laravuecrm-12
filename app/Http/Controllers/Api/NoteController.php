@@ -38,7 +38,7 @@ class NoteController extends ApiBaseController
         }
 
         // Extra Filters
-        if ($user->ability('admin', 'view_completed_campaigns')) {
+        if ($user->hasRole('admin') || $user->hasPermissionTo('view_completed_campaigns')) {
             if ($request->has('campaign_status') && $request->campaign_status == "completed") {
                 $query = $query->where('campaigns.status', '=', 'completed');
             } else {
