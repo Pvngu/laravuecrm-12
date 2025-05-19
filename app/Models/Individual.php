@@ -41,7 +41,8 @@ class Individual extends BaseModel
         'salesman_booking_id' => Hash::class . ':hash',
         'lead_data' => 'array',
         'time_taken' => 'integer',
-        'started' => 'integer'
+        'started' => 'integer',
+        'date_of_birth' => 'date',      
     ];
 
     protected static function boot()

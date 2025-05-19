@@ -3,15 +3,14 @@
 use App\Models\Company;
 use App\Scopes\CompanyScope;
 
-// Get App Type
-if (!function_exists('app_type')) {
-
-    function app_type()
+// This is app setting to check if co-applicant is required
+if(!function_exists('co_applicant_required')) {
+    function co_applicant_required()
     {
-        if (env('APP_TYPE')) {
-            return env('APP_TYPE');
+        if(env('CO_APPLICANT_REQUIRED')) {
+            return env('CO_APPLICANT_REQUIRED');
         } else {
-            return "non-saas";
+            return false;
         }
     }
 }

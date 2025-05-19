@@ -29,26 +29,6 @@ return new class extends Migration
             $table->date('date');
             $table->timestamps();
         });
-
-        // Adding currencies
-        // Creating only for non-saas
-        // if (app_type() == 'non-saas') {
-        //     $allCompanies = Company::all();
-
-        //     foreach ($allCompanies as $allCompany) {
-        //         $currencyId = DB::table('currencies')->insertGetId([
-        //             'company_id' => $allCompany->id,
-        //             'name' => 'Dollar',
-        //             'code' => 'USD',
-        //             'symbol' => '$',
-        //             'position' => 'front',
-        //             'is_deletable' => false,
-        //         ]);
-
-        //         $allCompany->currency_id = $currencyId;
-        //         $allCompany->save();
-        //     }
-        // }
     }
 
     /**

@@ -374,7 +374,7 @@
                             </a-tab-pane>
                             <a-tab-pane key="address" tab="Address">
                                 <Address
-                                    :formData="leadData.individual.address"
+                                    :formData="leadData.individual"
                                     :states="states"
                                     @success="() => (refreshTimeLine = true)"
                                 />
@@ -572,7 +572,6 @@ export default {
             individual_id: undefined,
         });
         const states = ref([]);
-        const individualData = ref({});
         const leadData = ref({});
         const individualId = ref("");
 
@@ -660,22 +659,6 @@ export default {
                     leadXid.value = leadResult.xid;
                     individualId.value = leadResult.individual.xid;
 
-                    if(leadResult.individual.address) {
-                        addressesFormData.value = leadResult.individual.address;
-                    }
-
-                    if(leadResult.individual.co_applicant) {
-
-                        if(leadResult.individual.co_applicant.address) {
-                            addressesFormData.value.co_address_line1 = leadResult.individual.co_applicant.address.address_line1;
-                            addressesFormData.value.co_address_line2 = leadResult.individual.co_applicant.address.address_line2;
-                            addressesFormData.value.co_city = leadResult.individual.co_applicant.address.city;
-                            addressesFormData.value.co_state_id = leadResult.individual.co_applicant.address.state_id;
-                            addressesFormData.value.co_zip_code = leadResult.individual.co_applicant.address.zip_code;
-                            addressesFormData.value.full_address = leadResult.individual.co_applicant.address.full_address;
-                        }
-                    }
-
                     addressesFormData.value.individual_id = leadResult.individual.xid;
 
                     leadFollowUp.value = leadResult.individual.individual_follow_up
@@ -759,38 +742,6 @@ export default {
             url = `campaigns/update-actioned-lead`;
             data = {
                 ...leadFormData.value,
-                lead_status: individualData.value.lead_status,
-                reference_number: individualData.value.reference_number,
-                first_name: individualData.value.first_name,
-                last_name: individualData.value.last_name,
-                SSN: individualData.value.SSN,
-                date_of_birth: individualData.value.date_of_birth,
-                home_phone: individualData.value.home_phone,
-                phone_number: individualData.value.phone_number,
-                email: individualData.value.email,
-                language: individualData.value.language,
-                original_profile_id: individualData.value.original_profile_id,
-
-                co_first_name: individualData.value.co_first_name,
-                co_last_name: individualData.value.co_last_name,
-                co_SSN: individualData.value.co_SSN,
-                co_date_of_birth: individualData.value.co_date_of_birth,
-                co_home_phone: individualData.value.co_home_phone,
-                co_phone_number: individualData.value.co_phone_number,
-                co_email: individualData.value.co_email,
-                co_language: individualData.value.co_language,
-
-                address_line1: individualData.value.address_line1,
-                address_line2: individualData.value.address_line2,
-                city: individualData.value.city,
-                state_id: individualData.value.state_id,
-                zip_code: individualData.value.zip_code,
-
-                co_address_line1: individualData.value.co_address_line1,
-                co_address_line2: individualData.value.co_address_line2,
-                co_city: individualData.value.co_city,
-                co_state_id: individualData.value.co_state_id,
-                co_zip_code: individualData.value.co_zip_code,
 
                 call_log_id: leadCallLogDetails.value.xid,
                 call_time: calculateTotalTimeInSeconds(),
@@ -860,40 +811,7 @@ export default {
                 url: `campaigns/take-lead-action`,
                 data: {
                     ...leadFormData.value,
-                    reference_number: individualData.value.reference_number,
-                    lead_status: individualData.value.lead_status,
-                    first_name: individualData.value.first_name,
-                    last_name: individualData.value.last_name,
-                    SSN: individualData.value.SSN,
-                    date_of_birth: individualData.value.date_of_birth,
-                    home_phone: individualData.value.home_phone,
-                    phone_number: individualData.value.phone_number,
-                    email: individualData.value.email,
-                    language: individualData.value.language,
-                    original_profile_id: individualData.value.original_profile_id,
 
-                    co_first_name: individualData.value.co_first_name,
-                    co_last_name: individualData.value.co_last_name,
-                    co_SSN: individualData.value.co_SSN,
-                    co_date_of_birth: individualData.value.co_date_of_birth,
-                    co_home_phone: individualData.value.co_home_phone,
-                    co_phone_number: individualData.value.co_phone_number,
-                    co_email: individualData.value.co_email,
-                    co_language: individualData.value.co_language,
-
-                    address_line1: individualData.value.address_line1,
-                    address_line2: individualData.value.address_line2,
-                    city: individualData.value.city,
-                    state_id: individualData.value.state_id,
-                    zip_code: individualData.value.zip_code,
-
-                    co_address_line1: individualData.value.co_address_line1,
-                    co_address_line2: individualData.value.co_address_line2,
-                    co_city: individualData.value.co_city,
-                    co_state_id: individualData.value.co_state_id,
-                    co_zip_code: individualData.value.co_zip_code,
-
-                    original_profile_id: individualData.value.original_profile_id,
                     call_log_id: leadCallLogDetails.value.xid,
                     call_time: calculateTotalTimeInSeconds(),
                     action_type: newActionName,
@@ -1009,7 +927,6 @@ export default {
             skipDeleteSuccess,
             skipSuccess,
 
-            individualData,
             leadData,
             extraLeadFormData,
             states,

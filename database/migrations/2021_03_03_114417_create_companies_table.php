@@ -53,20 +53,18 @@ class CreateCompaniesTable extends Migration
             $table->timestamps();
         });
 
-        if (app_type() == 'non-saas') {
-            $enLang = Lang::where('key', 'en')->first();
+        $enLang = Lang::where('key', 'en')->first();
 
-            // Creating entries using DB
-            // So that no observer will be called
-            DB::table('companies')->insert([
-                'name' => 'Laravue',
-                'short_name' => 'Laravue',
-                'email' => 'company@example.com',
-                'phone' => '+9199999999',
-                'address' => '7 street, city, state, 762782',
-                'lang_id' => $enLang->id,
-            ]);
-        }
+        // Creating entries using DB
+        // So that no observer will be called
+        DB::table('companies')->insert([
+            'name' => 'Laravue',
+            'short_name' => 'Laravue',
+            'email' => 'company@example.com',
+            'phone' => '+9199999999',
+            'address' => '7 street, city, state, 762782',
+            'lang_id' => $enLang->id,
+        ]);
     }
 
     /**

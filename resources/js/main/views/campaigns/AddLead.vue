@@ -67,7 +67,7 @@
                             <a-input v-model:value="leadDetailsFormData.email" :placeholder="$t('common.placeholder_default_text', [$t('lead.email')])"></a-input>
                         </a-form-item>
                     </a-col>
-                    <a-col :xs="24" :sm="24" :md="12" :lg="12">
+                    <a-col :xs="24" :sm="24" :md="12" :lg="12" v-if="optionLanguages.length">
                         <a-form-item :label="$t('lead.language')" name="language">
                             <a-select
                                 v-model:value="leadDetailsFormData.language"
@@ -81,9 +81,9 @@
                                 <a-select-option
                                     v-for="option in optionLanguages"
                                     :key="option.id"
-                                    :value="language.key"
+                                    :value="option.key"
                                 >
-                                    {{ $t(option.key) }}
+                                    {{ $t(option.value) }}
                                 </a-select-option>
                             </a-select>
                         </a-form-item>

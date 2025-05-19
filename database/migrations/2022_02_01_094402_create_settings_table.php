@@ -32,11 +32,9 @@ class CreateSettingsTable extends Migration
             $table->timestamps();
         });
 
-        if (app_type() == 'non-saas') {
-            $company = Company::where('is_global', 0)->first();
+        $company = Company::where('is_global', 0)->first();
 
-            Common::insertInitSettings($company);
-        }
+        Common::insertInitSettings($company);
     }
 
     /**

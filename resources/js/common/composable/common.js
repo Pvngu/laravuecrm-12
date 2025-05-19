@@ -25,6 +25,7 @@ const common = () => {
     const addMenus = computed(() => store.state.auth.addMenus);
     const selectedLang = computed(() => store.state.auth.lang);
     const user = computed(() => store.state.auth.user);
+    const coApplicantRequired = computed(() => store.state.auth.coApplicantRequired);
 
     const statusColors = {
         enabled: "success",
@@ -255,6 +256,8 @@ const common = () => {
 
         getCampaignUrl,
         getCampaignStatsUrl,
+
+        coApplicantRequired
     };
 }
 

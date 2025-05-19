@@ -45,6 +45,7 @@
 				'appChecking': true,
 				'app_version': "{{ $appVersion }}",
 				'app_env': "{{ $appEnv }}",
+                'co_applicant_required': false,
             };
         </script>
 

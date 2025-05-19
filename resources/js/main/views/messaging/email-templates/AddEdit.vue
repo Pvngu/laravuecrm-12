@@ -110,7 +110,7 @@
             </a-typography-title>
             <a-row
                 :gutter="16"
-                class="mb-20"
+                class="mb-5"
             >
                 <a-col
                     :xs="8"
@@ -239,126 +239,128 @@
                     </a-button>
                 </a-col>
             </a-row>
-            <a-typography-title :level="5">
-                {{ $t("lead.co_applicant") }}
-            </a-typography-title>
-            <a-row
-                :gutter="16"
-                class="mb-20"
-            >
-                <a-col
-                    :xs="8"
-                    :sm="8"
-                    :md="6"
-                    :lg="4"
+            <div v-if="coApplicantRequired">
+                <a-typography-title :level="5">
+                    {{ $t("lead.co_applicant") }}
+                </a-typography-title>
+                <a-row
+                    :gutter="16"
+                    class="mb-20"
                 >
-                    <a-button
-                        @click="insertFormText('co_first_name')"
-                        type="link"
-                        style="padding: 0px"
+                    <a-col
+                        :xs="8"
+                        :sm="8"
+                        :md="6"
+                        :lg="4"
                     >
-                        {{ $t('lead.first_name') }}
-                    </a-button>
-                </a-col>
-                <a-col
-                    :xs="8"
-                    :sm="8"
-                    :md="6"
-                    :lg="4"
-                >
-                    <a-button
-                        @click="insertFormText('co_last_name')"
-                        type="link"
-                        style="padding: 0px"
+                        <a-button
+                            @click="insertFormText('co_first_name')"
+                            type="link"
+                            style="padding: 0px"
+                        >
+                            {{ $t('lead.first_name') }}
+                        </a-button>
+                    </a-col>
+                    <a-col
+                        :xs="8"
+                        :sm="8"
+                        :md="6"
+                        :lg="4"
                     >
-                        {{ $t('lead.last_name') }}
-                    </a-button>
-                </a-col>
-                <a-col
-                    :xs="8"
-                    :sm="8"
-                    :md="6"
-                    :lg="4"
-                >
-                    <a-button
-                        @click="insertFormText('co_SSN')"
-                        type="link"
-                        style="padding: 0px"
+                        <a-button
+                            @click="insertFormText('co_last_name')"
+                            type="link"
+                            style="padding: 0px"
+                        >
+                            {{ $t('lead.last_name') }}
+                        </a-button>
+                    </a-col>
+                    <a-col
+                        :xs="8"
+                        :sm="8"
+                        :md="6"
+                        :lg="4"
                     >
-                        {{ $t('lead.SSN') }}
-                    </a-button>
-                </a-col>
-                <a-col
-                    :xs="8"
-                    :sm="8"
-                    :md="6"
-                    :lg="4"
-                >
-                    <a-button
-                        @click="insertFormText('co_date_of_birth')"
-                        type="link"
-                        style="padding: 0px"
+                        <a-button
+                            @click="insertFormText('co_SSN')"
+                            type="link"
+                            style="padding: 0px"
+                        >
+                            {{ $t('lead.SSN') }}
+                        </a-button>
+                    </a-col>
+                    <a-col
+                        :xs="8"
+                        :sm="8"
+                        :md="6"
+                        :lg="4"
                     >
-                        {{ $t('lead.date_of_birth') }}
-                    </a-button>
-                </a-col>
-                <a-col
-                    :xs="8"
-                    :sm="8"
-                    :md="6"
-                    :lg="4"
-                >
-                    <a-button
-                        @click="insertFormText('co_phone_number')"
-                        type="link"
-                        style="padding: 0px"
+                        <a-button
+                            @click="insertFormText('co_date_of_birth')"
+                            type="link"
+                            style="padding: 0px"
+                        >
+                            {{ $t('lead.date_of_birth') }}
+                        </a-button>
+                    </a-col>
+                    <a-col
+                        :xs="8"
+                        :sm="8"
+                        :md="6"
+                        :lg="4"
                     >
-                        {{ $t('lead.phone_number') }}
-                    </a-button>
-                </a-col>
-                <a-col
-                    :xs="8"
-                    :sm="8"
-                    :md="6"
-                    :lg="4"
-                >
-                    <a-button
-                        @click="insertFormText('co_home_phone')"
-                        type="link"
-                        style="padding: 0px"
+                        <a-button
+                            @click="insertFormText('co_phone_number')"
+                            type="link"
+                            style="padding: 0px"
+                        >
+                            {{ $t('lead.phone_number') }}
+                        </a-button>
+                    </a-col>
+                    <a-col
+                        :xs="8"
+                        :sm="8"
+                        :md="6"
+                        :lg="4"
                     >
-                        {{ $t('lead.home_phone') }}
-                    </a-button>
-                </a-col>
-                <a-col
-                    :xs="8"
-                    :sm="8"
-                    :md="6"
-                    :lg="4"
-                >
-                    <a-button
-                        @click="insertFormText('co_email')"
-                        type="link"
-                        style="padding: 0px"
+                        <a-button
+                            @click="insertFormText('co_home_phone')"
+                            type="link"
+                            style="padding: 0px"
+                        >
+                            {{ $t('lead.home_phone') }}
+                        </a-button>
+                    </a-col>
+                    <a-col
+                        :xs="8"
+                        :sm="8"
+                        :md="6"
+                        :lg="4"
                     >
-                        {{ $t('lead.email') }}
-                    </a-button>
-                </a-col>
-                <a-col
-                    :xs="8"
-                    :sm="8"
-                    :md="6"
-                    :lg="4"
-                >
-                    <a-button
-                        @click="insertFormText('co_language')"
-                        type="link"
-                        style="padding: 0px"
+                        <a-button
+                            @click="insertFormText('co_email')"
+                            type="link"
+                            style="padding: 0px"
+                        >
+                            {{ $t('lead.email') }}
+                        </a-button>
+                    </a-col>
+                    <a-col
+                        :xs="8"
+                        :sm="8"
+                        :md="6"
+                        :lg="4"
                     >
-                        {{ $t('lead.language') }}
-                    </a-button>
-                </a-col>
-            </a-row>
+                        <a-button
+                            @click="insertFormText('co_language')"
+                            type="link"
+                            style="padding: 0px"
+                        >
+                            {{ $t('lead.language') }}
+                        </a-button>
+                    </a-col>
+                </a-row>
+            </div>
 
             <a-row :gutter="16">
                 <a-col :span="24">
@@ -397,7 +399,7 @@
                     selectedForm.form_fields &&
                     selectedForm.form_fields.length > 0
                 "
-                class="mb-20"
+                class="mb-5"
             >
                 <a-col
                     :xs="8"
@@ -473,8 +475,8 @@ import {
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import apiAdmin from "../../../../common/composable/apiAdmin";
+import common from "../../../../common/composable/common";
 import FormAddButton from "../../forms/forms/AddButton.vue";
-import { useI18n } from "vue-i18n";
 
 export default defineComponent({
     props: [
@@ -501,6 +503,7 @@ export default defineComponent({
         const allForms = ref([]);
         const selectedFormId = ref(undefined);
         const selectedForm = ref({});
+        const { coApplicantRequired } = common();
 
         onMounted(() => {
             const formsPromise = axiosAdmin.get(formUrl);
@@ -580,6 +583,7 @@ export default defineComponent({
             formAdded,
             formSelected,
             selectedForm,
+            coApplicantRequired,
 
             drawerWidth: window.innerWidth <= 991 ? "90%" : "45%",
         };
