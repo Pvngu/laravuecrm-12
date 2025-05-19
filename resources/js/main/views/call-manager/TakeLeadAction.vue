@@ -72,7 +72,14 @@
         v-if="leadDetails && leadDetails.xid"
     >
     <!-- timer, lead details, campaing details -->
-        <a-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6" class="bg-setting-sidebar">
+        <a-col
+            :xs="24"
+            :sm="24"
+            :md="24"
+            :lg="6"
+            :xl="6"
+            class="bg-setting-sidebar h-[calc(100vh-100px)]"
+        >
             <perfect-scrollbar
                     :options="{
                         wheelSpeed: 1,
@@ -80,7 +87,7 @@
                         suppressScrollX: true,
                     }"
             >
-                <div class="callmanager-left-sidebar">
+                <div class="h-[calc(100vh-100px)]">
                     <a-card :bordered="false" :bodyStyle="{ paddingBottom: '0px' }">
                         <a-row>
                             <a-col :span="24" class="text-center">
@@ -151,7 +158,7 @@
                             swipeEasing: true,
                             suppressScrollX: true,
                         }"
-                        class="mt-2"
+                        class="mt-2 h-[calc(100vh-350px)]"
                     >
                         <a-collapse v-model:activeKey="activeLeftPanelKey" :bordered="false">
                             <a-collapse-panel
@@ -354,8 +361,16 @@
                 </div>
             </perfect-scrollbar>
         </a-col>
-        <a-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
-            <a-card class="callmanager-middle-sidebar">
+
+        <a-col
+            :xs="24"
+            :sm="24"
+            :md="24"
+            :lg="12"
+            :xl="12"
+            class="h-[calc(100vh-100px)]"
+        >
+            <a-card :bordered="false">
                 <a-tabs v-model:activeKey="activeKey">
                     <a-tab-pane key="lead_details">
                         <template #tab>
@@ -364,11 +379,10 @@
                                 {{ $t("lead.lead_details") }}
                             </span>
                         </template>
-                        <a-tabs v-model:activeKeyLead="activeKeyLead" type="card" class="address">
+                        <a-tabs v-model:activeKeyLead="activeKeyLead" type="card" class="address flex justify-end">
                             <a-tab-pane key="details" tab="Details">
                                 <Details
-                                    :formData="leadData.individual"
-                                    :id="leadXid"
+                                    :saleLeadData="leadData"
                                     @success="() => (refreshTimeLine = true)"
                                 />
                             </a-tab-pane>
@@ -441,7 +455,15 @@
                 </a-tabs>
             </a-card>
         </a-col>
-        <a-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6" v-if="activeKey !== 'debts'" class="bg-setting-sidebar">
+        <a-col
+            :xs="24"
+            :sm="24"
+            :md="24"
+            :lg="6"
+            :xl="6"
+            v-if="activeKey !== 'debts'"
+            class="bg-setting-sidebar h-[calc(100vh-99px)]"
+        >
             <a-card
                 :bordered="false"
                 class="callmanager-right-sidebar"
@@ -716,8 +738,6 @@ export default {
                 saveExitLoading.value = true;
             }
 
-            console.log("leadFormData.value", leadFormData.value);
-
             let url = '';
             let data = {};
 
@@ -918,57 +938,3 @@ export default {
     },
 };
 </script>
-
-<style scoped>
-.callmanager-left-sidebar {
-    height: calc(100vh - 100px);
-}
-
-.callmanager-left-sidebar .ps {
-    height: calc(100vh - 350px);
-}
-
-.callmanager-middle-sidebar {
-    height: calc(100vh - 94px);
-}
-
-.callmanager-middle-sidebar .ps {
-    height: calc(100vh - 235px);
-}
-
-.callmanager-right-sidebar {
-    height: calc(100vh - 99px);
-}
-
-.certain-category-search-dropdown .ant-select-dropdown-menu-item-group-title {
-  color: #666;
-  font-weight: bold;
-}
-
-.certain-category-search-dropdown .ant-select-dropdown-menu-item-group {
-  border-bottom: 1px solid #f6f6f6;
-}
-
-.certain-category-search-dropdown .ant-select-dropdown-menu-item {
-  padding-left: 16px;
-}
-
-.certain-category-search-dropdown .ant-select-dropdown-menu-item.show-all {
-  text-align: center;
-  cursor: default;
-}
-
-.certain-category-search-dropdown .ant-select-dropdown-menu {
-  max-height: 300px;
-}
-</style>
-
-<style>
-.hidden-label .ant-form-item-label {
-    visibility: hidden;
-}
-
-.address .ant-tabs-nav-wrap {
-    justify-content: end;
-}
-</style>

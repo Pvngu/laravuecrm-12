@@ -1,13 +1,13 @@
 <template>
-    <perfect-scrollbar
-        :options="{
-            wheelSpeed: 1,
-            swipeEasing: true,
-            suppressScrollX: true,
-        }"
-        :class="{ 'callmanager-details': !isSale }"
-    >
-        <a-form layout="vertical" class="mt-20">
+    <a-form layout="vertical" class="mt-20">
+            <perfect-scrollbar
+                :options="{
+                    wheelSpeed: 1,
+                    swipeEasing: true,
+                    suppressScrollX: true,
+                }"
+                :class="{ 'callmanager-details': !isSale }"
+            >
             <a-row :gutter="16" justify="end" v-if="isSale">
                 <a-col :xs="24" :sm="24" :md="6" :lg="6">
                     <a-form-item
@@ -150,7 +150,7 @@
                         class="hidden-label"
                     >
                         <a-input
-                            v-model:value="coApplicantFormData.co_first_name"
+                            v-model:value="formData.co_first_name"
                             :placeholder="
                                 $t('common.placeholder_default_text', [
                                     $t('lead.first_name'),
@@ -185,7 +185,7 @@
                         class="hidden-label"
                     >
                         <a-input
-                            v-model:value="coApplicantFormData.co_last_name"
+                            v-model:value="formData.co_last_name"
                             :placeholder="
                                 $t('common.placeholder_default_text', [
                                     $t('lead.last_name'),
@@ -220,7 +220,7 @@
                         class="hidden-label"
                     >
                         <a-input
-                            v-model:value="coApplicantFormData.co_SSN"
+                            v-model:value="formData.co_SSN"
                             :placeholder="
                                 $t('common.placeholder_default_text', [
                                     $t('lead.SSN'),
@@ -257,13 +257,13 @@
                         class="hidden-label"
                     >
                         <DateTimePicker
-                            :dateTime="coApplicantFormData.co_date_of_birth"
+                            :dateTime="formData.co_date_of_birth"
                             :isFutureDateDisabled="false"
                             :showTime="false"
                             :onlyDate="true"
                             @dateTimeChanged="
                                 (changedDateTime) =>
-                                    (coApplicantFormData.co_date_of_birth =
+                                    (formData.co_date_of_birth =
                                         changedDateTime)
                             "
                         />
@@ -295,7 +295,7 @@
                         class="hidden-label"
                     >
                         <a-input
-                            v-model:value="coApplicantFormData.co_home_phone"
+                            v-model:value="formData.co_home_phone"
                             :placeholder="
                                 $t('common.placeholder_default_text', [
                                     $t('lead.home_phone'),
@@ -330,7 +330,7 @@
                         class="hidden-label"
                     >
                         <a-input
-                            v-model:value="coApplicantFormData.co_phone_number"
+                            v-model:value="formData.co_phone_number"
                             :placeholder="
                                 $t('common.placeholder_default_text', [
                                     $t('lead.phone_number'),
@@ -375,7 +375,7 @@
                     >
                         <a-input-group compact>
                             <a-input
-                                v-model:value="coApplicantFormData.co_email"
+                                v-model:value="formData.co_email"
                                 :placeholder="
                                     $t('common.placeholder_default_text', [
                                         $t('lead.email'),
@@ -385,7 +385,7 @@
                             >
                             </a-input>
                             <SendMail
-                                :email="coApplicantFormData.co_email"
+                                :email="formData.co_email"
                                 :leadFormData="formData"
                                 :extraLeadFormData="formData.template_form"
                             />
@@ -427,7 +427,7 @@
                         class="hidden-label"
                     >
                         <a-select
-                            v-model:value="coApplicantFormData.co_language"
+                            v-model:value="formData.co_language"
                             show-search
                             :placeholder="
                                 $t('common.placeholder_default_text', [
@@ -527,8 +527,8 @@
                     </a-form-item>
                 </a-col>
             </a-row>
+        </perfect-scrollbar>
         </a-form>
-    </perfect-scrollbar>
     <div
         :style="{
             position: 'absolute',
@@ -571,11 +571,8 @@ import DateTimePicker from "../../../common/components/common/calendar/DateTimeP
 
 export default {
     props: {
-        formData: {
+        saleLeadData: {
             default: {},
-        },
-        id: {
-            default: undefined,
         },
         isSale: {
             default: false,
@@ -595,8 +592,31 @@ export default {
         const optionLanguages = ref([]);
         const statuses = ref([]);
         const { t } = useI18n();
-        const coApplicantFormData = ref({});
         const { coApplicantRequired } = common();
+
+        const formData = ref({
+            assigned_user_xid: null,
+            reference_number: "",
+            sale_status_id: null,
+            lead_status: null,
+            first_name: "",
+            last_name: "",
+            SSN: "",
+            date_of_birth: "",
+            home_phone: "",
+            phone_number: "",
+            email: "",
+            co_first_name: "",
+            co_last_name: "",
+            co_SSN: "",
+            co_date_of_birth: "",
+            co_home_phone: "",
+            co_phone_number: "",
+            co_email: "",
+            co_language: "",
+            original_profile_id: "",
+            lead_data: [],
+        })
 
         onMounted(() => {
             const statusesUrl = props.isSale
@@ -615,33 +635,14 @@ export default {
             );
         });
 
-        // Watch for changes in formData.co_applicant and update formData.co_ fields accordingly
-        watch(
-            () => props.formData.co_applicant && coApplicantFormData.value,
-            (newVal) => {
-                if (newVal && typeof newVal === "object") {
-                    Object.keys(newVal).forEach((key) => {
-                        const coKey = `co_${key}`;
-                        coApplicantFormData.value[coKey] = newVal[key];
-                    });
-                }
-            },
-            { deep: true, immediate: true }
-        );
-
         const onSubmit = () => {
             saveLoading.value = true;
             const url = props.isSale
                 ? "campaigns/update-actioned-sale"
                 : "campaigns/update-actioned-lead";
-            console.log("formData", props.formData);
             addEditRequestAdmin({
                 url: url,
-                data: {
-                    ...props.formData,
-                    ...coApplicantFormData.value,
-                    x_sale_lead_id: props.id,
-                },
+                data: formData.value,
                 success: (res) => {
                     saveLoading.value = false;
 
@@ -660,12 +661,12 @@ export default {
             var fieldType = "text";
 
             if (
-                props.formData.campaign &&
-                props.formData.campaign.form &&
-                props.formData.campaign.form.form_fields &&
-                props.formData.campaign.form.form_fields.length > 0
+                formData.value.campaign &&
+                formData.value.campaign.form &&
+                formData.value.campaign.form.form_fields &&
+                formData.value.campaign.form.form_fields.length > 0
             ) {
-                var newResult = find(props.formData.campaign.form.form_fields, {
+                var newResult = find(formData.value.campaign.form.form_fields, {
                     name: fieldName,
                 });
 
@@ -677,6 +678,26 @@ export default {
             return fieldType;
         };
 
+        watch(
+            () => props.saleLeadData,
+            (newValue) => {
+                formData.value = {
+                    ...newValue.individual,
+                    x_sale_lead_id: newValue.xid,
+                    co_first_name: newValue.individual.co_applicant?.first_name || "",
+                    co_last_name: newValue.individual.co_applicant?.last_name || "",
+                    co_SSN: newValue.individual.co_applicant?.SSN || "",
+                    co_date_of_birth: newValue.individual.co_applicant?.date_of_birth || "",
+                    co_home_phone: newValue.individual.co_applicant?.home_phone || "",
+                    co_phone_number: newValue.individual.co_applicant?.phone_number || "",
+                    co_email: newValue.individual.co_applicant?.email || "",
+                    co_language: newValue.individual.co_applicant?.language || "",
+                    lead_status: newValue?.lead_status,
+                };
+            },
+            { immediate: true }
+        )
+
         return {
             rules,
             optionLanguages,
@@ -684,8 +705,8 @@ export default {
             onSubmit,
             saveLoading,
             getLeadDataFieldType,
-            coApplicantFormData,
-            coApplicantRequired,
+            formData,
+            coApplicantRequired
         };
     },
 };
@@ -693,6 +714,6 @@ export default {
 
 <style>
 .callmanager-details {
-    height: calc(100vh - 240px);
+    height: calc(100vh - 264px);
 }
 </style>
