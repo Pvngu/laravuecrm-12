@@ -13,13 +13,13 @@ class Individual extends BaseModel
     
     protected $table = 'individuals';
 
-    protected $default = ['id','xid','reference_number','first_name','last_name','SSN','date_of_birth','home_phone','phone_number','email','original_profile_id','language','lead_data','time_taken','last_action_by','x_last_action_by','x_campaign_id'];
+    protected $default = ['id','xid','reference_number','first_name','last_name', 'full_name','SSN','date_of_birth','home_phone','phone_number','email','original_profile_id','language','lead_data','time_taken','last_action_by','x_last_action_by','x_campaign_id'];
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
     protected $hidden = ['id', 'company_id', 'campaign_id', 'first_action_by', 'last_action_by', 'individual_follow_up_id', 'salesman_booking_id'];
 
-    protected $appends = ['xid', 'x_company_id', 'x_campaign_id', 'x_first_action_by', 'x_last_action_by', 'x_individual_follow_up_id', 'x_salesman_booking_id', 'full_name', 'template_form'];
+    protected $appends = ['xid', 'x_company_id', 'x_campaign_id', 'x_first_action_by', 'x_last_action_by', 'x_individual_follow_up_id', 'x_salesman_booking_id', 'full_name', 'template_form', 'full_address'];
 
     protected $filterable = ['reference_number','first_name','last_name', 'campaign_id', 'individual_status'];
 
@@ -110,6 +110,22 @@ class Individual extends BaseModel
     public function getFullNameAttribute()
     {
         return $this->first_name . ' ' . $this->last_name;
+    }
+
+    public function getFullAddressAttribute()
+    {
+        if ($this->address) {
+            $address = $this->address;
+            $parts = [
+                $address->address_line1,
+                $address->address_line2,
+                $address->city,
+                optional($address->state)->name,
+                $address->zip_code,
+            ];
+            return implode(', ', array_filter($parts));
+        }
+        return '';
     }
 
     public function getTemplateFormAttribute()

@@ -110,6 +110,8 @@ class LangTrans
             'english' => 'English',
             'spanish' => 'Spanish',
             'docs' => 'Docs',
+            'last_activity' => 'Last Activity',
+            'registration' => 'Registration',
         ],
         'menu' => [
             'dashboard' => 'Dashboard',
@@ -777,7 +779,7 @@ class LangTrans
             'first_name' => 'First Name',
             'last_name' => 'Last Name',
             'SSN' => 'SSN',
-            'date_of_birth' => 'Date of Birth',
+            'date_of_birth' => 'Birthday',
             'phone_number' => 'Phone Number',
             'home_phone' => 'Home Phone',
             'address_id' => 'Address ID',

@@ -219,6 +219,14 @@ const common = () => {
         return campaignStatsUrl;
     }
 
+    const formatPhoneNumber = (phoneNumber) => {
+        if (phoneNumber == undefined) {
+            return "";
+        } else {
+            return phoneNumber.replace(/[^0-9]/g, "");
+        }
+    }
+
     return {
         menuCollapsed,
         appSetting,

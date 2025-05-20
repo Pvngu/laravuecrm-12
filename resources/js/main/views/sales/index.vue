@@ -221,8 +221,17 @@
                         </a-row>
                     </template>
                     <template #bodyCell="{ column,record }">
+                            <template v-if="column.dataIndex === 'name'">
+                                <span>{{ record.individual ? record.individual.full_name : "" }}</span>
+                            </template>
+                            <template v-if="column.dataIndex === 'date_of_birth'">
+                                <span>{{ record.individual && record.individual.date_of_birth ? formatDate(record.individual.date_of_birth) : "" }}</span>
+                            </template>
+                            <template v-if="column.dataIndex === 'updated_at'">
+                                <span>{{ formatDate(record.individual.created_at) }}</span>
+                            </template>
                             <template v-if="column.dataIndex === 'created_at'">
-                                <span>{{ formatDateTime(record.created_at) }}</span>
+                                <span>{{ formatDate(record.individual.created_at) }}</span>
                             </template>
                             <template v-if="column.dataIndex === 'status'">
                                 <span v-if="record.sale_status">{{ record.sale_status.name }}</span>
@@ -235,79 +244,7 @@
                                     :email="record.individual.email"
                                     :leadFormData="record.individual"
                                     :allEmailTemplates="allEmailTemplates"
-                                    :extraLeadFormData="{
-                                        lead_data: [
-                                            {
-                                                field_name: 'first_name',
-                                                field_value: record.individual.first_name,
-                                            },
-                                            {
-                                                field_name: 'last_name',
-                                                field_value: record.individual.last_name,
-                                            },
-                                            {
-                                                field_name: 'SSN',
-                                                field_value: record.individual.SSN,
-                                            },
-                                            {
-                                                field_name: 'date_of_birth',
-                                                field_value: record.individual.date_of_birth,
-                                            },
-                                            {
-                                                field_name: 'phone_number',
-                                                field_value: record.individual.phone_number,
-                                            },
-                                            {
-                                                field_name: 'home_phone',
-                                                field_value: record.individual.home_phone,
-                                            },
-                                            {
-                                                field_name: 'email',
-                                                field_value: record.individual.email,
-                                            },
-                                            {
-                                                field_name: 'language',
-                                                field_value: record.individual.language,
-                                            },
-                                            {
-                                                field_name: 'original_profile_id',
-                                                field_value: record.individual.original_profile_id,
-                                            },
-                                            {
-                                                field_name: 'co_first_name',
-                                                field_value: record.individual.co_applicant ? record.individual.co_applicant.first_name : '',
-                                            },
-                                            {
-                                                field_name: 'co_last_name',
-                                                field_value: record.individual.co_applicant ? record.individual.co_applicant.last_name : '',
-                                            },
-                                            {
-                                                field_name: 'co_SSN',
-                                                field_value: record.individual.co_applicant ? record.individual.co_applicant.SSN : '',
-                                            },
-                                            {
-                                                field_name: 'co_date_of_birth',
-                                                field_value: record.individual.co_applicant ? record.individual.co_applicant.date_of_birth : '',
-                                            },
-                                            {
-                                                field_name: 'co_phone_number',
-                                                field_value: record.individual.co_applicant ? record.individual.co_applicant.phone_number : '',
-                                            },
-                                            {
-                                                field_name: 'co_home_phone',
-                                                field_value: record.individual.co_applicant ? record.individual.co_applicant.home_phone : '',
-                                            },
-                                            {
-                                                field_name: 'co_email',
-                                                field_value: record.individual.co_applicant ? record.individual.co_applicant.email : '',
-                                            },
-                                            {
-                                                field_name: 'co_language',
-                                                field_value: record.individual.co_applicant ? record.individual.co_applicant.language : '',
-                                            }
-                                        ]
-                                    }
-                                    "
+                                    :extraLeadFormData="record.individual.template_form"
                                     @success="
                                         () => (refreshTimeLine = true)
                                     "
@@ -390,7 +327,7 @@ export default {
         const router = useRouter();
         const {
             permsArray,
-            formatDateTime,
+            formatDate,
         } = common();
         const currentSaleName = ref("");
         const extraFilters = ref({
@@ -492,7 +429,7 @@ export default {
             url,
             columns,
             addEditUrl,
-            formatDateTime,
+            formatDate,
             ...crudVariables,
             allUsers,
             allEmailTemplates,

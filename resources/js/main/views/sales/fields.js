@@ -5,7 +5,7 @@ import common from "../../../common/composable/common";
 const fields = () => {
     const { getCampaignUrl } = common();
     const { t } = useI18n();
-    const url = 'sales?fields=id,xid,saleStatus{id,xid,name},individual{id,xid,reference_number,first_name,last_name,full_name,home_phone,phone_number,email,SSN,date_of_birth,language,original_profile_id,lead_data},individual:coApplicant{id,xid,first_name,last_name,SSN,date_of_birth,home_phone,phone_number,email,language},assignedUser{id,xid,name}';
+    const url = 'sales?fields=id,xid,saleStatus{id,xid,name},individual{id,xid,reference_number,first_name,last_name,full_name,home_phone,phone_number,email,SSN,date_of_birth,language,original_profile_id,lead_data,template_form,full_address,updated_at,created_at},individual:coApplicant{id,xid,first_name,last_name,SSN,date_of_birth,home_phone,phone_number,email,language},assignedUser{id,xid,name},individual:address';
     const hashableColumns = [
         'assigned_to',
         'campaign_id',
@@ -33,35 +33,37 @@ const fields = () => {
     
     const columns = [
         {
-            title: t('common.created_at'),
-            dataIndex: 'created_at'
-        },
-        // {
-        //     title: t('sales.assigned_company'),
-        //     dataIndex: 'assigned_company',
-        // },
-        {
-            title: t('sales.assigned_to'),
-            dataIndex: 'assigned_to',
+            title: t('common.name'),
+            dataIndex: 'name',
+            customRender: ({ record }) => record.individual?.full_name || ''
         },
         {
-            title: t('sales.full_name'),
-            dataIndex: 'full_name',
-            customRender: ({ record }) => record.individual.full_name
+            title: t('common.phone'),
+            dataIndex: 'phone',
+            customRender: ({ record }) => record.individual?.phone_number || ''
         },
         {
-            title: t('sales.home_phone'),
-            dataIndex: 'home_phone',
-            customRender: ({ record }) => record.individual.home_phone
+            title: t('common.address'),
+            dataIndex: 'address',
+            width: '80px',
+            customRender: ({ record }) => record.individual?.full_address || ''
         },
         {
-            title: t('sales.email'),
-            dataIndex: 'email',
-            customRender: ({ record }) => record.individual.email
+            title: t('lead.date_of_birth'),
+            dataIndex: 'date_of_birth',
+            customRender: ({ record }) => record.individual?.date_of_birth || ''
         },
         {
-            title: t('sales.status'),
-            dataIndex: 'status'
+            title: t('lead.email'),
+            dataIndex: 'email'
+        },
+        {
+            title: t('common.last_activity'),
+            dataIndex: 'updated_at',
+        },
+        {
+            title: t('common.registration'),
+            dataIndex: 'created_at',
         },
         {
             title: t('sales.action'),

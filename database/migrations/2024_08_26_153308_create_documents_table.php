@@ -14,12 +14,10 @@ return new class extends Migration
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('individual_id')->unsigned()->nullable()->default(null);
-            $table->foreign('individual_id')->references('id')->on('individuals')->onUpdate('cascade')->onDelete('cascade');
-            $table->string('signeasy_document_id')->nullable()->default(null);
+            $table->foreign('individual_id')->references('id')->on('individuals')->onUpdate('cascade')->onDelete('cascade'); 
             $table->string('title');
             $table->string('file');
             $table->string('type');
-            $table->enum('status', ['incomplete', 'canceled', 'recipient_declined', 'complete'])->nullable();
             $table->bigInteger('created_by_id')->unsigned()->nullable()->default(null);
             $table->foreign('created_by_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->bigInteger('updated_by_id')->unsigned()->nullable()->default(null);

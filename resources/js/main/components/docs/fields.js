@@ -6,63 +6,37 @@ const fields = () => {
 
     const initData = {
         title: "",
-        created_by: "",
-        created_at: "",
-    }
+        file: undefined,
+        file_url: undefined,
+    };
 
     const columns = [
-        {
-            title: t("docs.title"),
-            dataIndex: "title",
-            key: "title"
-        },
+        { title: "", dataIndex: "icon", key: "icon", width: 40 },
+        { title: t("docs.title"), dataIndex: "name", key: "name" },
         {
             title: t("common.created_by"),
-            dataIndex: "created_by_id",
-            key: "created_by_id"
+            dataIndex: "uploaded_by",
+            key: "uploaded_by",
         },
+        { title: t("docs.size"), dataIndex: "size", key: "size" },
         {
             title: t("docs.created_at"),
             dataIndex: "created_at",
+            key: "created_at",
         },
         {
             title: t("common.action"),
-            dataIndex: "action"
+            dataIndex: "action",
+            key: "action",
+            width: 80,
         },
     ];
-
-    const eSignColumns = [
-        {
-            title: t("docs.title"),
-            dataIndex: "title",
-            key: "title"
-        },
-        {
-            title: t("common.status"),
-            dataIndex: "status",
-            key: "status",
-        },
-        {
-            title: t("docs.sent_by"),
-            dataIndex: "created_by_id",
-            key: "created_by_id",
-        },
-        {
-            title: t("docs.sent_at"),
-            dataIndex: "created_at",
-        },
-        {
-            title: t("common.action"),
-            dataIndex: "action"
-        },
-    ]
 
     return {
         initData,
         columns,
         addEditUrl,
-        eSignColumns,
-    }
-}
+    };
+};
 
 export default fields;
