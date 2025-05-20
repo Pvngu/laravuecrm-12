@@ -11,7 +11,7 @@ class Document extends BaseModel
 {
     protected $table = 'documents';
     
-    protected $default = ["xid", "title"];
+    protected $default = ["xid", "name", "file_path", "file_type", "file_size", "created_by_id", "updated_by_id"];
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
@@ -56,10 +56,5 @@ class Document extends BaseModel
     public function updater()
     {
         return $this->belongsTo(User::class, 'updated_by_id', 'id')->withoutGlobalScopes();
-    }
-
-    public function signers()
-    {
-        return $this->hasMany(Signer::class);
     }
 }
