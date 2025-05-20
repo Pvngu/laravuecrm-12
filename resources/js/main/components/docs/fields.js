@@ -1,13 +1,17 @@
 import { useI18n } from "vue-i18n";
 
 const fields = () => {
-    const { t } = useI18n();
+    const url = "documents?fields=id,xid,individual_id,x_individual_id,name,file_path,file_type,file_size,created_by_id,x_created_by_id,updated_by_id,x_updated_by_id,created_at,updated_at";
+    const hashableColumns = ["individual_id"];
     const addEditUrl = "documents";
-
+    
+    const { t } = useI18n();
+    
     const initData = {
-        title: "",
-        file: undefined,
-        file_url: undefined,
+        name: "",
+        file_path: "",
+        file_type: "",
+        file_size: "",
     };
 
     const columns = [
@@ -39,9 +43,11 @@ const fields = () => {
     ];
 
     return {
+        url,
+        addEditUrl,
         initData,
         columns,
-        addEditUrl,
+        hashableColumns
     };
 };
 

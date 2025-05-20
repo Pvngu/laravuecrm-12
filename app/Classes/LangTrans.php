@@ -112,6 +112,7 @@ class LangTrans
             'docs' => 'Docs',
             'last_activity' => 'Last Activity',
             'registration' => 'Registration',
+            'phone_number' => 'Phone Number',
         ],
         'menu' => [
             'dashboard' => 'Dashboard',
@@ -806,7 +807,7 @@ class LangTrans
             'address_save_error_message' => 'There was an error while saving address... Please try again',
         ],
         'docs' => [
-            'title' => 'Document Title',
+            'name' => 'Document Name',
             'created_at' => 'Created At',
             'drag_n_drop' => 'Drag and drop files, or Browse',
             'delete_message' => 'Are you sure you want to delete this document?',

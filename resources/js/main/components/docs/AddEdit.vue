@@ -10,7 +10,7 @@
         <a-row :gutter="16">
             <a-col :xs="24" :sm="24" :md="24" :lg="24">
                 <a-form-item
-                    :label="$t('docs.title')"
+                    :label="$t('common.name')"
                     name="title"
                     :help="
                         rules.title
@@ -27,27 +27,11 @@
                     :placeholder="
                         $t(
                             'common.placeholder_default_text',
-                            [$t('docs.title')]
+                            [$t('docs.name')]
                         )
                     "
                 />
                 </a-form-item>
-            </a-col>
-        </a-row>
-        <a-row :gutter="16">
-            <a-col :xs="24" :sm="24" :md="24" :lg="24">
-                <UploadFileBig
-                    :acceptFormat="'image/*,.pdf'"
-                    :formData="formData"
-                    folder="documents"
-                    uploadField="file"
-                    @onFileUploaded="
-                        (file) => {
-                            formData.file = file.file;
-                            formData.file_url = file.file_url;
-                        }
-                    "
-                />
             </a-col>
         </a-row>
     </a-form>
@@ -65,10 +49,9 @@
     </a-modal>
 </template>
 <script>
-import { defineComponent, ref, onMounted, computed } from "vue";
+import { defineComponent } from "vue";
 import { PlusOutlined, LoadingOutlined, SaveOutlined, CloudUploadOutlined } from "@ant-design/icons-vue";
 import apiAdmin from "../../../common/composable/apiAdmin";
-import UploadFileBig from "../../../common/core/ui/file/UploadFileBig.vue";
 
 
 export default defineComponent({
@@ -85,8 +68,7 @@ export default defineComponent({
         PlusOutlined,
         LoadingOutlined,
         SaveOutlined,
-        CloudUploadOutlined,
-        UploadFileBig
+        CloudUploadOutlined
     },
     setup(props, { emit }) {
         const { addEditRequestAdmin, loading, rules } = apiAdmin();

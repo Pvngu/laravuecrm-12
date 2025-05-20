@@ -621,7 +621,6 @@ export default {
                     leadDetails.value = leadResult;
 
                     leadData.value = leadResult;
-                    console.log(leadDetailsResponse.data);
 
                     var newLeadDataArray = [];
                     if (leadResult.individual.lead_data && leadResult.individual.lead_data.length > 0) {
