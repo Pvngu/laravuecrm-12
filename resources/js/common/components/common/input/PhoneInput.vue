@@ -1,7 +1,7 @@
 <template>
     <vue-tel-input
-        v-model="internalValue"
-        :placeholder="placeholder"
+        v-model="model"
+        :placeholder="$t('common.phone_number')"
         :inputOptions="{
             showDialCode: true,
             mode: 'international',
@@ -13,45 +13,21 @@
         }"
         :disabled="disabled"
         :onlyCountries="['US', 'CA', 'MX']"
-        @input="onInput"
     />
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
 import { VueTelInput } from "vue-tel-input";
 import 'vue-tel-input/vue-tel-input.css';
 
 const props = defineProps({
-    value: {
-        type: [String, Number, Object],
-        default: "",
-    },
-    placeholder: {
-        type: String,
-        default: "",
-    },
     disabled: {
         type: Boolean,
         default: false,
     },
 });
 
-const emit = defineEmits(["update:value"]);
-
-const internalValue = ref(props.value);
-
-watch(
-    () => props.value,
-    (val) => {
-        if (val !== internalValue.value) internalValue.value = val;
-    }
-);
-
-// Emit the full phone object on input
-function onInput(phoneObj) {
-    emit("update:value", phoneObj);
-}
+const model = defineModel()
 </script>
 
 <style>

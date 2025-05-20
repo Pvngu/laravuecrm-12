@@ -52,12 +52,16 @@
                 <a-row :gutter="16">
                     <a-col :xs="24" :sm="24" :md="12" :lg="12">
                         <a-form-item :label="$t('lead.phone_number')" name="phone_number">
-                            <a-input v-model:value="leadDetailsFormData.phone_number" :placeholder="$t('common.placeholder_default_text', [$t('lead.phone_number')])"></a-input>
+                            <PhoneInput
+                                v-model:value="leadDetailsFormData.phone_number"
+                            />
                         </a-form-item>
                     </a-col>
                     <a-col :xs="24" :sm="24" :md="12" :lg="12">
                         <a-form-item :label="$t('lead.home_phone')" name="home_phone">
-                            <a-input v-model:value="leadDetailsFormData.home_phone" :placeholder="$t('common.placeholder_default_text', [$t('lead.home_phone')])"></a-input>
+                            <PhoneInput
+                                v-model:value="leadDetailsFormData.home_phone"
+                            />
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -152,6 +156,7 @@ import { forEach } from "lodash-es";
 import { useI18n } from "vue-i18n";
 import common from "../../../common/composable/common";
 import apiAdmin from "../../../common/composable/apiAdmin";
+import PhoneInput from "../../../common/components/common/input/PhoneInput.vue";
 
 export default defineComponent({
     props: {
@@ -171,6 +176,7 @@ export default defineComponent({
     emits: ["success"],
     components: {
         SaveOutlined,
+        PhoneInput,
     },
     setup(props, { emit }) {
         const { permsArray } = common();

@@ -276,14 +276,9 @@
                         :help="rules.home_phone ? rules.home_phone.message : null"
                         :validateStatus="rules.home_phone ? 'error' : null"
                     >
-                        <a-input
+                        <PhoneInput
                             v-model:value="formData.home_phone"
-                            :placeholder="
-                                $t('common.placeholder_default_text', [
-                                    $t('lead.home_phone'),
-                                ])
-                            "
-                        ></a-input>
+                        />
                     </a-form-item>
                 </a-col>
                 <a-col :xs="24" :sm="24" :md="12" :lg="12" v-if="coApplicantRequired">
@@ -312,12 +307,7 @@
                         :validateStatus="rules.phone_number ? 'error' : null"
                     >
                         <PhoneInput
-                            v-model:value="formData.phone_number"
-                            :placeholder="
-                                $t('common.placeholder_default_text', [
-                                    $t('lead.phone_number'),
-                                ])
-                            "
+                            v-model="formData.phone_number"
                         />
                     </a-form-item>
                 </a-col>
@@ -330,12 +320,7 @@
                         class="hidden-label"
                     >
                         <PhoneInput
-                            v-model:value="formData.co_phone_number"
-                            :placeholder="
-                                $t('common.placeholder_default_text', [
-                                    $t('lead.phone_number'),
-                                ])
-                            "
+                            v-model="formData.co_phone_number"
                         />
                     </a-form-item>
                 </a-col>
@@ -413,7 +398,7 @@
                                 :key="language.id"
                                 :value="language.key"
                             >
-                                {{ $t(language.key) }}
+                                {{ $t(language.value) }}
                             </a-select-option>
                         </a-select>
                     </a-form-item>
