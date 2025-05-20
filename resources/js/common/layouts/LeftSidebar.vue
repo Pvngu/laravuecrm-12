@@ -149,73 +149,6 @@
                     </a-sub-menu>
 
                     <LeftSideBarMainHeading
-                        v-if="
-                            permsArray.includes('users_view') ||
-                            permsArray.includes('admin')
-                        "
-                        :title="$t('menu.user_management')"
-                        :visible="menuCollapsed"
-                    />
-
-                    <a-menu-item
-                        v-if="
-                            permsArray.includes('users_view') ||
-                            permsArray.includes('admin')
-                        "
-                        @click="
-                            () => {
-                                menuSelected();
-                                $router.push({ name: 'admin.users.index' });
-                            }
-                        "
-                        key="users"
-                    >
-                        <SolutionOutlined />
-                        <span>{{ $t("menu.staff_members") }}</span>
-                    </a-menu-item>
-
-                    <a-sub-menu
-                        v-if="
-                            (permsArray.includes('salesmans_view') ||
-                                permsArray.includes('admin'))
-                        "
-                        key="salesmans"
-                    >
-                        <template #title>
-                            <span>
-                                <ApartmentOutlined />
-                                <span>{{ $t("menu.salesmans") }}</span>
-                            </span>
-                        </template>
-                        <a-menu-item
-                            @click="
-                                () => {
-                                    menuSelected();
-                                    $router.push({ name: 'admin.salesman.index' });
-                                }
-                            "
-                            key="salesmans"
-                        >
-                            <TeamOutlined />
-                            <span>{{ $t("menu.salesmans") }}</span>
-                        </a-menu-item>
-                        <a-menu-item
-                            @click="
-                                () => {
-                                    menuSelected();
-                                    $router.push({
-                                        name: 'admin.bookings.salesman_bookings.index',
-                                    });
-                                }
-                            "
-                            key="salesman_bookings"
-                        >
-                            <ShoppingCartOutlined />
-                            <span>{{ $t("menu.salesman_bookings") }}</span>
-                        </a-menu-item>
-                    </a-sub-menu>
-
-                    <LeftSideBarMainHeading
                         :title="$t('menu.lead_management')"
                         :visible="menuCollapsed"
                     />
@@ -325,6 +258,73 @@
                         <ScheduleOutlined />
                         <span>{{ $t("menu.lead_follow_up") }}</span>
                     </a-menu-item>
+
+                    <LeftSideBarMainHeading
+                        v-if="
+                            permsArray.includes('users_view') ||
+                            permsArray.includes('admin')
+                        "
+                        :title="$t('menu.user_management')"
+                        :visible="menuCollapsed"
+                    />
+
+                    <a-menu-item
+                        v-if="
+                            permsArray.includes('users_view') ||
+                            permsArray.includes('admin')
+                        "
+                        @click="
+                            () => {
+                                menuSelected();
+                                $router.push({ name: 'admin.users.index' });
+                            }
+                        "
+                        key="users"
+                    >
+                        <SolutionOutlined />
+                        <span>{{ $t("menu.staff_members") }}</span>
+                    </a-menu-item>
+
+                    <a-sub-menu
+                        v-if="
+                            (permsArray.includes('salesmans_view') ||
+                                permsArray.includes('admin'))
+                        "
+                        key="salesmans"
+                    >
+                        <template #title>
+                            <span>
+                                <ApartmentOutlined />
+                                <span>{{ $t("menu.salesmans") }}</span>
+                            </span>
+                        </template>
+                        <a-menu-item
+                            @click="
+                                () => {
+                                    menuSelected();
+                                    $router.push({ name: 'admin.salesman.index' });
+                                }
+                            "
+                            key="salesmans"
+                        >
+                            <TeamOutlined />
+                            <span>{{ $t("menu.salesmans") }}</span>
+                        </a-menu-item>
+                        <a-menu-item
+                            @click="
+                                () => {
+                                    menuSelected();
+                                    $router.push({
+                                        name: 'admin.bookings.salesman_bookings.index',
+                                    });
+                                }
+                            "
+                            key="salesman_bookings"
+                        >
+                            <ShoppingCartOutlined />
+                            <span>{{ $t("menu.salesman_bookings") }}</span>
+                        </a-menu-item>
+                    </a-sub-menu>
 
                     <LeftSideBarMainHeading
                         :title="$t('menu.settings')"

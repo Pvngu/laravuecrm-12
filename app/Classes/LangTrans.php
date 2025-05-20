@@ -563,16 +563,6 @@ class LangTrans
             'fetched_successfully' => 'Translations Fetch Successfully',
             'import_translations' => 'Import Translations',
         ],
-        'storage_settings' => [
-            'updated' => 'Storage Settings Updated',
-            'storage' => 'Storage',
-            'local' => 'Local',
-            'aws' => 'AWS S3 Storage',
-            'aws_key' => 'AWS Key',
-            'aws_secret' => 'AWS Secret',
-            'aws_region' => 'AWS Region',
-            'aws_bucket' => 'AWS Bucket',
-        ],
         'mail_settings' => [
             'updated' => 'Mail Settings Updated',
             'mail_driver' => 'Mail Driver',

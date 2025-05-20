@@ -37,11 +37,8 @@ class Common
             'langImagePath' => 'langs',
             'expenseBillPath' => 'expenses',
             'productLogoPath' => 'product',
-            'audioFilesPath' => 'audio',
-            'websiteImagePath' => 'website',
             'offlineRequestDocumentPath' => 'offline-requests',
             'docFilesPath' => 'documents',
-            'recordingAudioPath' => 'calls',
         ];
 
         return ($type == null) ? $paths : $paths[$type];
@@ -52,25 +49,17 @@ class Common
         $folder = $request->folder;
         $folderString = "";
 
-        if ($folder == "user") {
-            $folderString = "userImagePath";
-        } else if ($folder == "company") {
-            $folderString = "companyLogoPath";
-        } else if ($folder == "langs") {
-            $folderString = "langImagePath";
-        } else if ($folder == "expenses") {
-            $folderString = "expenseBillPath";
-        } else if ($folder == "product") {
-            $folderString = "productLogoPath";
-        } else if ($folder == "website") {
-            $folderString = "websiteImagePath";
-        } else if ($folder == "offline-requests") {
-            $folderString = "offlineRequestDocumentPath";
-        } else if ($folder == "documents") {
-            $folderString = "docFilesPath";
-        } else if ($folder == "calls") {
-            $folderString = "recordingAudioPath";
-        }
+        $folderMap = [
+            "user" => "userImagePath",
+            "company" => "companyLogoPath",
+            "langs" => "langImagePath",
+            "expenses" => "expenseBillPath",
+            "product" => "productLogoPath",
+            "offline-requests" => "offlineRequestDocumentPath",
+            "documents" => "docFilesPath",
+        ];
+
+        $folderString = $folderMap[$folder] ?? $folder;
 
         $folderPath = self::getFolderPath($folderString);
 
@@ -98,7 +87,7 @@ class Common
 
     public static function getFileUrl($folderPath, $fileName)
     {
-        if (config('filesystems.default') == 's3') {
+        if (env('FILESYSTEM_DISK') == 's3') {
             $path = $folderPath . '/' . $fileName;
 
             return Storage::url($path);
@@ -239,22 +228,6 @@ class Common
         $local->status = true;
         $local->is_global = $company->is_global;
         $local->save();
-
-        $aws = new Settings();
-        $aws->company_id = $company->id;
-        $aws->setting_type = 'storage';
-        $aws->name = 'AWS';
-        $aws->name_key = 'aws';
-        $aws->credentials = [
-            'driver' => 's3',
-            'key' => '',
-            'secret' => '',
-            'region' => '',
-            'bucket' => '',
-
-        ];
-        $aws->is_global = $company->is_global;
-        $aws->save();
 
         $smtp = new Settings();
         $smtp->company_id = $company->id;
