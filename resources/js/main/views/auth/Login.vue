@@ -2,7 +2,7 @@
     <div class="bg-white h-screen overflow-hidden">
         <a-row class="h-full">
             <a-col :xs="24" :sm="24" :md="12" :lg="10">
-                <div class="flex flex-col h-screen px-12 py-8 md:px-8 sm:px-6">
+                <div class="flex flex-col h-screen px-12 py-8 md:px-8 sm:px-6 max-w-2xl mx-auto">
                     <div class="mb-8 text-left">
                         <img class="w-32 h-auto" :src="globalSetting.light_logo_url" />
                     </div>
