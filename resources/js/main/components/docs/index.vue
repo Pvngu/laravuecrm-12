@@ -27,7 +27,7 @@
         <div class="mt-5">
             <a-table
                 :columns="columns"
-                :data-source="files"
+                :data-source="table.data"
                 :row-key="record => record.id"
                 bordered
                 size="middle"
@@ -60,10 +60,10 @@
                                     <a-menu-item key="view" @click="onView(record)">
                                         <EyeOutlined /> {{ $t("common.view") }}
                                     </a-menu-item>
-                                    <a-menu-item key="edit" @click="onEdit(record)">
+                                    <a-menu-item key="edit" @click="editItem(record)">
                                         <EditOutlined /> {{ $t("common.edit") }}
                                     </a-menu-item>
-                                    <a-menu-item key="delete" @click="onDelete(record)">
+                                    <a-menu-item key="delete" @click="showDeleteConfirm(record.xid)">
                                         <DeleteOutlined /> {{ $t("common.delete") }}
                                     </a-menu-item>
                                 </a-menu>
@@ -73,20 +73,26 @@
                 </template>
             </a-table>
         </div>
-
-
     </div>
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import UploadFileBig from "../../../common/core/ui/file/UploadFileBig.vue";
 import { FileOutlined, PictureOutlined, EyeOutlined, EditOutlined, DeleteOutlined, EllipsisOutlined, FilePdfOutlined, PlusOutlined } from "@ant-design/icons-vue";
 import AddEdit from "./AddEdit.vue";
 import fields from "./fields";
 import crud from "../../../common/composable/crud";
+import apiAdmin from "../../../common/composable/apiAdmin";
+import { useI18n } from "vue-i18n";
 
 export default {
+    props: {
+        individualId: {
+            type: String,
+            default: "",
+        },
+    },
     components: {
         UploadFileBig,
         FileOutlined,
@@ -99,39 +105,15 @@ export default {
         PlusOutlined,
         AddEdit,
     },
-    setup() {
+    setup(props, { emit }) {
         // Get data from fields and crud
-        const { initData, addEditUrl, columns } = fields();
+        const { initData, url, addEditUrl, columns, filterableColumns } = fields();
+        const { addEditRequestAdmin } = apiAdmin();
         const crudVariables = crud();
-        
-        // Set up crud variables
-        crudVariables.crudUrl.value = addEditUrl;
-        crudVariables.langKey.value = "docs";
-        crudVariables.initData.value = { ...initData };
-        crudVariables.formData.value = { ...initData };
+        const { t } = useI18n();
 
         // Define uploadFormData for UploadFileBig component
         const uploadFormData = ref({ file: undefined, file_url: undefined });
-
-        // Dummy data for demonstration
-        const files = ref([
-            {
-                id: 1,
-                fileType: "pdf",
-                name: "Document1.pdf",
-                uploadedBy: "Alice",
-                size: "1.2 MB",
-                createdAt: "2024-06-01",
-            },
-            {
-                id: 2,
-                fileType: "image",
-                name: "Photo.png",
-                uploadedBy: "Bob",
-                size: "500 KB",
-                createdAt: "2024-06-02",
-            },
-        ]);
 
         // Map file type to icon
         const getFileIcon = (type) => {
@@ -140,71 +122,51 @@ export default {
             return "FileOutlined";
         };
 
-        // Add item function
-        const addItem = () => {
-            crudVariables.addEditType.value = "add";
-            crudVariables.pageTitle.value = crudVariables.langKey.value + ".add";
-            crudVariables.formData.value = { ...crudVariables.initData.value };
-            crudVariables.successMessage.value = crudVariables.langKey.value + ".created";
-            crudVariables.addEditVisible.value = true;
+        onMounted(() => {
+            crudVariables.crudUrl.value = addEditUrl;
+            crudVariables.langKey.value = "documents";
+            crudVariables.initData.value = { ...initData };
+            crudVariables.formData.value = { ...initData };
+
+            setUrlData();
+        });
+
+        const setUrlData = () => {
+            crudVariables.tableUrl.value = {
+                url: url,
+            };
+            crudVariables.table.filterableColumns = filterableColumns;
+
+            crudVariables.fetch({
+                page: 1,
+            });
         };
 
-        // Handle file upload
         const onFileUploaded = (file) => {
-            // Open the AddEdit drawer with the file already loaded
-            crudVariables.addEditType.value = "add";
-            crudVariables.pageTitle.value = crudVariables.langKey.value + ".add";
-            crudVariables.formData.value = { 
-                ...crudVariables.initData.value,
-                file: file.file,
-                file_url: file.file_url
-            };
-            crudVariables.successMessage.value = crudVariables.langKey.value + ".created";
-            crudVariables.addEditVisible.value = true;
+            addEditRequestAdmin({
+                url: url,
+                data: {
+                    file: file.file,
+                    name: file.file.replace(/\.[^/.]+$/, ""),
+                    individual_id: props.individualId,
+                },
+                successMessage: t('docs.created'),
+                success: (res) => {
+                    setUrlData();
+                    emit("addEditSuccess", res.xid);
+                },
+            });
         };
 
         // Handlers for records
         const onView = (record) => {};
-        
-        const onEdit = (record) => {
-            crudVariables.addEditType.value = "edit";
-            crudVariables.pageTitle.value = crudVariables.langKey.value + ".edit";
-            crudVariables.formData.value = { ...record };
-            crudVariables.successMessage.value = crudVariables.langKey.value + ".updated";
-            crudVariables.addEditVisible.value = true;
-        };
-        
-        const onDelete = (record) => {
-            // Implement delete functionality here if needed
-        };
-
-        // Handle AddEdit events
-        const addEditSuccess = (xid) => {
-            // In a real app, you would fetch the updated data
-            // For now, we'll just close the drawer
-            crudVariables.addEditVisible.value = false;
-            
-            // Clear form data
-            crudVariables.formData.value = { ...crudVariables.initData.value };
-        };
-
-        const onCloseAddEdit = () => {
-            crudVariables.addEditVisible.value = false;
-            crudVariables.formData.value = { ...crudVariables.initData.value };
-        };
 
         return {
-            files,
             columns,
             uploadFormData,
             getFileIcon,
-            onFileUploaded,
             onView,
-            onEdit,
-            onDelete,
-            addItem,
-            addEditSuccess,
-            onCloseAddEdit,
+            onFileUploaded,
             ...crudVariables,
         };
     },

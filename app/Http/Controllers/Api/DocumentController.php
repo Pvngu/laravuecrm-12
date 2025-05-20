@@ -56,20 +56,17 @@ class DocumentController extends ApiBaseController
     public function storing($document)
     {
         $loggedUser = user();
-        $individualId = $document->individual->id;
 
         if($loggedUser) {
             $document->created_by_id = $loggedUser->id;
         }
-        
-        $document->type = 'uploaded';
 
-        $notes = json_encode([
-            'title' => $document->title,
-            'type' => $document->type
-        ]);
+        // $notes = json_encode([
+        //     'title' => $document->title,
+        //     'type' => $document->type
+        // ]);
 
-        Common::storeIndividualLog($individualId, 'doc', $notes);
+        // Common::storeIndividualLog($individualId, 'doc', $notes);
         
         return $document;
     }

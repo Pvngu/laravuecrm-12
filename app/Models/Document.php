@@ -11,7 +11,7 @@ class Document extends BaseModel
 {
     protected $table = 'documents';
     
-    protected $default = ["xid", "name", "file_path", "file_type", "file_size", "created_by_id", "updated_by_id"];
+    protected $default = ["xid", "name", "file", "file_type", "file_size", "created_by_id", "updated_by_id"];
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
 

@@ -24,7 +24,7 @@ class StoreRequest extends BaseRequest
     public function rules()
     {
         $rules = [
-            'title' => 'required',
+            'name' => 'required',
             'file' => 'required'
         ];
         return $rules;

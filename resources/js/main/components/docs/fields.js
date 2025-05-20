@@ -1,7 +1,7 @@
 import { useI18n } from "vue-i18n";
 
 const fields = () => {
-    const url = "documents?fields=id,xid,individual_id,x_individual_id,name,file_path,file_type,file_size,created_by_id,x_created_by_id,updated_by_id,x_updated_by_id,created_at,updated_at";
+    const url = "documents?fields=id,xid,individual_id,x_individual_id,name,file,file_url,file_type,file_size";
     const hashableColumns = ["individual_id"];
     const addEditUrl = "documents";
     
@@ -42,12 +42,31 @@ const fields = () => {
         },
     ];
 
+    const filterableColumns = [
+        { 
+            title: t("common.name"), 
+            dataIndex: "name", 
+            key: "name" 
+        },
+        {
+            title: t("docs.uploaded_by"),
+            dataIndex: "uploaded_by",
+            key: "uploaded_by",
+        },
+        {
+            title: t("docs.uploaded_at"),
+            dataIndex: "created_at",
+            key: "created_at",
+        },
+    ]
+
     return {
         url,
         addEditUrl,
         initData,
         columns,
-        hashableColumns
+        hashableColumns,
+        filterableColumns,
     };
 };
 

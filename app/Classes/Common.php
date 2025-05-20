@@ -20,9 +20,7 @@ use App\Scopes\CompanyScope;
 use App\Models\IndividualLog;
 use App\Models\AppNotification;
 use Illuminate\Support\Facades\DB;
-use Nwidart\Modules\Facades\Module;
 use Vinkla\Hashids\Facades\Hashids;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Examyou\RestAPI\Exceptions\ApiException;
 

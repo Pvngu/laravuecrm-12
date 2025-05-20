@@ -31,10 +31,14 @@ const model = defineModel()
 </script>
 
 <style>
-.vue-tel-input {
+.vue-tel-input,
+.vue-tel-input .vti__input,
+.vti__dropdown-list.below
+{
     border-radius: 8px !important;
 }
-.vue-tel-input .vti__input {
-    border-radius: 8px !important;
+
+.vti__dropdown-list.below {
+    margin-top: 4px !important;
 }
 </style>
