@@ -9,25 +9,31 @@
 		<meta name="msapplication-TileImage" href="{{ $company->small_light_logo_url }}">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700&display=swap">
         <link rel="stylesheet" href="{{ asset('css/pre-loader.css') }}">
+        <style>
+            .svg-animation {
+                animation: svg-animation 3s ease-in-out infinite;
+            }
+
+            @keyframes svg-animation {
+                0% {
+                    opacity: 0.15;
+                }
+                50% {
+                    opacity: 1;
+                }
+                100% {
+                    opacity: 0.15;
+                }
+            }
+        </style>
         @vite('resources/css/app.css')
     </head>
     <body>
         <div id="app">
             <div class="loading-app-container">
-                <div class="ant-result ant-result-info">
-                    <div class="ant-result-title">
-                        <span style="color: rgb(0, 113, 128);">
-                            Loading
-                        </span> 
-                    </div>
-                    <div class="spinner">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                </div>
+                <span>
+                    <img class="h-12 svg-animation" src="{{ asset('images/loading.png') }}">
+                </span>
             </div>
         </div>
 
