@@ -16,7 +16,7 @@ class User extends BaseModel implements AuthenticatableContract, JWTSubject
 {
     use Notifiable, HasRoles, Authenticatable, HasFactory;
 
-    protected $default = ["xid", "name", "profile_image"];
+    protected $default = ["xid", "name", "profile_image", "profile_image_url"];
 
     protected $guarded = ['id', 'company_id', 'created_at', 'updated_at'];
 

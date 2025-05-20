@@ -76,6 +76,7 @@ export default defineComponent({
 		const { t } = useI18n();
 
 		const customRequest = (info) => {
+			console.log(info)
 			const formData = new FormData();
 			formData.append("file", info.file);
 			formData.append("folder", props.folder);
@@ -95,6 +96,9 @@ export default defineComponent({
 					emit("onFileUploaded", {
 						file: response.data.file,
 						file_url: response.data.file_url,
+						name: info.file.name.replace(/\.[^/.]+$/, ""),
+						size: info.file.size,
+						type: info.file.type,
 					});
 				})
 				.catch(() => {

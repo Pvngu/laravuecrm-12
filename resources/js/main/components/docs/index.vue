@@ -16,7 +16,7 @@
 
         <!-- Upload Section -->
         <UploadFileBig
-            :acceptFormat="'image/*,.pdf'"
+            :acceptFormat="'image/*,.pdf,.doc,.docx'"
             :formData="uploadFormData"
             folder="documents"
             uploadField="file"
@@ -36,19 +36,19 @@
                     <template v-if="column.dataIndex === 'name'">
                         <a-button>
                             <template #icon>
-                                <component :is="getFileIcon(record.fileType)" style="font-size: 14px;" />
+                                <component :is="getFileIcon(record)" style="font-size: 14px;" />
                             </template>
                         </a-button>
-                        {{ record.name }}
+                        <span class="ml-2">{{ record.name }}</span>
                     </template>
                     <template v-if="column.dataIndex === 'uploaded_by'">
-                        {{ record.uploadedBy }}
+                        <user-info @click="showViewUserDrawer(record)" :user="record.creator" />
                     </template>
-                    <template v-if="column.dataIndex === 'size'">
-                        {{ record.size }}
+                    <template v-if="column.dataIndex === 'file_size'">
+                        {{ bToMb(record.file_size) }} MB
                     </template>
                     <template v-if="column.dataIndex === 'created_at'">
-                        {{ record.createdAt }}
+                        {{ record.created_at }}
                     </template>
                     <template v-if="column.dataIndex === 'action'">
                         <a-dropdown>
@@ -79,12 +79,13 @@
 <script>
 import { ref, onMounted } from "vue";
 import UploadFileBig from "../../../common/core/ui/file/UploadFileBig.vue";
-import { FileOutlined, PictureOutlined, EyeOutlined, EditOutlined, DeleteOutlined, EllipsisOutlined, FilePdfOutlined, PlusOutlined } from "@ant-design/icons-vue";
+import { FileOutlined, PictureOutlined, EyeOutlined, EditOutlined, DeleteOutlined, EllipsisOutlined, FilePdfOutlined, PlusOutlined, FileWordOutlined } from "@ant-design/icons-vue";
 import AddEdit from "./AddEdit.vue";
 import fields from "./fields";
 import crud from "../../../common/composable/crud";
 import apiAdmin from "../../../common/composable/apiAdmin";
 import { useI18n } from "vue-i18n";
+import UserInfo from "../../../common/components/user/UserInfo.vue";
 
 export default {
     props: {
@@ -103,7 +104,9 @@ export default {
         EllipsisOutlined,
         FilePdfOutlined,
         PlusOutlined,
+        FileWordOutlined,
         AddEdit,
+        UserInfo,
     },
     setup(props, { emit }) {
         // Get data from fields and crud
@@ -116,15 +119,29 @@ export default {
         const uploadFormData = ref({ file: undefined, file_url: undefined });
 
         // Map file type to icon
-        const getFileIcon = (type) => {
-            if (type === "pdf") return "FilePdfOutlined";
-            if (type === "image") return "PictureOutlined";
+        const getFileIcon = (record) => {
+            var type = record.file_type;
+            var ext = "";
+            if (record.file) {
+                const parts = record.file.split(".");
+                if (parts.length > 1) {
+                    ext = parts.pop().toLowerCase();
+                }
+            }
+            if (ext === "pdf") return "FilePdfOutlined";
+            if(ext === 'docx' || ext === 'dox') return "FileWordOutlined"
+            if (type && type.startsWith("image")) return "PictureOutlined";
             return "FileOutlined";
+        };
+
+        const bToMb = (bytes) => {
+            if (!bytes) return "0";
+            return (bytes / (1024 * 1024)).toFixed(2);
         };
 
         onMounted(() => {
             crudVariables.crudUrl.value = addEditUrl;
-            crudVariables.langKey.value = "documents";
+            crudVariables.langKey.value = "docs";
             crudVariables.initData.value = { ...initData };
             crudVariables.formData.value = { ...initData };
 
@@ -139,6 +156,7 @@ export default {
 
             crudVariables.fetch({
                 page: 1,
+                limit: 10
             });
         };
 
@@ -147,7 +165,9 @@ export default {
                 url: url,
                 data: {
                     file: file.file,
-                    name: file.file.replace(/\.[^/.]+$/, ""),
+                    name: file.name,
+                    file_size: file.size,
+                    file_type: file.type,
                     individual_id: props.individualId,
                 },
                 successMessage: t('docs.created'),
@@ -167,6 +187,7 @@ export default {
             getFileIcon,
             onView,
             onFileUploaded,
+            bToMb,
             ...crudVariables,
         };
     },

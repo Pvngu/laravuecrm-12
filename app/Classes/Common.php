@@ -74,6 +74,19 @@ class Common
         ];
     }
 
+    public function downloadFile($fileName, $folderString)
+    {
+        $folderPath = self::getFolderPath($folderString);
+
+        $fullPath = $folderPath . '/' . $fileName;
+
+        if (Storage::exists($fullPath)) {
+            return Storage::download($fullPath);
+        } else {
+            throw new ApiException("File not found");
+        }
+    }
+
     public static function checkFileExists($folderString, $fileName)
     {
         $folderPath = self::getFolderPath($folderString);

@@ -11,19 +11,19 @@
             <a-col :xs="24" :sm="24" :md="24" :lg="24">
                 <a-form-item
                     :label="$t('common.name')"
-                    name="title"
+                    name="name"
                     :help="
-                        rules.title
-                            ? rules.title.message
+                        rules.name
+                            ? rules.name.message
                             : null
                     "
                     :validateStatus="
-                        rules.title ? 'error' : null
+                        rules.name ? 'error' : null
                     "
                     class="required"
                 >
                 <a-input
-                    v-model:value="formData.title"
+                    v-model:value="formData.name"
                     :placeholder="
                         $t(
                             'common.placeholder_default_text',

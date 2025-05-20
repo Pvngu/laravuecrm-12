@@ -25,7 +25,6 @@ class UpdateRequest extends BaseRequest
     {
         return [
             'name' => 'required',
-            'file' => 'required'
         ];
     }
 }

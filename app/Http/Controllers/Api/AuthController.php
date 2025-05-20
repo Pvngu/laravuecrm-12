@@ -231,6 +231,14 @@ class AuthController extends ApiBaseController
 
         return ApiResponse::make('File Uploaded', $result);
     }
+    
+    public function downloadFile(Request $request)
+    {
+        $fileName = $request->file_name;
+        $folderString = $request->folder;
+
+        return (new Common())->downloadFile($fileName, $folderString);
+    }
 
     public function profile(ProfileRequest $request)
     {

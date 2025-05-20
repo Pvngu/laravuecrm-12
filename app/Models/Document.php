@@ -34,7 +34,7 @@ class Document extends BaseModel
     {
         parent::boot();
 
-        // static::addGlobalScope(new CompanyScope);
+        static::addGlobalScope(new CompanyScope);
     }
 
     public function getFileUrlAttribute()

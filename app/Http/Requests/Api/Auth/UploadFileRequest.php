@@ -34,7 +34,11 @@ class UploadFileRequest extends BaseRequest
         }
 
         if ($this->has('file')) {
-            $rules['file'] = 'required|image|max:20';
+            $rules['file'] = 'required|image|max:20000';
+
+            if($folder == 'documents') {
+                $rules['file'] = 'required|mimes:csv,txt,xlx,xls,pdf,docx,txt,jpg,jpeg,svg,png|max:20000';
+            }
 
             if ($folder == 'expenses') {
                 $rules['file'] = 'required|mimes:csv,txt,xlx,xls,pdf,docx,txt,jpg,jpeg,svg,png|max:20000';

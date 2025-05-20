@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreign('individual_id')->references('id')->on('individuals')->onUpdate('cascade')->onDelete('cascade'); 
             $table->string('name');
             $table->string('file');
-            $table->string('file_type');
+            $table->string('file_type')->nullable()->default(null);
             $table->bigInteger('file_size')->unsigned()->nullable()->default(null);
             $table->bigInteger('created_by_id')->unsigned()->nullable()->default(null);
             $table->foreign('created_by_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
