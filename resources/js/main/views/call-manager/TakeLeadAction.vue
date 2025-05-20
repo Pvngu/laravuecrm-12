@@ -273,11 +273,10 @@
                                                 v-if="
                                                     leadData &&
                                                     leadData.individual &&
-                                                    leadData.individual.address &&
-                                                    leadData.individual.address.full_address
+                                                    leadData.individual.full_address
                                                 "
                                             >
-                                                {{ leadData.individual.address.full_address }}
+                                                {{ leadData.individual.full_address }}
                                             </a-typography-text>
                                             <span v-else>-</span>
                                         </a-col>
@@ -589,7 +588,7 @@ export default {
         const fetchInitData = () => {
             const leadId = route.params.id;
             const campaignUrl = "individual:campaign,individual:campaign:campaignUsers,individual:campaign:campaignUsers:user{id,xid,name,profile_image,profile_image_url},individual:campaign:emailTemplate{id,xid,name},individual:campaign:form{id,xid,name,form_fields},individual:campaign:lastActioner{id,xid,name},individual:campaign:completedBy{id,xid,name}";
-            const leadDetailsUrl = `leads/${leadId}?fields=id,xid,individual{id,xid,reference_number,first_name,last_name,SSN,date_of_birth,home_phone,phone_number,email,original_profile_id,language,lead_data,time_taken,last_action_by,x_last_action_by,x_campaign_id,template_form},individual:address,individual:coApplicant,individual:coApplicant:address,started,lead_status,individual:lastActioner{id,xid,name},${campaignUrl},individual:individualFollowUp{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:individualFollowUp:user{id,xid,name},individual:salesmanBooking{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:salesmanBooking:user{id,xid,name}`;
+            const leadDetailsUrl = `leads/${leadId}?fields=id,xid,individual{id,xid,reference_number,first_name,last_name,SSN,date_of_birth,home_phone,phone_number,email,original_profile_id,language,lead_data,time_taken,last_action_by,x_last_action_by,x_campaign_id,template_form,full_address},individual:address,individual:coApplicant,individual:coApplicant:address,started,lead_status,individual:lastActioner{id,xid,name},${campaignUrl},individual:individualFollowUp{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:individualFollowUp:user{id,xid,name},individual:salesmanBooking{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:salesmanBooking:user{id,xid,name}`;
 
             leadDetails.value = {};
             leadCallLogDetails.value = {};

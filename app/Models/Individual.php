@@ -118,10 +118,10 @@ class Individual extends BaseModel
             $address = $this->address;
             $parts = [
                 $address->address_line1,
-                $address->address_line2,
                 $address->city,
-                optional($address->state)->name,
+                // optional($address->state)->name,
                 $address->zip_code,
+                optional($address->state)->code,
             ];
             return implode(', ', array_filter($parts));
         }
