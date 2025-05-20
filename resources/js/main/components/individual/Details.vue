@@ -311,14 +311,14 @@
                         :help="rules.phone_number ? rules.phone_number.message : null"
                         :validateStatus="rules.phone_number ? 'error' : null"
                     >
-                        <a-input
+                        <PhoneInput
                             v-model:value="formData.phone_number"
                             :placeholder="
                                 $t('common.placeholder_default_text', [
                                     $t('lead.phone_number'),
                                 ])
                             "
-                        ></a-input>
+                        />
                     </a-form-item>
                 </a-col>
                 <a-col :xs="24" :sm="24" :md="12" :lg="12" v-if="coApplicantRequired">
@@ -329,14 +329,14 @@
                         :validateStatus="rules.co_phone_number ? 'error' : null"
                         class="hidden-label"
                     >
-                        <a-input
+                        <PhoneInput
                             v-model:value="formData.co_phone_number"
                             :placeholder="
                                 $t('common.placeholder_default_text', [
                                     $t('lead.phone_number'),
                                 ])
                             "
-                        ></a-input>
+                        />
                     </a-form-item>
                 </a-col>
                 <a-col :xs="24" :sm="24" :md="12" :lg="12">
@@ -568,6 +568,7 @@ import { useI18n } from "vue-i18n";
 import SendMail from "../../views/call-manager/SendMail.vue";
 import UserSelect from "../../../common/components/common/select/UserSelect.vue";
 import DateTimePicker from "../../../common/components/common/calendar/DateTimePicker.vue";
+import PhoneInput from "../../../common/components/common/input/PhoneInput.vue";
 
 export default {
     props: {
@@ -584,6 +585,7 @@ export default {
         UserSelect,
         DateTimePicker,
         MobileOutlined,
+        PhoneInput,
     },
     emits: ["success"],
     setup(props, { emit }) {

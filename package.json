@@ -47,6 +47,7 @@
         "unplugin-vue-components": "^0.25.1",
         "vite": "^6.2.4",
         "vue-loader": "^16.8.3",
-        "vue-stripe-js": "^1.0.1"
+        "vue-stripe-js": "^1.0.1",
+        "vue-tel-input": "^9.3.0"
     }
 }
