@@ -28,12 +28,14 @@ const fields = () => {
         { 
             title: t("docs.size"), 
             dataIndex: "file_size", 
-            key: "file_size" 
+            key: "file_size",
+            width: 100,
         },
         {
             title: t("docs.uploaded_at"),
             dataIndex: "created_at",
             key: "created_at",
+            width: 100,
         },
         { 
             dataIndex: "action", 

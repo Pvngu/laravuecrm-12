@@ -10,6 +10,8 @@ use App\Models\BaseModel;
 class Document extends BaseModel
 {
     protected $table = 'documents';
+
+    protected $hidden = ['id'];
     
     protected $default = ["xid", "name", "file", "file_type", "file_size", "created_by_id", "updated_by_id"];
 

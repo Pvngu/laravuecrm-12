@@ -240,6 +240,16 @@ class AuthController extends ApiBaseController
         return (new Common())->downloadFile($fileName, $folderString);
     }
 
+    public function deleteFile(Request $request)
+    {
+        $fileName = $request->file_name;
+        $folderString = $request->folder;
+
+        (new Common())->deleteFile($fileName, $folderString);
+
+        return ApiResponse::make('File deleted successfully');
+    }
+
     public function profile(ProfileRequest $request)
     {
         $user = auth('api')->user();

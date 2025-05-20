@@ -367,9 +367,8 @@
             :md="24"
             :lg="12"
             :xl="12"
-            class="h-[calc(100vh-100px)]"
         >
-            <a-card :bordered="false">
+            <a-card :bordered="false" class="h-[calc(100vh-100px)]">
                 <a-tabs v-model:activeKey="activeKey">
                     <a-tab-pane key="lead_details">
                         <template #tab>
@@ -378,7 +377,7 @@
                                 {{ $t("lead.lead_details") }}
                             </span>
                         </template>
-                        <a-tabs v-model:activeKeyLead="activeKeyLead" type="card" class="address flex justify-end">
+                        <a-tabs v-model:activeKeyLead="activeKeyLead" type="card">
                             <a-tab-pane key="details" tab="Details">
                                 <Details
                                     :saleLeadData="leadData"
@@ -446,7 +445,7 @@
                         <DocsTable
                             pageName="documents"
                             :individualId="leadDetails.individual.xid"
-                            :scrollStyle="{ y: 'calc(100vh - 320px)' }"
+                            :scrollStyle="{ y: 'calc(100vh - 460px)', x: 'auto' }"
                             @success="() => (refreshTimeLine = true)"
                             :individualDetails="leadDetails"
                         />

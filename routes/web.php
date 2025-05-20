@@ -17,6 +17,7 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
         ApiRoute::post('dashboard', ['as' => 'api.extra.dashboard', 'uses' => 'AuthController@dashboard']);
         ApiRoute::post('upload-file', ['as' => 'api.extra.upload-file', 'uses' => 'AuthController@uploadFile']);
         ApiRoute::post('download-file', ['as' => 'api.extra.download-file', 'uses' => 'AuthController@downloadFile']);
+        ApiRoute::post('delete-file', ['as' => 'api.extra.delete-file', 'uses' => 'AuthController@deleteFile']);
         ApiRoute::post('profile', ['as' => 'api.extra.profile', 'uses' => 'AuthController@profile']);
         ApiRoute::post('user', ['as' => 'api.extra.user', 'uses' => 'AuthController@user']);
         ApiRoute::get('timezones', ['as' => 'api.extra.user', 'uses' => 'AuthController@getAllTimezones']);

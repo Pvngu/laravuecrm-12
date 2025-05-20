@@ -41,23 +41,24 @@ class AppServiceProvider extends ServiceProvider
     {
         Company::observe(CompanyObserver::class);
         User::observe(UserObserver::class);
-        Form::observe(FormObserver::class);
         LeadLog::observe(LeadLogObserver::class);
-        IndividualLog::observe(GeneralObserver::class);
-        Document::observe(GeneralObserver::class);
+        Document::observe(DocumentObserver::class);
         
         // Add company scope to models
         foreach ([
             Campaign::class, 
             Currency::class, 
             Settings::class, 
+            Form::class,
             FormFieldName::class, 
             EmailTemplate::class, 
             Form::class,
             Expense::class,
             ExpenseCategory::class,
             Product::class,
-            Lead::class
+            Lead::class,
+            IndividualLog::class,
+            Document::class,
         ] as $model) {
             $model::observe(GeneralObserver::class);
         }

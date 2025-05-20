@@ -31,6 +31,7 @@
                 :row-key="record => record.id"
                 bordered
                 size="middle"
+                :scroll="scrollStyle"
             >
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'name'">
@@ -39,7 +40,13 @@
                                 <component :is="getFileIcon(record)" style="font-size: 14px;" />
                             </template>
                         </a-button>
-                        <span class="ml-2">{{ record.name }}</span>
+                        <span class="ml-2">
+                            <a-typography-text
+                                :style="{ width: '320px' }"
+                                :ellipsis="{ tooltip: record.name }"
+                                :content="record.name"
+                            />
+                        </span>
                     </template>
                     <template v-if="column.dataIndex === 'uploaded_by'">
                         <user-info @click="showViewUserDrawer(record)" :user="record.creator" />
@@ -48,7 +55,7 @@
                         {{ bToMb(record.file_size) }} MB
                     </template>
                     <template v-if="column.dataIndex === 'created_at'">
-                        {{ record.created_at }}
+                        {{ formatDate(record.created_at) }}
                     </template>
                     <template v-if="column.dataIndex === 'action'">
                         <a-dropdown>
@@ -83,6 +90,7 @@ import { FileOutlined, PictureOutlined, EyeOutlined, EditOutlined, DeleteOutline
 import AddEdit from "./AddEdit.vue";
 import fields from "./fields";
 import crud from "../../../common/composable/crud";
+import common from "../../../common/composable/common";
 import apiAdmin from "../../../common/composable/apiAdmin";
 import { useI18n } from "vue-i18n";
 import UserInfo from "../../../common/components/user/UserInfo.vue";
@@ -93,6 +101,10 @@ export default {
             type: String,
             default: "",
         },
+        scrollStyle: {
+            type: Object,
+            default: {},
+        }
     },
     components: {
         UploadFileBig,
@@ -113,7 +125,9 @@ export default {
         const { initData, url, addEditUrl, columns, filterableColumns } = fields();
         const { addEditRequestAdmin } = apiAdmin();
         const crudVariables = crud();
+        const { formatDate } = common();
         const { t } = useI18n();
+        const ellipsis = ref(true);
 
         // Define uploadFormData for UploadFileBig component
         const uploadFormData = ref({ file: undefined, file_url: undefined });
@@ -156,7 +170,7 @@ export default {
 
             crudVariables.fetch({
                 page: 1,
-                limit: 10
+                limit: 8
             });
         };
 
@@ -188,6 +202,7 @@ export default {
             onView,
             onFileUploaded,
             bToMb,
+            formatDate,
             ...crudVariables,
         };
     },
