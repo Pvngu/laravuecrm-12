@@ -33,11 +33,12 @@
                 size="middle"
             >
                 <template #bodyCell="{ column, record }">
-                    <template v-if="column.dataIndex === 'icon'">
-                        <component :is="getFileIcon(record.fileType)" style="font-size: 20px;" />
-                    </template>
                     <template v-if="column.dataIndex === 'name'">
-                        <a-checkbox :checked="false" style="margin-right: 8px;" />
+                        <a-button>
+                            <template #icon>
+                                <component :is="getFileIcon(record.fileType)" style="font-size: 14px;" />
+                            </template>
+                        </a-button>
                         {{ record.name }}
                     </template>
                     <template v-if="column.dataIndex === 'uploaded_by'">
@@ -100,7 +101,7 @@ export default {
     },
     setup() {
         // Get data from fields and crud
-        const { initData, addEditUrl } = fields();
+        const { initData, addEditUrl, columns } = fields();
         const crudVariables = crud();
         
         // Set up crud variables
@@ -131,15 +132,6 @@ export default {
                 createdAt: "2024-06-02",
             },
         ]);
-
-        const columns = [
-            { title: "", dataIndex: "icon", key: "icon", width: 40 },
-            { title: "Name", dataIndex: "name", key: "name" },
-            { title: "Uploaded by", dataIndex: "uploaded_by", key: "uploaded_by" },
-            { title: "Size", dataIndex: "size", key: "size" },
-            { title: "Created at", dataIndex: "created_at", key: "created_at" },
-            { title: "Actions", dataIndex: "action", key: "action", width: 80 },
-        ];
 
         // Map file type to icon
         const getFileIcon = (type) => {

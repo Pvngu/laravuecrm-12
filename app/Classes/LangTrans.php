@@ -880,6 +880,9 @@ class LangTrans
             'for' => 'for',
             'by' => 'by',
             'viewed' => 'Viewed',
+            'uploaded_at' => 'Uploaded At',
+            'uploaded_by' => 'Uploaded By',
+            'size' => 'Size',
         ],
     ];
 
