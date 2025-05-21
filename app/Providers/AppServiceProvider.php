@@ -22,6 +22,7 @@ use App\Observers\UserObserver;
 use App\Observers\CompanyObserver;
 use App\Observers\GeneralObserver;
 use App\Observers\LeadLogObserver;
+use App\Observers\DocumentObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -52,7 +53,6 @@ class AppServiceProvider extends ServiceProvider
             Form::class,
             FormFieldName::class, 
             EmailTemplate::class, 
-            Form::class,
             Expense::class,
             ExpenseCategory::class,
             Product::class,

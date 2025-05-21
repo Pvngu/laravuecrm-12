@@ -13,7 +13,7 @@ class Individual extends BaseModel
     
     protected $table = 'individuals';
 
-    protected $default = ['id','xid','reference_number','first_name','last_name', 'full_name','SSN','date_of_birth','home_phone','phone_number','email','original_profile_id','language','lead_data','time_taken','last_action_by','x_last_action_by','x_campaign_id'];
+    protected $default = ['id','xid','reference_number','first_name','last_name', 'full_name','SSN','date_of_birth','home_phone','phone_number','email','original_profile_id','language','lead_data','time_taken','template_form','full_address','last_action_by','x_last_action_by','x_campaign_id'];
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
 

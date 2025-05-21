@@ -87,10 +87,8 @@ class Common
         }
     }
 
-    public function deleteFile($fileName, $folderString)
+    public function deleteFile($fileName, $folderPath)
     {
-        $folderPath = self::getFolderPath($folderString);
-
         $fullPath = $folderPath . '/' . $fileName;
 
         if (Storage::exists($fullPath)) {

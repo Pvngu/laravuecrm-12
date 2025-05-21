@@ -1,10 +1,10 @@
-import { ref, onBeforeMount } from "vue";
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { forEach } from "lodash-es";
 import common from "../../../common/composable/common";
 
 const fields = (props) => {
-    const { convertStringToKey, getCampaignUrl, user } = common();
+    const { convertStringToKey, getCampaignUrl } = common();
     const leadUrl = "individual{id,xid,reference_number,lead_data,first_name,last_name,email,home_phone,phone_number,language,SSN,date_of_birth,original_profile_id,campaign_id,x_campaign_id,time_taken,first_action_by,x_first_action_by,last_action_by,x_last_action_by},individual:campaign{id,xid,name,status},individual:firstActioner{id,xid,name},individual:lastActioner{id,xid,name}";
     const formFieldNamesUrl = "form-field-names/all";
     const url = `notes?fields=id,xid,alert_type,created_at,created_by_id,x_created_by_id,content,creator{id,xid,name,profile_image,profile_image_url},${leadUrl}`;

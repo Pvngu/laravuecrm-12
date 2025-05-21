@@ -681,6 +681,11 @@ export default {
                     co_language: newValue.individual.co_applicant?.language || "",
                     lead_status: newValue?.lead_status,
                 };
+
+                if(props.isSale) {
+                    console.log(newValue.x_assigned_to)
+                    formData.value.assigned_user_xid = newValue.x_assigned_to;
+                }
             },
             { immediate: true }
         )

@@ -113,6 +113,8 @@ class LangTrans
             'last_activity' => 'Last Activity',
             'registration' => 'Registration',
             'phone_number' => 'Phone Number',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
         ],
         'menu' => [
             'dashboard' => 'Dashboard',
@@ -313,7 +315,7 @@ class LangTrans
             'resume' => 'Resume',
             'call_made' => 'Call Made',
             'total_duration' => 'Total Duration',
-            'email_template' => 'Email Templage',
+            'email_template' => 'Email Template',
             'all_columns' => 'All Columns',
             'matched_columns' => 'Matched Columns',
             'unmatched_columns' => 'Unmatched Columns',

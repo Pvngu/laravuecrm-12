@@ -19,7 +19,7 @@ class Sale extends BaseModel
 
     protected $hidden = ['id', 'assigned_to', 'individual_id', 'company_id'];
 
-    protected $appends = ['xid'];
+    protected $appends = ['xid', 'x_assigned_to'];
 
     protected $filterable = ['assigned_to', 'campaign_id', 'sale_status_id', 'reference_number','first_name', 'last_name', 'home_phone', 'phone_number','email', 'SSN'];
 

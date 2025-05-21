@@ -19,15 +19,15 @@
                         <a-row>
                             <a-col :span="24">
                                 <a-typography-title :level="3">
-                                    {{ individualData.first_name }} {{ individualData.last_name }}
+                                    {{ saleData.individual.full_name }}
                                 </a-typography-title>
                                 <a-space direction="vertical" :size="0">
-                                    <a-typography-title v-if="individualData.campaign" :level="5">
-                                        {{ individualData.campaign.name }}
+                                    <a-typography-title v-if="saleData.individual.campaign" :level="5">
+                                        {{ saleData.individual.campaign.name }}
                                     </a-typography-title>
                                     <a-typography-title :level="5">
                                         {{ $t('sales.status') }}:
-                                        <span v-if="individualData.sale_status">{{ individualData.sale_status }}</span>
+                                        <span v-if="saleData.individual.sale_status">{{ saleData.individual.sale_status }}</span>
                                         <span v-else>-</span>
                                     </a-typography-title>
                                 </a-space>
@@ -36,7 +36,7 @@
                         <a-divider />
                         <Alerts
                             :individualId="individualId"
-                            :language="individualData.language"
+                            :language="saleData.individual.language"
                             ref="alerts"
                         />
                         <a-row class="mt-5">
@@ -49,7 +49,7 @@
                                     </a-col>
                                     <a-col :span="14">
                                         <a-typography-text>
-                                            {{ individualData.language }}
+                                            {{ saleData.individual.language }}
                                         </a-typography-text>
                                     </a-col>
                                 </a-row>
@@ -63,7 +63,7 @@
                                     </a-col>
                                     <a-col :span="14">
                                         <a-typography-text>
-                                            {{ individualData.reference_number }}
+                                            {{ saleData.individual.reference_number }}
                                         </a-typography-text>
                                     </a-col>
                                 </a-row>
@@ -80,7 +80,7 @@
                                     </a-col>
                                     <a-col :span="14">
                                         <a-typography-text>
-                                            {{ formatDateTime(individualData.sale_created_at) }}
+                                            {{ formatDateTime(saleData.individual.sale_created_at) }}
                                         </a-typography-text>
                                     </a-col>
                                 </a-row>
@@ -94,7 +94,7 @@
                                     </a-col>
                                     <a-col :span="14">
                                         <a-typography-text>
-                                            {{ formatDateTime(individualData.updated_at) }}
+                                            {{ formatDateTime(saleData.individual.updated_at) }}
                                         </a-typography-text>
                                     </a-col>
                                 </a-row>
@@ -107,8 +107,8 @@
                                         </a-typography-text>
                                     </a-col>
                                     <a-col :span="14">
-                                        <a-typography-text v-if="individualData.assigned_user">
-                                            {{ individualData.assigned_user.name }}
+                                        <a-typography-text v-if="saleData.individual.assigned_user">
+                                            {{ saleData.individual.assigned_user.name }}
                                         </a-typography-text>
                                     </a-col>
                                 </a-row>
@@ -124,7 +124,7 @@
                                     </a-col>
                                     <a-col :span="14">
                                         <a-typography-text>
-                                            {{ individualData.SSN }}
+                                            {{ saleData.individual.SSN }}
                                         </a-typography-text>
                                     </a-col>
                                 </a-row>
@@ -138,7 +138,7 @@
                                     </a-col>
                                     <a-col :span="14">
                                         <a-typography-text>
-                                            {{ prettyFormatDate(individualData.date_of_birth)  }}
+                                            {{ formatDate(saleData.individual.date_of_birth)  }}
                                         </a-typography-text>
                                     </a-col>
                                 </a-row>
@@ -154,7 +154,7 @@
                                     </a-col>
                                     <a-col :span="14">
                                         <a-typography-text>
-                                            {{ individualData.email }}
+                                            {{ saleData.individual.email }}
                                         </a-typography-text>
                                     </a-col>
                                 </a-row>
@@ -168,7 +168,7 @@
                                     </a-col>
                                     <a-col :span="14">
                                         <a-typography-text>
-                                            {{ individualData.home_phone }}
+                                            {{ saleData.individual.home_phone }}
                                         </a-typography-text>
                                     </a-col>
                                 </a-row>
@@ -182,7 +182,7 @@
                                     </a-col>
                                     <a-col :span="14">
                                         <a-typography-text>
-                                            {{ individualData.phone_number }}
+                                            {{ saleData.individual.phone_number }}
                                         </a-typography-text>
                                     </a-col>
                                 </a-row>
@@ -198,7 +198,7 @@
                                     </a-col>
                                     <a-col :span="14">
                                         <a-typography-text>
-                                            <span v-if="individualData.full_address !== null">{{ individualData.full_address }}</span>
+                                            <span v-if="saleData.individual.full_address !== null">{{ saleData.individual.full_address }}</span>
                                             <span v-else>-</span>
                                         </a-typography-text>
                                     </a-col>
@@ -219,10 +219,10 @@
                                 {{ $t("sales.history") }}
                             </span>
                         </template>
-                        <ActivityLogTable
+                        <!-- <ActivityLogTable
                             :individualId="individualId"
                             :refresh="activeKey == 'history' ? true : false"
-                        />
+                        /> -->
                     </a-tab-pane>
                     <a-tab-pane key="sale_details">
                         <template #tab>
@@ -234,15 +234,16 @@
                         <a-tabs v-model:activeKeySale="activeKeySale" type="card" class="address">
                             <a-tab-pane key="details" :tab="$t('common.details')">
                                 <Details
-                                    :formData="individualData"
-                                    :id="route.params.id"
+                                    :saleLeadData="saleData"
+                                    @success="() => (refreshTimeLine = true)"
                                     :isSale="true"
                                 />
                             </a-tab-pane>
                             <a-tab-pane key="address" :tab="$t('common.address')">
                                 <Address
-                                    :formData="addressesFormData"
+                                    :individualData="saleData.individual"
                                     :states="states"
+                                    @success="() => (refreshTimeLine = true)"
                                 />
                             </a-tab-pane>
                         </a-tabs>
@@ -289,7 +290,7 @@
 </template>
 
 <script>
-    import { ref, onMounted, onUnmounted, watch } from 'vue';
+    import { ref, onMounted, onUnmounted } from 'vue';
     import { 
         FileTextOutlined,
         PhoneOutlined,
@@ -331,11 +332,12 @@
             Details
         },
         setup() {
-            const { formatDateTime, formatDate, prettyFormatDate, formatAmountCurrency } = common();
+            const { formatDateTime, formatDate, formatAmountCurrency } = common();
             const activeKey = ref("history");
             const activeKeySale = ref("details");
             const route = useRoute();
             const states = ref([]);
+            const saleData = ref({});
             const individualData = ref({
                 campaign: {
                     name: null,
@@ -396,7 +398,6 @@
             const saleFollowUp = ref({});
             const salesmanBooking = ref({});
             const refreshNotes = ref(false);
-            const showSmsAlert = ref(false);
             const individualId = ref(undefined);
 
             onMounted(() => {
@@ -410,7 +411,7 @@
             
             const fetchInitData = () => {
                 const campaignUrl = "individual:campaign{id,xid,name},individual:campaign:emailTemplate{id,xid,name},individual:campaign:form{name,form_fields}";
-                const saleDetailsUrl = `sales/${route.params.id}?fields=id,xid,sale_status_id,assigned_to,created_at,saleStatus{id,name},assignedUser{id,xid,name,email,phone},individual{id,xid,reference_number,first_name,last_name,SSN,date_of_birth,home_phone,phone_number,email,original_profile_id,language,lead_data,time_taken,last_action_by,x_last_action_by,x_campaign_id,updated_at},individual:address{id,xid,address_line1,address_line2,city,state_id,zip_code},individual:coApplicant{id,xid,first_name,last_name,SSN,date_of_birth,home_phone,phone_number,email,language},individual:coApplicant:address{id,xid,address_line1,address_line2,city,state_id,zip_code,full_address},individual:lastActioner{id,xid,name},${campaignUrl},individual:individualFollowUp{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:individualFollowUp:user{id,xid,name},individual:salesmanBooking{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:salesmanBooking:user{id,xid,name}`;
+                const saleDetailsUrl = `sales/${route.params.id}?fields=id,xid,sale_status_id,assigned_to,x_assigned_to,created_at,saleStatus{id,name},assignedUser{id,xid,name,email,phone},individual,individual:coApplicant,individual:coApplicant:address{id,xid,address_line1,address_line2,city,state_id,zip_code,full_address},individual:lastActioner{id,xid,name},${campaignUrl},individual:individualFollowUp{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:individualFollowUp:user{id,xid,name},individual:salesmanBooking{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:salesmanBooking:user{id,xid,name}`;
                 saleCallLogDetails.value = {};
                 activeKey.value =  route.query.tab ?? "history";
                 activeKeySale.value = "details";
@@ -425,6 +426,7 @@
                         var saleResult = saleDetailsResponse.data;
                         states.value = statesResponse.data;
 
+                        saleData.value = saleResult;
 
                         individualData.value.campaign.name = saleResult.individual.campaign.name;
                         individualData.value.campaign.status = saleResult.individual.campaign.status;
@@ -474,11 +476,6 @@
                             individualData.value.assigned_user_xid = saleResult.assigned_user.xid;
                         }
 
-                        axiosAdmin.get(`smsMessages?fields=id,xid&individual_id=${saleResult.individual.xid}&is_read=0&is_inbound=1`).then((response) => {
-                            const messageDetails = response.data;
-                            showSmsAlert.value = messageDetails.length ? true : false;
-                        });
-
                         if(saleResult.individual.co_applicant) {
                             individualData.value.co_first_name = saleResult.individual.co_applicant.first_name;
                             individualData.value.co_last_name = saleResult.individual.co_applicant.last_name;
@@ -517,13 +514,12 @@
                 formatDateTime,
                 refreshNotes,
                 formatDate,
-                prettyFormatDate,
-                showSmsAlert,
                 route,
                 formatAmountCurrency,
                 addressesFormData,
                 individualData,
-                individualId
+                individualId,
+                saleData,
             }
         }
     }
@@ -532,13 +528,6 @@
 <style scoped>
     .callmanager-middle-sidebar {
         min-height: calc(100vh);
-    }
-
-    .sms-badge {
-        position: absolute;
-        top: -10px;
-        right: -14px;
-        transform: scale(0.6);
     }
 </style>
 

@@ -71,9 +71,9 @@ const fields = () => {
                         dataIndex: "full_name",
                     },
                     {
-                        title: t("lead.home_phone"),
-                        dataIndex: "home_phone",
-                        customRender: ({ record }) => record.individual.home_phone,
+                        title: t("lead.phone_number"),
+                        dataIndex: "phone_number",
+                        customRender: ({ record }) => record.individual.phone_number,
                     },
                     {
                         title: t("lead.email"),

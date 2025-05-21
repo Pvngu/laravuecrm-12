@@ -353,7 +353,6 @@ export default {
             dates: [],
         });
         const filters = ref({
-            log_type: props.logType,
             user_id: undefined,
         });
 
