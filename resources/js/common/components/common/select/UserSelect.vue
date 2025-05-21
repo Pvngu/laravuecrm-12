@@ -1,6 +1,6 @@
 <template>
     <a-select
-        v-model:value="selectOption"
+        v-model:value="model"
         :placeholder="$t('common.select_default_text', [$t('user.user')])"
         :allowClear="true"
         style="width: 100%"
@@ -32,77 +32,55 @@
     </a-select>
 </template>
 
-<script>
-import { defineComponent, onMounted, ref, watch } from 'vue';
+<script setup>
+import { ref, onMounted, watch } from 'vue';
 
-export default defineComponent({
-    props: {
-        value: {
-            default: null
-        },
-        disabled: {
-            default: false
-        },
-        showDisabledUserWarning: {
-            default: false
-        },
-        showAssignedSalesCount: {
-            default: false
-        },
-        disableDisabledUsers: {
-            default: false
-        },
-        currentUserId: {
-            default: undefined
-        },
-        fetchUserData: {
-            default: true
-        },
-        data: {
-            default: null
-        }
+const props = defineProps({
+    disabled: {
+        default: false
     },
-    setup(props, { emit }) {
-        const usersUrl = 'all-users?log_type=staff_members';
-        const allUsers = ref({});
-        const selectOption = ref(null);
+    showDisabledUserWarning: {
+        default: false
+    },
+    showAssignedSalesCount: {
+        default: false
+    },
+    disableDisabledUsers: {
+        default: false
+    },
+    currentUserId: {
+        default: undefined
+    },
+    fetchUserData: {
+        default: true
+    },
+    data: {
+        default: null
+    }
+});
 
-        const onChange = (id) => {
-            emit('onChange', id);
-        }
+const emit = defineEmits(['onChange']);
+const model = defineModel();
+const usersUrl = 'all-users?log_type=staff_members';
+const allUsers = ref({});
 
-        onMounted(()=> {
-            if(props.value) {
-                selectOption.value = props.value;
-            }
+const onChange = (id) => {
+    emit('onChange', id);
+};
 
-            if(props.fetchUserData) {
-                axiosAdmin.get(usersUrl).then((res) => {
-                    allUsers.value = res.data.users;
-                })
-            } else if (Object.keys(props.data).length > 0) {
-                allUsers.value = props.data;
-            }
-        })
+onMounted(() => {
+    if (props.fetchUserData) {
+        axiosAdmin.get(usersUrl).then((res) => {
+            allUsers.value = res.data.users;
+        });
+    } else if (props.data && Object.keys(props.data).length > 0) {
+        allUsers.value = props.data;
+    }
+});
 
-        // Reset select option when value is null
-        watch(() => props.value, (newValue) => {
-            if(newValue === null) {
-                selectOption.value = newValue;
-            }
-        })
-
-        watch(() => props.data, (newValue) => {
-            if(newValue) {
-                allUsers.value = newValue;
-            }
-        })
-
-        return {
-            allUsers,
-            onChange,
-            selectOption
-        }
+watch(() => props.data, (newValue) => {
+    if (newValue) {
+        allUsers.value = newValue;
     }
 });
 </script>

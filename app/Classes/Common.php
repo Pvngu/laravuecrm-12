@@ -367,8 +367,8 @@ class Common
                 $saleLead->sale_status_id = $request->sale_status_id;
             }
     
-            if($request->has('assigned_user_xid')) {
-                $assignedToXId = $request->assigned_user_xid;
+            if($request->has('assigned_to')) {
+                $assignedToXId = $request->assigned_to;
                 $assignedToId = Common::getIdFromHash($assignedToXId);
                 $saleLead->assigned_to = $assignedToId;
             }

@@ -367,7 +367,7 @@
                 language: undefined,
                 original_profile_id: "",
                 lead_status: "",
-                assigned_user_xid: "",
+                assigned_to: "",
                 sale_status_id: "",
                 lead_data: [],
                 updated_at: "",
@@ -473,7 +473,7 @@
                         }
 
                         if (saleResult.assigned_user) {
-                            individualData.value.assigned_user_xid = saleResult.assigned_user.xid;
+                            individualData.value.assigned_to = saleResult.assigned_user.xid;
                         }
 
                         if(saleResult.individual.co_applicant) {

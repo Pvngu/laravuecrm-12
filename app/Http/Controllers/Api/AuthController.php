@@ -100,8 +100,13 @@ class AuthController extends ApiBaseController
     public function allUsers()
     {
         $request = request();
-        
-        $users = StaffMember::select('id', 'name', 'profile_image')->get();
+
+        if ($request->has('log_type') && $request->log_type == 'staff_members') {
+            $users = User::join('roles', 'users.role_id', '=', 'roles.id')
+                        ->select('users.id', 'users.name', 'users.profile_image', 'users.status', 'roles.display_name as role')
+                        ->get()
+                        ->groupBy('role');
+        }
 
         return ApiResponse::make('Success', [
             'users' => $users

@@ -19,12 +19,7 @@
                         :validateStatus="rules.assigned_to ? 'error' : null"
                     >
                         <UserSelect
-                            :value="formData.assigned_user_xid"
-                            @onChange="
-                                (id) => {
-                                    formData.assigned_user_xid = id;
-                                }
-                            "
+                            v-model:value="formData.assigned_to"
                         />
                     </a-form-item>
                 </a-col>
@@ -582,7 +577,7 @@ export default {
         const { coApplicantRequired } = common();
 
         const formData = ref({
-            assigned_user_xid: null,
+            assigned_to: null,
             reference_number: "",
             sale_status_id: null,
             lead_status: null,
@@ -684,7 +679,7 @@ export default {
 
                 if(props.isSale) {
                     console.log(newValue.x_assigned_to)
-                    formData.value.assigned_user_xid = newValue.x_assigned_to;
+                    formData.value.assigned_to = newValue.x_assigned_to;
                 }
             },
             { immediate: true }
