@@ -3,7 +3,7 @@
         :gutter="16"
         class="mt-5"
         style="margin: 10px;"
-        v-if="individualId"
+        v-if="saleData.individual"
     >
         <!-- sale details -->
         <a-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6" class="bg-setting-sidebar">
@@ -260,9 +260,9 @@
                             :individualId="individualId"
                             @success="(data) => { if(data.alert_type) $refs.alerts.refreshAlerts(data) }"
                             :showAddButton="
-                                individualData &&
-                                individualData.campaign &&
-                                individualData.campaign.status == 'completed'
+                                saleData.individual &&
+                                saleData.individual.campaign &&
+                                saleData.individual.campaign.status == 'completed'
                                     ? false
                                     : true
                             "
@@ -276,11 +276,8 @@
                             </span>
                         </template>
                         <DocsTable
-                            pageName="documents"
-                            :individualId="individualId"
+                            :individualId="saleData.individual.xid"
                             :scrollStyle="{ y: 'calc(100vh - 320px)' }"
-                            :selectedTab="route.query.doc_tab"
-                            :individualDetails="individualData"
                         />
                     </a-tab-pane>
                 </a-tabs>
@@ -338,62 +335,6 @@
             const route = useRoute();
             const states = ref([]);
             const saleData = ref({});
-            const individualData = ref({
-                campaign: {
-                    name: null,
-                    status: null,
-                    email_template_xid: null,
-                    form: {
-                        name: null,
-                        form_fields: {},
-                    },
-                },
-                assigned_user: {
-                    name: null,
-                    email: null,
-                    phone: null,
-                },
-                sale_status: null,
-                sale_created_at: null,
-
-                reference_number: "",
-                first_name: "",
-                last_name: "",
-                SSN: "",
-                date_of_birth: "",
-                phone_number: "",
-                home_phone: "",
-                email: "",
-                language: undefined,
-                original_profile_id: "",
-                lead_status: "",
-                assigned_to: "",
-                sale_status_id: "",
-                lead_data: [],
-                updated_at: "",
-
-                co_first_name: "",
-                co_last_name: "",
-                co_SSN: "",
-                co_date_of_birth: "",
-                co_phone_number: "",
-                co_home_phone: "",
-                co_email: "",
-                co_language: undefined,
-            });
-            const addressesFormData = ref({
-                address_line1: "",
-                address_line2: "",
-                city: "",
-                state_id: "",
-                zip_code: "",
-                co_address_line1: "",
-                co_address_line2: "",
-                co_city: "",
-                co_state_id: "",
-                co_zip_code: "",
-                individual_id: undefined,
-            });
             const saleCallLogDetails = ref({});
             const saleFollowUp = ref({});
             const salesmanBooking = ref({});
@@ -428,75 +369,6 @@
 
                         saleData.value = saleResult;
 
-                        individualData.value.campaign.name = saleResult.individual.campaign.name;
-                        individualData.value.campaign.status = saleResult.individual.campaign.status;
-                        individualData.value.sale_status = saleResult.sale_status.name;
-                        individualData.value.sale_created_at = saleResult.created_at;
-
-                        if(saleResult.individual.campaign.form) {
-                            individualData.value.campaign.form.name = saleResult.individual.campaign.form.name;
-                            individualData.value.campaign.form.form_fields = saleResult.individual.campaign.form.form_fields;
-                        }
-
-                        if(saleResult.individual.campaign.email_template) {
-                            individualData.value.campaign.email_template_xid = saleResult.individual.campaign.email_template.xid;
-                        }
-
-                        if(saleResult.assigned_user) {
-                            individualData.value.assigned_user.name = saleResult.assigned_user.name;
-                            individualData.value.assigned_user.email = saleResult.assigned_user.email;
-                            individualData.value.assigned_user.phone = saleResult.assigned_user.phone;
-                        }
-
-                        if(saleResult.individual) {
-                            individualData.value.reference_number = saleResult.individual.reference_number;
-                            individualData.value.first_name = saleResult.individual.first_name;
-                            individualData.value.last_name = saleResult.individual.last_name;
-                            individualData.value.SSN = saleResult.individual.SSN;
-                            individualData.value.date_of_birth = saleResult.individual.date_of_birth;
-                            individualData.value.home_phone = saleResult.individual.home_phone;
-                            individualData.value.phone_number = saleResult.individual.phone_number;
-                            individualData.value.email = saleResult.individual.email;
-                            individualData.value.language = saleResult.individual.language;
-                            individualData.value.original_profile_id = saleResult.individual.original_profile_id;
-                            individualData.value.lead_status = saleResult.lead_status;
-                            individualData.value.sale_status_id = saleResult.sale_status_id;
-                            individualData.value.full_address = saleResult.individual.address ? saleResult.individual.address.full_address : '';
-                            individualData.value.lead_data = saleResult.individual.lead_data;
-                            individualData.value.updated_at = saleResult.individual.updated_at;
-
-                            individualId.value = saleResult.individual.xid;
-                        }
-
-                        if(saleResult.individual.address) {
-                            addressesFormData.value = saleResult.individual.address;
-                        }
-
-                        if (saleResult.assigned_user) {
-                            individualData.value.assigned_to = saleResult.assigned_user.xid;
-                        }
-
-                        if(saleResult.individual.co_applicant) {
-                            individualData.value.co_first_name = saleResult.individual.co_applicant.first_name;
-                            individualData.value.co_last_name = saleResult.individual.co_applicant.last_name;
-                            individualData.value.co_SSN = saleResult.individual.co_applicant.SSN;
-                            individualData.value.co_date_of_birth = saleResult.individual.co_applicant.date_of_birth;
-                            individualData.value.co_home_phone = saleResult.individual.co_applicant.home_phone;
-                            individualData.value.co_phone_number = saleResult.individual.co_applicant.phone_number;
-                            individualData.value.co_email = saleResult.individual.co_applicant.email;
-                            individualData.value.co_language = saleResult.individual.co_applicant.language;
-
-                            if(saleResult.individual.co_applicant.address) {
-                                addressesFormData.value.co_address_line1 = saleResult.individual.co_applicant.address.address_line1;
-                                addressesFormData.value.co_address_line2 = saleResult.individual.co_applicant.address.address_line2;
-                                addressesFormData.value.co_city = saleResult.individual.co_applicant.address.city;
-                                addressesFormData.value.co_state_id = saleResult.individual.co_applicant.address.state_id;
-                                addressesFormData.value.co_zip_code = saleResult.individual.co_applicant.address.zip_code;
-                            }
-                        }
-
-                        addressesFormData.value.individual_id = saleResult.individual.xid;
-
                         saleFollowUp.value = saleResult.individual.individual_follow_up
                             ? saleResult.individual.individual_follow_up
                             : [];
@@ -516,8 +388,6 @@
                 formatDate,
                 route,
                 formatAmountCurrency,
-                addressesFormData,
-                individualData,
                 individualId,
                 saleData,
             }

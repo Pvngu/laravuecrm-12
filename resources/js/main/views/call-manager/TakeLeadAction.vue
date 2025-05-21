@@ -443,11 +443,9 @@
                             </span>
                         </template>
                         <DocsTable
-                            pageName="documents"
                             :individualId="leadDetails.individual.xid"
                             :scrollStyle="{ y: 'calc(100vh - 460px)', x: 'auto' }"
                             @success="() => (refreshTimeLine = true)"
-                            :individualDetails="leadDetails"
                         />
                     </a-tab-pane>
                 </a-tabs>
