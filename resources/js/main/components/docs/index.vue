@@ -103,7 +103,7 @@ export default {
         },
         scrollStyle: {
             type: Object,
-            default: {},
+            default: null,
         }
     },
     components: {

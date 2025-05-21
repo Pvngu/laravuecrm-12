@@ -79,6 +79,7 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
         ApiRoute::post('campaigns/skip-delete-lead', ['as' => 'api.campaigns.skip-delete-lead', 'uses' => 'CampaignController@skipAndDeleteLead']);
         ApiRoute::post('campaigns/update-lead-timer', ['as' => 'api.campaigns.update-lead-timer', 'uses' => 'CampaignController@updateTimerLead']);
         ApiRoute::post('campaigns/update-actioned-lead', ['as' => 'api.campaigns.update-actioned-lead', 'uses' => 'CampaignController@updateActionedLead']);
+        ApiRoute::post('campaigns/update-actioned-sale', ['as' => 'api.campaigns.update-actioned-sale', 'uses' => 'CampaignController@updateActionedSale']);
         ApiRoute::post('campaigns/take-lead-action', ['as' => 'api.campaigns.take-lead-action', 'uses' => 'CampaignController@takeLeadAction']);
         ApiRoute::post('campaigns/take-action', ['as' => 'api.campaigns.take-action', 'uses' => 'CampaignController@takeAction']);
         ApiRoute::post('campaigns/stop', ['as' => 'api.campaigns.stop', 'uses' => 'CampaignController@stopCampaign']);

@@ -351,6 +351,8 @@ class Common
         $loggedUser = user();
         $request = request();
 
+        $request->validate(app(\App\Http\Requests\Api\Individual\UpdateRequest::class)->rules());
+
         // Sale
         $saleLeadXId = $request->x_sale_lead_id;
         $saleLeadId = Common::getIdFromHash($saleLeadXId);

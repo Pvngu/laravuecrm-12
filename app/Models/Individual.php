@@ -179,4 +179,25 @@ class Individual extends BaseModel
 
         return $template;
     }
+
+    public function getPhoneNumberAttribute($value)
+    {
+        // Format: +52 664 345 7777
+        if (!$value) return $value;
+        $value = preg_replace('/[^\d+]/', '', $value); // Remove non-numeric except +
+        if (preg_match('/^(\+\d{2})(\d{3})(\d{3})(\d{4})$/', $value, $matches)) {
+            return $matches[1] . ' ' . $matches[2] . ' ' . $matches[3] . ' ' . $matches[4];
+        }
+        return $value;
+    }
+
+    public function setPhoneNumberAttribute($value)
+    {
+        // Store as: +526643457777
+        if ($value) {
+            $this->attributes['phone_number'] = preg_replace('/\s+/', '', $value);
+        } else {
+            $this->attributes['phone_number'] = $value;
+        }
+    }
 }

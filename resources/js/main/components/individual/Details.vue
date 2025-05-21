@@ -1,13 +1,13 @@
 <template>
-    <a-form layout="vertical" class="mt-20">
-            <perfect-scrollbar
-                :options="{
-                    wheelSpeed: 1,
-                    swipeEasing: true,
-                    suppressScrollX: true,
-                }"
-                :class="{ 'callmanager-details': !isSale }"
-            >
+    <a-form layout="vertical">
+        <perfect-scrollbar
+            :options="{
+                wheelSpeed: 1,
+                swipeEasing: true,
+                suppressScrollX: true,
+            }"
+            :class="{ 'callmanager-details': !isSale }"
+        >
             <a-row :gutter="16" justify="end" v-if="isSale">
                 <a-col :xs="24" :sm="24" :md="6" :lg="6">
                     <a-form-item
@@ -266,36 +266,6 @@
                 </a-col>
                 <a-col :xs="24" :sm="24" :md="12" :lg="12">
                     <a-form-item
-                        :label="$t('lead.home_phone')"
-                        name="home_phone"
-                        :help="rules.home_phone ? rules.home_phone.message : null"
-                        :validateStatus="rules.home_phone ? 'error' : null"
-                    >
-                        <PhoneInput
-                            v-model:value="formData.home_phone"
-                        />
-                    </a-form-item>
-                </a-col>
-                <a-col :xs="24" :sm="24" :md="12" :lg="12" v-if="coApplicantRequired">
-                    <a-form-item
-                        :label="$t('lead.home_phone')"
-                        name="co_home_phone"
-                        :help="rules.co_home_phone ? rules.co_home_phone.message : null"
-                        :validateStatus="rules.co_home_phone ? 'error' : null"
-                        class="hidden-label"
-                    >
-                        <a-input
-                            v-model:value="formData.co_home_phone"
-                            :placeholder="
-                                $t('common.placeholder_default_text', [
-                                    $t('lead.home_phone'),
-                                ])
-                            "
-                        ></a-input>
-                    </a-form-item>
-                </a-col>
-                <a-col :xs="24" :sm="24" :md="12" :lg="12">
-                    <a-form-item
                         :label="$t('lead.phone_number')"
                         name="phone_number"
                         :help="rules.phone_number ? rules.phone_number.message : null"
@@ -317,6 +287,36 @@
                         <PhoneInput
                             v-model="formData.co_phone_number"
                         />
+                    </a-form-item>
+                </a-col>
+                <a-col :xs="24" :sm="24" :md="12" :lg="12">
+                    <a-form-item
+                        :label="$t('lead.home_phone')"
+                        name="home_phone"
+                        :help="rules.home_phone ? rules.home_phone.message : null"
+                        :validateStatus="rules.home_phone ? 'error' : null"
+                    >
+                        <PhoneInput
+                            v-model="formData.home_phone"
+                        />
+                    </a-form-item>
+                </a-col>
+                <a-col :xs="24" :sm="24" :md="12" :lg="12" v-if="coApplicantRequired">
+                    <a-form-item
+                        :label="$t('lead.home_phone')"
+                        name="co_home_phone"
+                        :help="rules.co_home_phone ? rules.co_home_phone.message : null"
+                        :validateStatus="rules.co_home_phone ? 'error' : null"
+                        class="hidden-label"
+                    >
+                        <a-input
+                            v-model:value="formData.co_home_phone"
+                            :placeholder="
+                                $t('common.placeholder_default_text', [
+                                    $t('lead.home_phone'),
+                                ])
+                            "
+                        ></a-input>
                     </a-form-item>
                 </a-col>
                 <a-col :xs="24" :sm="24" :md="12" :lg="12">
@@ -508,18 +508,12 @@
                 </a-col>
             </a-row>
         </perfect-scrollbar>
-        </a-form>
+        <div v-if="isSale">
+            
+        </div>
+    </a-form>
     <div
-        :style="{
-            position: 'absolute',
-            right: 0,
-            bottom: 0,
-            width: '100%',
-            borderTop: '1px solid #e9e9e9',
-            padding: '10px 16px',
-            background: '#fff',
-            zIndex: 1,
-        }"
+        class="absolute right-0 bottom-0 w-full border-t! border-gray-200! p-2 bg-white z-10"
     >
         <a-row justify="end">
             <a-col>
@@ -626,15 +620,17 @@ export default {
                 url: url,
                 data: formData.value,
                 success: (res) => {
-                    saveLoading.value = false;
+                    if(res.message === 'success') {
+                        notification.success({
+                            message: t("common.success"),
+                            description: t("sales.updated"),
+                            placement: "bottomRight",
+                        });
 
-                    notification.success({
-                        message: t("common.success"),
-                        description: t("sales.updated"),
-                        placement: "bottomRight",
-                    });
+                        emit("success");
 
-                    emit("success");
+                        saveLoading.value = false;
+                    }
                 },
             });
         };
@@ -678,9 +674,9 @@ export default {
                 };
 
                 if(props.isSale) {
-                    console.log(newValue.x_assigned_to)
                     formData.value.assigned_to = newValue.x_assigned_to;
                 }
+                console.log("formData", formData.value);
             },
             { immediate: true }
         )

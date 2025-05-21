@@ -1,12 +1,11 @@
 <template>
     <a-row
-        :gutter="16"
-        class="mt-5"
-        style="margin: 10px;"
+        :gutter="8"
+        class="mt-2"
         v-if="saleData.individual"
     >
         <!-- sale details -->
-        <a-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6" class="bg-setting-sidebar">
+        <a-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6">
             <perfect-scrollbar
                     :options="{
                         wheelSpeed: 1,
@@ -14,8 +13,8 @@
                         suppressScrollX: true,
                     }"
             >
-                <div class="salemanager-left-sidebar">
-                    <a-card :bordered="false" :bodyStyle="{ paddingBottom: '0px' }">
+                <div>
+                    <a-card :bodyStyle="{ paddingBottom: '0px' }">
                         <a-row>
                             <a-col :span="24">
                                 <a-typography-title :level="3">
@@ -212,18 +211,18 @@
         <a-col :xs="24" :sm="24" :md="24" :lg="18" style="position: unset">
             <a-card class="callmanager-middle-sidebar" style="position: unset">
                 <a-tabs v-model:activeKey="activeKey" class="salemanager-tabs">
-                    <a-tab-pane key="history">
+                    <!-- <a-tab-pane key="history">
                         <template #tab>
                             <span>
                                 <HistoryOutlined />
                                 {{ $t("sales.history") }}
                             </span>
                         </template>
-                        <!-- <ActivityLogTable
+                        <ActivityLogTable
                             :individualId="individualId"
                             :refresh="activeKey == 'history' ? true : false"
-                        /> -->
-                    </a-tab-pane>
+                        />
+                    </a-tab-pane> -->
                     <a-tab-pane key="sale_details">
                         <template #tab>
                             <span>
@@ -330,7 +329,7 @@
         },
         setup() {
             const { formatDateTime, formatDate, formatAmountCurrency } = common();
-            const activeKey = ref("history");
+            const activeKey = ref("sale_details");
             const activeKeySale = ref("details");
             const route = useRoute();
             const states = ref([]);
@@ -354,7 +353,7 @@
                 const campaignUrl = "individual:campaign{id,xid,name},individual:campaign:emailTemplate{id,xid,name},individual:campaign:form{name,form_fields}";
                 const saleDetailsUrl = `sales/${route.params.id}?fields=id,xid,sale_status_id,assigned_to,x_assigned_to,created_at,saleStatus{id,name},assignedUser{id,xid,name,email,phone},individual,individual:coApplicant,individual:coApplicant:address{id,xid,address_line1,address_line2,city,state_id,zip_code,full_address},individual:lastActioner{id,xid,name},${campaignUrl},individual:individualFollowUp{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:individualFollowUp:user{id,xid,name},individual:salesmanBooking{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:salesmanBooking:user{id,xid,name}`;
                 saleCallLogDetails.value = {};
-                activeKey.value =  route.query.tab ?? "history";
+                activeKey.value =  route.query.tab ?? "sale_details";
                 activeKeySale.value = "details";
                 saleFollowUp.value = {};
                 salesmanBooking.value = {};
