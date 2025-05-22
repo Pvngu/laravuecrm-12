@@ -28,11 +28,7 @@ class LeadImport implements ToArray, WithHeadingRow
 
     public function array(array $leads)
     {
-        error_log($this->importLeadFields);
-        error_log($this->allFormFields);
-        error_log($this->campaignId);
         // Adding defined fields so it can be saved in lead data
-        
         $fields = [
             'Reference Number' => 'text',
             'First Name' => 'text',

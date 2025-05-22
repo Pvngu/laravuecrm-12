@@ -219,12 +219,35 @@ const common = () => {
         return campaignStatsUrl;
     }
 
-    const formatPhoneNumber = (phoneNumber) => {
-        if (phoneNumber == undefined) {
-            return "";
-        } else {
-            return phoneNumber.replace(/[^0-9]/g, "");
-        }
+    const downloadFile = (url) => {
+        return new Promise((resolve, reject) => {
+            message.loading({
+                content: t("common.downloading")
+            });
+
+            axiosAdmin.get(url, { responseType: "blob" }).then((res) => {
+                // Try to get filename from response headers if not provided
+                let contentDisposition = res.headers && res.headers['content-disposition'];
+                let suggestedFilename = 'file';
+                if (contentDisposition) {
+                    const match = contentDisposition.match(/filename="?([^"]+)"?/);
+                    if (match && match[1]) {
+                        suggestedFilename = match[1];
+                    }
+                }
+
+                const blob = new Blob([res.data]);
+                const link = document.createElement("a");
+                link.href = window.URL.createObjectURL(blob);
+                link.download = suggestedFilename;
+
+                link.click();
+
+                resolve();
+            }).catch((error) => {
+                reject();
+            });
+        });
     }
 
     return {
@@ -264,6 +287,8 @@ const common = () => {
 
         getCampaignUrl,
         getCampaignStatsUrl,
+
+        downloadFile,
 
         coApplicantRequired
     };

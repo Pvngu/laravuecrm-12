@@ -42,7 +42,7 @@ class Individual extends BaseModel
         'lead_data' => 'array',
         'time_taken' => 'integer',
         'started' => 'integer',
-        'date_of_birth' => 'date',      
+        'date_of_birth' => 'date',
     ];
 
     protected static function boot()

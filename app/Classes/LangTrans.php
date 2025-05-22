@@ -323,6 +323,7 @@ class LangTrans
             'csv_header_field' => 'Header Field',
             'csv_field_data' => 'Field Data',
             'column_status' => 'Column Status',
+            'export_leads' => 'Export Leads',
         ],
         'email_template' => [
             'add' => 'Add New Email Template',

@@ -64,7 +64,7 @@
                             </a-button>
                             <template #overlay>
                                 <a-menu>
-                                    <a-menu-item key="view" @click="onView(record)">
+                                    <a-menu-item key="view" @click="downloadFile(url, )">
                                         <EyeOutlined /> {{ $t("common.view") }}
                                     </a-menu-item>
                                     <a-menu-item key="edit" @click="editItem(record)">
@@ -125,9 +125,8 @@ export default {
         const { initData, url, addEditUrl, columns, filterableColumns } = fields();
         const { addEditRequestAdmin } = apiAdmin();
         const crudVariables = crud();
-        const { formatDate } = common();
+        const { formatDate, downloadFile } = common();
         const { t } = useI18n();
-        const ellipsis = ref(true);
 
         // Define uploadFormData for UploadFileBig component
         const uploadFormData = ref({ file: undefined, file_url: undefined });
@@ -192,17 +191,14 @@ export default {
             });
         };
 
-        // Handlers for records
-        const onView = (record) => {};
-
         return {
             columns,
             uploadFormData,
             getFileIcon,
-            onView,
             onFileUploaded,
             bToMb,
             formatDate,
+            downloadFile,
             ...crudVariables,
         };
     },

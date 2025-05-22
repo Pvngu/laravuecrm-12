@@ -21,6 +21,7 @@ class PermsSeed
         'campaigns_create',
         'campaigns_edit',
         'campaigns_delete',
+        'campaigns_export',
         'leads_view_all',
         'leads_create',
         'leads_delete',
