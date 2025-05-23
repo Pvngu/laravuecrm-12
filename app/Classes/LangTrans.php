@@ -115,6 +115,7 @@ class LangTrans
             'phone_number' => 'Phone Number',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'downloading' => 'Downloading',
         ],
         'menu' => [
             'dashboard' => 'Dashboard',

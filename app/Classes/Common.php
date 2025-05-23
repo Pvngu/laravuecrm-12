@@ -74,10 +74,8 @@ class Common
         ];
     }
 
-    public function downloadFile($fileName, $folderString)
+    public function downloadFile($fileName, $folderPath)
     {
-        $folderPath = self::getFolderPath($folderString);
-
         $fullPath = $folderPath . '/' . $fileName;
 
         if (Storage::exists($fullPath)) {

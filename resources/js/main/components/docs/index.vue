@@ -64,8 +64,8 @@
                             </a-button>
                             <template #overlay>
                                 <a-menu>
-                                    <a-menu-item key="view" @click="downloadFile(url, )">
-                                        <EyeOutlined /> {{ $t("common.view") }}
+                                    <a-menu-item key="view" @click="downloadS3File(record.file, 'documents')">
+                                        <DownloadOutlined /> {{ $t("common.download") }}
                                     </a-menu-item>
                                     <a-menu-item key="edit" @click="editItem(record)">
                                         <EditOutlined /> {{ $t("common.edit") }}
@@ -86,7 +86,7 @@
 <script>
 import { ref, onMounted } from "vue";
 import UploadFileBig from "../../../common/core/ui/file/UploadFileBig.vue";
-import { FileOutlined, PictureOutlined, EyeOutlined, EditOutlined, DeleteOutlined, EllipsisOutlined, FilePdfOutlined, PlusOutlined, FileWordOutlined } from "@ant-design/icons-vue";
+import { FileOutlined, PictureOutlined, DownloadOutlined, EditOutlined, DeleteOutlined, EllipsisOutlined, FilePdfOutlined, PlusOutlined, FileWordOutlined } from "@ant-design/icons-vue";
 import AddEdit from "./AddEdit.vue";
 import fields from "./fields";
 import crud from "../../../common/composable/crud";
@@ -110,7 +110,7 @@ export default {
         UploadFileBig,
         FileOutlined,
         PictureOutlined,
-        EyeOutlined,
+        DownloadOutlined,
         EditOutlined,
         DeleteOutlined,
         EllipsisOutlined,
@@ -125,7 +125,7 @@ export default {
         const { initData, url, addEditUrl, columns, filterableColumns } = fields();
         const { addEditRequestAdmin } = apiAdmin();
         const crudVariables = crud();
-        const { formatDate, downloadFile } = common();
+        const { formatDate, downloadS3File } = common();
         const { t } = useI18n();
 
         // Define uploadFormData for UploadFileBig component
@@ -198,7 +198,7 @@ export default {
             onFileUploaded,
             bToMb,
             formatDate,
-            downloadFile,
+            downloadS3File,
             ...crudVariables,
         };
     },
