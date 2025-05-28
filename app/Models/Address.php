@@ -33,6 +33,6 @@ class Address extends BaseModel
 
     public function getFullAddressAttribute()
     {
-        return $this->address_line1 . ' ' . $this->city . ', ' . $this->state->code . ' ' . $this->zip_code;
+        return $this->address_line1 . ' ' . $this->city . ', ' . $this->state . ' ' . $this->zip_code;
     }
 }

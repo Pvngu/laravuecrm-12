@@ -134,6 +134,10 @@
                                 {{ $t(`campaign.${allCampaign.upcoming_lead_action}`) }}
                             </a-button>
                             <a-button
+                                v-if="
+                                    (permsArray.includes('campaigns_delete') || 
+                                    permsArray.includes('admin'))
+                                "
                                 type="link"
                                 @click="stopCampaign(allCampaign.xid)"
                                 danger

@@ -66,6 +66,12 @@ class PermsSeed
         'translations_delete',
         'storage_edit',
         'email_edit',
+        'call_managers_view',
+        'sales_view',
+        'sales_view_all',
+        'sales_create',
+        'sales_edit',
+        'sales_delete',
     ];
 
     public static function seedPermissions()

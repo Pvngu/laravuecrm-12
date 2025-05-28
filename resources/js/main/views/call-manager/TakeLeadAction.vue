@@ -448,6 +448,19 @@
                             @success="() => (refreshTimeLine = true)"
                         />
                     </a-tab-pane>
+                    <a-tab-pane key="sms">
+                        <template #tab>
+                            <span>
+                                <MessageOutlined />
+                                {{ $t("menu.sms") }}
+                            </span>
+                        </template>
+                        <SmsChat
+                            :individualId="leadDetails.individual.xid"
+                            :scrollStyle="{ y: 'calc(100vh - 460px)', x: 'auto' }"
+                            @success="() => (refreshTimeLine = true)"
+                        />
+                    </a-tab-pane>
                 </a-tabs>
             </a-card>
         </a-col>
@@ -519,6 +532,7 @@ import IndividualLogTable from "../../components/individual-logs/index.vue";
 import LogTimeline from "../../components/individual-logs/LogTimeline.vue";
 import LeadNotesTable from "../../components/lead-notes/index.vue";
 import DocsTable from "../../components/docs/index.vue";
+import SmsChat from "../../components/sms/index.vue";
 import SkipLeadModal from "./SkipLeadModal.vue";
 import Alerts from "../../components/individual/Alerts.vue";
 import Address from "../../components/individual/Address.vue";
@@ -542,6 +556,7 @@ export default {
         IndividualLogTable,
         LeadNotesTable,
         DocsTable,
+        SmsChat,
         LogTimeline,
         SkipLeadModal,
         ExclamationCircleFilled,

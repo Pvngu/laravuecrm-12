@@ -88,7 +88,7 @@
                         <h2 class="text-3xl font-semibold mb-4 max-w-[80%]">Effortlessly manage your team and operations.</h2>
                         <p class="text-lg mb-8 opacity-90">Log in to access your CRM dashboard and manage your team.</p>
                         <div class="w-11/12 max-w-3xl mx-auto bg-white rounded-xl overflow-hidden shadow-lg">
-                            <img class="w-full h-auto block" :src="loginBackground" alt="Dashboard Preview" />
+                            <img class="w-full h-auto block" src="/images/lead_preview.png" alt="Dashboard Preview" />
                         </div>
                     </div>
                 </div>
@@ -113,7 +113,6 @@ export default defineComponent({
     setup() {
         const { addEditRequestAdmin, loading, rules } = apiAdmin();
         const { globalSetting } = common();
-        const loginBackground = globalSetting.value.login_image_url;
         const store = useStore();
         const router = useRouter();
         const credentials = reactive({
@@ -198,7 +197,6 @@ export default defineComponent({
             onSubmit,
             onRequestSend,
             globalSetting,
-            loginBackground,
             rememberMe,
             forgotPassword,
             register,

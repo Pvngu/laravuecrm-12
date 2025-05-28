@@ -14,7 +14,7 @@
                     }"
             >
                 <div>
-                    <a-card :bodyStyle="{ paddingBottom: '0px' }">
+                    <a-card>
                         <a-row>
                             <a-col :span="24">
                                 <a-typography-title :level="3">

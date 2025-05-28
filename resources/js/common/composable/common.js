@@ -221,30 +221,30 @@ const common = () => {
     }
 
     const downloadS3File = (file_name, folder) => {
-    return new Promise((resolve, reject) => {
-        message.loading({
-            content: t("common.downloading")
+        return new Promise((resolve, reject) => {
+            message.loading({
+                content: t("common.downloading")
+            });
+
+            axiosAdmin.post('download-file', {
+                file_name: file_name,
+                folder: folder
+            }, { responseType: "blob" }).then((res) => {
+                const blob = new Blob([res]);
+                
+                // Create an object URL from the blob
+                const link = document.createElement("a");
+                link.href = window.URL.createObjectURL(blob);
+                link.download = file_name;
+
+                link.click();
+
+                resolve();
+            }).catch((error) => {
+                reject();
+            });
         });
-
-        axiosAdmin.post('download-file', {
-            file_name: file_name,
-            folder: folder
-        }, { responseType: "blob" }).then((res) => {
-            const blob = new Blob([res]);
-            
-            // Create an object URL from the blob
-            const link = document.createElement("a");
-            link.href = window.URL.createObjectURL(blob);
-            link.download = file_name;
-
-            link.click();
-
-            resolve();
-        }).catch((error) => {
-            reject();
-        });
-    });
-}
+    }
 
     const downloadFile = (url) => {
         return new Promise((resolve, reject) => {

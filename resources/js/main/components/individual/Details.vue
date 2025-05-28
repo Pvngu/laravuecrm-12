@@ -513,20 +513,24 @@
         </div>
     </a-form>
     <div
-        class="absolute right-0 bottom-0 w-full border-t! border-gray-200! p-2 bg-white z-10"
+        :class="[
+            { 'absolute right-0 bottom-0 w-full border-t! border-gray-200! p-2 bg-white z-10': !isSale }
+        ]"
     >
         <a-row justify="end">
             <a-col>
-                <a-button
-                    type="primary"
-                    :loading="saveLoading"
-                    @click="onSubmit"
-                >
-                    <template #icon>
-                        <SaveOutlined />
-                    </template>
-                    {{ $t("common.save") }}
-                </a-button>
+                <a-affix :offset-bottom="10">
+                    <a-button
+                        type="primary"
+                        :loading="loading"
+                        @click="onSubmit"
+                    >
+                        <template #icon>
+                            <SaveOutlined />
+                        </template>
+                        {{ $t("common.save") }}
+                    </a-button>
+                </a-affix>
             </a-col>
         </a-row>
     </div>
@@ -563,8 +567,7 @@ export default {
     },
     emits: ["success"],
     setup(props, { emit }) {
-        const { addEditRequestAdmin, rules } = apiAdmin();
-        const saveLoading = ref(false);
+        const { addEditRequestAdmin, rules, loading } = apiAdmin();
         const optionLanguages = ref([]);
         const statuses = ref([]);
         const { t } = useI18n();
@@ -612,7 +615,7 @@ export default {
         });
 
         const onSubmit = () => {
-            saveLoading.value = true;
+            loading.value = true;
             const url = props.isSale
                 ? "campaigns/update-actioned-sale"
                 : "campaigns/update-actioned-lead";
@@ -629,7 +632,7 @@ export default {
 
                         emit("success");
 
-                        saveLoading.value = false;
+                        loading.value = false;
                     }
                 },
             });
@@ -686,7 +689,7 @@ export default {
             optionLanguages,
             statuses,
             onSubmit,
-            saveLoading,
+            loading,
             getLeadDataFieldType,
             formData,
             coApplicantRequired
