@@ -54,6 +54,32 @@ class CreateUsersTable extends Migration
             'description' => 'Admin is allowed to manage everything of the app.',
         ]);
 
+        $agentRole = Role::create([
+            'name' => 'agent',
+            'display_name' => 'Agent',
+            'description' => 'Agent can manage campaigns and tasks assigned to them.',
+        ]);
+
+        $permissions = [
+            'leads_view_all',
+            'leads_create',
+            'leads_delete',
+            'campaigns_export',
+            'call_managers_view',
+            'sales_view',
+            'sales_view_all',
+            'sales_create',
+            'sales_edit',
+            'sales_delete',
+        ];
+
+        foreach ($permissions as $permissionName) {
+            $permission = \App\Models\Permission::where('name', $permissionName)->first();
+            if ($permission) {
+            $agentRole->permissions()->attach($permission->id);
+            }
+        }
+
         $adminId = DB::table('users')->insertGetId([
             'company_id' => $company->id,
             'name' => 'Admin',
