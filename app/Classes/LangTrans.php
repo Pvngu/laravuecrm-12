@@ -162,6 +162,7 @@ class LangTrans
             'setup_company' => 'Setup Company',
             'sale_manager' => 'Sale Manager',
             'sales' => 'Sales',
+            'sms' => 'SMS',
         ],
         'dashboard' => [
             'dashboard' => 'Dashboard',
