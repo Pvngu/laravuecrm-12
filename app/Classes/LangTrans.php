@@ -164,6 +164,7 @@ class LangTrans
             'sale_manager' => 'Sale Manager',
             'sales' => 'Sales',
             'sms' => 'SMS',
+            'activity_log' => 'Activity Log',
         ],
         'dashboard' => [
             'dashboard' => 'Dashboard',

@@ -900,7 +900,6 @@ export default {
             activeLeftPanelKey,
             leadDetails,
             activeKey,
-            activeKeyLead,
             leadFormData,
             leadFollowUp,
             salesmanBooking,

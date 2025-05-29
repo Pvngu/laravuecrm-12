@@ -483,6 +483,7 @@ import {
     MailOutlined,
     FormOutlined,
     InsertRowBelowOutlined,
+    HistoryOutlined,
 } from "@ant-design/icons-vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 import common from "../../common/composable/common";
@@ -526,6 +527,7 @@ export default defineComponent({
         MailOutlined,
         FormOutlined,
         InsertRowBelowOutlined,
+        HistoryOutlined
     },
     setup(props, { emit }) {
         const {

@@ -1,5 +1,5 @@
 <template>
-    <a-tabs v-model:activeKey="activeTab" class="details-tabs" type="card">
+    <a-tabs v-model:activeKey="activeTab" :class="[ {'details-tabs' : !isSale } ]" type="card">
         <a-tab-pane key="details" :tab="$t('common.details')">
             <template #tab>
                 <span>
@@ -726,7 +726,9 @@
     >
         <a-row justify="end">
             <a-col>
-                <a-affix :offset-bottom="10">
+                <div :class="[
+                    { 'fixed bottom-4 right-6' : isSale },
+                ]">
                     <a-button
                         type="primary"
                         :loading="loading"
@@ -738,7 +740,7 @@
                         </template>
                         {{ $t("common.save") }}
                     </a-button>
-                </a-affix>
+                </div>
             </a-col>
         </a-row>
     </div>
@@ -999,7 +1001,7 @@ export default {
     justify-content: end;
 }
 .details-tabs .ant-tabs-content {
-    height: calc(100vh - 200px);
+    height: calc(100vh - 260px);
     overflow-y: auto;
 }
 </style>
