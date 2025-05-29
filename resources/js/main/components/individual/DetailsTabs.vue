@@ -860,12 +860,12 @@ export default {
 
         const onSubmit = () => {
             if (activeTab.value === 'details') {
-                const url = props.isSale
-                    ? "campaigns/update-actioned-sale"
-                    : "campaigns/update-actioned-lead";
                 addEditRequestAdmin({
-                    url: url,
-                    data: formData.value,
+                    url: "individuals/" + props.saleLeadData.individual.xid,
+                    data: {
+                        ...formData.value,
+                        _method: "PUT"
+                    },
                     successMessage: t("common.updated_successfully"),
                     success: (res) => {
                         emit("success");
@@ -926,9 +926,10 @@ export default {
                             sale_status_id: newValue.sale_status_id || null,
                             lead_status: newValue.individual.lead_status || null,
                             lead_data: newValue.individual.lead_data || [],
-                            campaign: newValue.individual.campaign || {},
+                            // campaign: newValue.individual.campaign || {},
                             individual_id: newValue.individual.xid,
-                            x_sale_lead_id: newValue.xid,
+                            sale_id: props.isSale == true ? newValue.xid : null,
+                            lead_id: props.isSale == false ? newValue.xid : null,
                         };
 
                         // Set co-applicant details if exists

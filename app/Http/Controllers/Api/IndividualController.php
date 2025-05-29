@@ -12,6 +12,4 @@ use App\Models\Individual;
 class IndividualController extends ApiBaseController
 {
     protected $model = Individual::class;
-
-  
 }

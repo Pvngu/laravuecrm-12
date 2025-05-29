@@ -13,6 +13,7 @@ use App\Models\Campaign;
 use App\Models\Currency;
 use App\Models\Document;
 use App\Models\Settings;
+use App\Models\Individual;
 use App\Models\EmailTemplate;
 use App\Models\FormFieldName;
 use App\Models\IndividualLog;
@@ -23,6 +24,7 @@ use App\Observers\CompanyObserver;
 use App\Observers\GeneralObserver;
 use App\Observers\LeadLogObserver;
 use App\Observers\DocumentObserver;
+use App\Observers\IndividualObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -44,6 +46,7 @@ class AppServiceProvider extends ServiceProvider
         User::observe(UserObserver::class);
         LeadLog::observe(LeadLogObserver::class);
         Document::observe(DocumentObserver::class);
+        Individual::observe(IndividualObserver::class);
         
         // Add company scope to models
         foreach ([

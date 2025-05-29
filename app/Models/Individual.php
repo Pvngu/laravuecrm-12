@@ -17,14 +17,32 @@ class Individual extends BaseModel
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
 
-    protected $hidden = ['id', 'company_id', 'campaign_id', 'first_action_by', 'last_action_by', 'individual_follow_up_id', 'salesman_booking_id'];
+    protected $hidden = ['id', 'campaign_id', 'first_action_by', 'last_action_by', 'individual_follow_up_id', 'salesman_booking_id'];
 
-    protected $appends = ['xid', 'x_company_id', 'x_campaign_id', 'x_first_action_by', 'x_last_action_by', 'x_individual_follow_up_id', 'x_salesman_booking_id', 'full_name', 'template_form', 'full_address'];
+    protected $appends = ['xid', 'x_campaign_id', 'x_first_action_by', 'x_last_action_by', 'x_individual_follow_up_id', 'x_salesman_booking_id', 'full_name', 'template_form', 'full_address'];
 
     protected $filterable = ['reference_number','first_name','last_name', 'campaign_id', 'individual_status'];
 
+    protected $fillable = [
+        'campaign_id',
+        'reference_number',
+        'first_name',
+        'last_name',
+        'SSN',
+        'date_of_birth',
+        'home_phone',
+        'phone_number',
+        'email',
+        'language',
+        'lead_data',
+        'time_taken',
+        'first_action_by',
+        'last_action_by',
+        'individual_follow_up_id',
+        'salesman_booking_id'
+    ];
+
     protected $hashableGetterFunctions = [
-        'getXCompanyIdAttribute' => 'company_id',
         'getXCampaignIdAttribute' => 'campaign_id',
         'getXFirstActionByAttribute' => 'first_action_by',
         'getXLastActionByAttribute' => 'last_action_by',
@@ -33,7 +51,6 @@ class Individual extends BaseModel
     ];
 
     protected $casts = [
-        'company_id' => Hash::class . ':hash',
         'campaign_id' => Hash::class . ':hash',
         'first_action_by' => Hash::class . ':hash',
         'last_action_by' => Hash::class . ':hash',
@@ -41,15 +58,12 @@ class Individual extends BaseModel
         'salesman_booking_id' => Hash::class . ':hash',
         'lead_data' => 'array',
         'time_taken' => 'integer',
-        'started' => 'integer',
         'date_of_birth' => 'date',
     ];
 
     protected static function boot()
     {
         parent::boot();
-
-        static::addGlobalScope(new CompanyScope);
     }
 
     public function campaign()
@@ -149,23 +163,26 @@ class Individual extends BaseModel
             ];
         }
 
-        $coFields = [
-            'first_name',
-            'last_name',
-            'SSN',
-            'date_of_birth',
-            'phone_number',
-            'home_phone',
-            'email',
-            'language',
-        ];
-
-        foreach ($coFields as $coField) {
-            $template[] = [
-            'field_name' => 'co_' . $coField,
-            'field_value' => $this->coApplicant ? $this->coApplicant->$coField : '',
+        if(co_applicant_required() === true && $this->coApplicant) {
+            $coFields = [
+                'first_name',
+                'last_name',
+                'SSN',
+                'date_of_birth',
+                'phone_number',
+                'home_phone',
+                'email',
+                'language',
             ];
+    
+            foreach ($coFields as $coField) {
+                $template[] = [
+                'field_name' => 'co_' . $coField,
+                'field_value' => $this->coApplicant ? $this->coApplicant->$coField : '',
+                ];
+            }
         }
+
 
         if (is_array($this->lead_data)) {
             foreach ($this->lead_data as $leadField) {

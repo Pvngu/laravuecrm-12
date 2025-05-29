@@ -116,7 +116,7 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
         ApiRoute::resource('sales', 'SaleController', ['as' => 'api', 'only' => ['index', 'show', 'destroy']]);
 
         ApiRoute::resource('addresses', 'AddressController', $options);
-        ApiRoute::resource('individuals', 'IndividualController', ['as' => 'api', 'only' => ['index', 'show']]);
+        ApiRoute::resource('individuals', 'IndividualController', $options);
 
         ApiRoute::resource('notes', 'NoteController', $options);
 
