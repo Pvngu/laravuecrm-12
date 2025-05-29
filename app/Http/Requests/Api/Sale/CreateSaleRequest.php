@@ -29,11 +29,9 @@ class CreateSaleRequest extends BaseRequest
             'assigned_user_id' => 'required',
             'first_name' => 'required',
             'last_name' => 'required',
+            'phone_number' => ['required', 'regex:/^\d{10}$/'],
         ];
-
-        // TODO - condition according to required Type
-
-
+        
         return $rules;
     }
 }

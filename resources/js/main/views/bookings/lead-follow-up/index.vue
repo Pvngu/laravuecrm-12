@@ -109,10 +109,8 @@
                                         >
                                             <a-form-item :label="$t('lead_follow_up.assigned_to')">
                                                 <UserSelect
-                                                    @onChange="(id) => {
-                                                        extraFilters.user_id = id;
-                                                        setUrlData();
-                                                    }"
+                                                    v-model="extraFilters.user_id"
+                                                    @onChange="setUrlData()"
                                                 />
                                             </a-form-item>
                                         </a-col>

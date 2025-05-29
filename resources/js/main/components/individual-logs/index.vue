@@ -76,10 +76,8 @@
             :xl="6"
         >
             <UserSelect
-                @onChange="(id) => {
-                    filters.user_id = id;
-                    setUrlData();
-                }"
+                v-model="filters.user_id"
+                @onChange="setUrlData()"
             />
         </a-col>
         <a-col

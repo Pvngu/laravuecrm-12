@@ -178,10 +178,8 @@
                                             :label="$t('sales.assigned_to')"
                                         >
                                             <UserSelect
-                                                @onChange="(id) => {
-                                                    filters.assigned_to = id;
-                                                    setUrlData();
-                                                }"
+                                                v-model="filters.assigned_to"
+                                                @onChange="setUrlData()"
                                                 :fetchUserData="false"
                                                 :data="allUsers"
                                             />

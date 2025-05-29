@@ -57,7 +57,7 @@
                         "
                     >
                         <UserSelect
-                            @onChange="(id) => (formData.assigned_user_id = id)"
+                            v-model="formData.assigned_user_id"
                             :fetchUserData="false"
                             :data="allUsers"
                         />
@@ -156,6 +156,7 @@
                                 : null
                         "
                         :validateStatus="rules.phone_number ? 'error' : null"
+                        class="required"
                     >
                         <PhoneInput
                             v-model="formData.phone_number"
@@ -171,14 +172,9 @@
                         "
                         :validateStatus="rules.home_phone ? 'error' : null"
                     >
-                        <a-input
-                            v-model:value="formData.home_phone"
-                            :placeholder="
-                                $t('common.placeholder_default_text', [
-                                    $t('lead.home_phone'),
-                                ])
-                            "
-                        ></a-input>
+                        <PhoneInput
+                            v-model="formData.home_phone"
+                        />
                     </a-form-item>
                 </a-col>
             </a-row>
@@ -215,8 +211,15 @@
                                     $t('lead.language'),
                                 ])
                             "
-                            :options="optionLanguages"
-                        ></a-select>
+                        >
+                            <a-select-option
+                                v-for="language in optionLanguages"
+                                :key="language.id"
+                                :value="language.key"
+                            >
+                                {{ $t(language.value) }}
+                            </a-select-option>
+                        </a-select>
                     </a-form-item>
                 </a-col>
             </a-row>
@@ -269,9 +272,8 @@
 </template>
 <script>
 import { SaveOutlined } from "@ant-design/icons-vue";
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import apiAdmin from "../../../common/composable/apiAdmin";
-import common from "../../../common/composable/common";
 import { useRouter } from "vue-router";
 import UserSelect from "../../../common/components/common/select/UserSelect.vue";
 import PhoneInput from "../../../common/components/common/input/PhoneInput.vue";
@@ -294,7 +296,6 @@ export default defineComponent({
     setup(props, { emit }) {
         const router = useRouter();
         const { addEditRequestAdmin, loading, rules } = apiAdmin();
-        const { optionLanguages } = common();
         const formData = ref({
             campaign_id: undefined,
             assigned_user_id: undefined,
@@ -306,6 +307,18 @@ export default defineComponent({
             home_phone: "",
             email: "",
         });
+        const optionLanguages = ref({});
+
+        const getPrefetchData = () => {
+            axiosAdmin.get("select-options/language")
+                .then((response) => {
+                    optionLanguages.value = response.data;
+                });
+        };
+
+        onMounted(() => {
+            getPrefetchData();
+        });
 
         const onSubmit = () => {
             addEditRequestAdmin({
@@ -314,6 +327,7 @@ export default defineComponent({
                 successMessage: props.successMessage,
                 success: (res) => {
                     emit("addEditSuccess", res.xid);
+                    emptyFormData();
                     router.push({
                         name: "admin.sales.details",
                         params: { id: res.sale_id },
@@ -344,8 +358,24 @@ export default defineComponent({
             };
         };
 
+        const emptyFormData = () => {
+            formData.value = {
+                campaign_id: undefined,
+                assigned_user_id: undefined,
+                first_name: "",
+                last_name: "",
+                SSN: "",
+                date_of_birth: "",
+                phone_number: "",
+                home_phone: "",
+                email: "",
+                lead_data: [],
+            };
+        };
+
         const onClose = () => {
             rules.value = {};
+            emptyFormData();
             emit("closed");
         };
         return {

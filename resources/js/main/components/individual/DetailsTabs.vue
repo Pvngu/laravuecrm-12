@@ -28,7 +28,7 @@
                         :validateStatus="rules.assigned_to ? 'error' : null"
                     >
                         <UserSelect
-                            v-model:value="formData.assigned_to"
+                            v-model="formData.assigned_to"
                         />
                     </a-form-item>
                 </a-col>
