@@ -553,6 +553,7 @@
                             <a-input 
                                 v-model:value="addressFormData.co_address_line1"
                                 :placeholder="$t('common.placeholder_default_text', [$t('address.address_line_1')])"
+                                :disabled="isCoApplicantDisabled"
                             />
                         </a-form-item>
                     </a-col>
@@ -585,8 +586,9 @@
                             class="hidden-label"
                         >
                             <a-input
-                                v-model:value="addressFormData.co_address_line2"
+                                v-model:value="addressFormData.co_address_line_2"
                                 :placeholder="$t('common.placeholder_default_text', [$t('address.address_line_2')])"
+                                :disabled="isCoApplicantDisabled"
                             />
                         </a-form-item>
                     </a-col>
@@ -621,6 +623,7 @@
                             <a-input
                                 v-model:value="addressFormData.co_city"
                                 :placeholder="$t('common.placeholder_default_text', [$t('address.city')])"
+                                :disabled="isCoApplicantDisabled"
                             />
                         </a-form-item>
                     </a-col>
@@ -665,6 +668,7 @@
                                 v-model:value="addressFormData.co_state"
                                 :placeholder="$t('common.select_default_text', [$t('address.state')])"
                                 style="width: 100%"
+                                :disabled="isCoApplicantDisabled"
                             >
                                 <a-select-option
                                     v-for="state in states"
@@ -707,6 +711,7 @@
                             <a-input
                                 v-model:value="addressFormData.co_zip_code"
                                 :placeholder="$t('common.placeholder_default_text', [$t('address.zip_code')])"
+                                :disabled="isCoApplicantDisabled"
                             />
                         </a-form-item>
                     </a-col>
@@ -821,6 +826,9 @@ export default {
             co_zip_code: "",
         });
 
+        // Track if co_applicant is null
+        const coApplicantData = ref(null);
+
         onMounted(() => {
             const statusesUrl = props.isSale
                 ? "sale-statuses"
@@ -862,12 +870,11 @@ export default {
                     },
                 });
             } else if (activeTab.value === 'address') {
-                console.log("Address Form Data:", addressFormData.value);
                 addEditRequestAdmin({
-                    url: "addresses/" + (props.saleLeadData.individual.address.xid ?? ""),
+                    url: "addresses/" + (props.saleLeadData.individual.address ? props.saleLeadData.individual.address.xid : ""),
                     data: {
                         ...addressFormData.value,
-                        _method: props.saleLeadData.individual.address.xid ? "PUT" : "POST",
+                        _method: props.saleLeadData.individual.address ? "PUT" : "POST",
                     },
                     successMessage: t("address.updated"),
                     success: (res) => {
@@ -923,7 +930,6 @@ export default {
                         };
 
                         // Set co-applicant details if exists
-                        console.log("Co-applicant required:", coApplicantRequired.value);
                         if (coApplicantRequired.value && newValue.individual.co_applicant) {
                             formData.value.co_first_name = newValue.individual.co_applicant.first_name || "";
                             formData.value.co_last_name = newValue.individual.co_applicant.last_name || "";
@@ -932,6 +938,9 @@ export default {
                             formData.value.co_home_phone = newValue.individual.co_applicant.home_phone || "";
                             formData.value.co_phone_number = newValue.individual.co_applicant.phone_number || "";
                             formData.value.co_email = newValue.individual.co_applicant.email || "";
+                            coApplicantData.value = newValue.individual.co_applicant;
+                        } else {
+                            coApplicantData.value = null;
                         }
 
                         // Set address data
@@ -958,6 +967,9 @@ export default {
             { immediate: true, deep: true }
         );
 
+        // Computed property to disable co-applicant address fields
+        const isCoApplicantDisabled = computed(() => !coApplicantData.value);
+
         return {
             rules,
             optionLanguages,
@@ -969,7 +981,8 @@ export default {
             addressFormData,
             coApplicantRequired,
             activeTab,
-            addressValidation
+            addressValidation,
+            isCoApplicantDisabled,
         };
     },
 };

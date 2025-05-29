@@ -116,7 +116,6 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
         ApiRoute::resource('sales', 'SaleController', ['as' => 'api', 'only' => ['index', 'show', 'destroy']]);
 
         ApiRoute::resource('addresses', 'AddressController', $options);
-        ApiRoute::post('addresses/save', ['as' => 'api.address.saveAddressData', 'uses' => 'AddressController@addEdit']);
         ApiRoute::resource('individuals', 'IndividualController', ['as' => 'api', 'only' => ['index', 'show']]);
 
         ApiRoute::resource('notes', 'NoteController', $options);

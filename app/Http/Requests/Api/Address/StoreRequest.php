@@ -84,11 +84,11 @@ class StoreRequest extends BaseRequest
         return [
             'address_line1.required_with' => 'The address line1 field is required.',
             'city.required_with' => 'The city field is required.',
-            'state_id.required_with' => 'The state field is required.',
+            'state.required_with' => 'The state field is required.',
             'zip_code.required_with' => 'The zip code field is required.',
             'co_address_line1.required_with' => 'The address line1 field is required.',
             'co_city.required_with' => 'The city field is required.',
-            'co_state_id.required_with' => 'The state field is required.',
+            'co_state.required_with' => 'The state field is required.',
             'co_zip_code.required_with' => 'The zip code field is required.',
         ];
     }
