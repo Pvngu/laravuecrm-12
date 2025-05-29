@@ -26,7 +26,7 @@
                                     </a-typography-title>
                                     <a-typography-title :level="5">
                                         {{ $t('sales.status') }}:
-                                        <span v-if="saleData.individual.sale_status">{{ saleData.individual.sale_status }}</span>
+                                        <span v-if="saleData.sale_status">{{ saleData.sale_status.name }}</span>
                                         <span v-else>-</span>
                                     </a-typography-title>
                                 </a-space>
@@ -38,7 +38,7 @@
                             :language="saleData.individual.language"
                             ref="alerts"
                         />
-                        <a-row class="mt-5">
+                        <a-row class="mt-5" :gutter="[0,16]">
                             <a-col :span="24">
                                 <a-row :gutter="16">
                                     <a-col :span="10">
@@ -69,7 +69,7 @@
                             </a-col>
                         </a-row>
                         <a-divider />
-                        <a-row :gutter="[0,8]">
+                        <a-row :gutter="[0,16]">
                             <a-col :span="24">
                                 <a-row :gutter="16">
                                     <a-col :span="10">
@@ -106,14 +106,12 @@
                                         </a-typography-text>
                                     </a-col>
                                     <a-col :span="14">
-                                        <a-typography-text v-if="saleData.individual.assigned_user">
-                                            {{ saleData.individual.assigned_user.name }}
+                                        <a-typography-text v-if="saleData.assigned_user">
+                                            {{ saleData.assigned_user.name }}
                                         </a-typography-text>
                                     </a-col>
                                 </a-row>
                             </a-col>
-                        </a-row>
-                        <a-row class="mt-2">
                             <a-col :span="24">
                                 <a-row :gutter="16">
                                     <a-col :span="10">
@@ -142,8 +140,6 @@
                                     </a-col>
                                 </a-row>
                             </a-col>
-                        </a-row>
-                        <a-row class="mt-2">
                             <a-col :span="24">
                                 <a-row :gutter="16">
                                     <a-col :span="10">
@@ -186,8 +182,6 @@
                                     </a-col>
                                 </a-row>
                             </a-col>
-                        </a-row>
-                        <a-row class="mt-5">
                             <a-col :span="24">
                                 <a-row :gutter="16">
                                     <a-col :span="10">

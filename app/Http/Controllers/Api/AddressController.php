@@ -27,7 +27,7 @@ class AddressController extends ApiBaseController
     public function updated() {
         $request = request();
 
-        if(env('CO_APPLICANT_REQUIRED') === true) $this->addEditCoapplicant($request);
+        $this->addEditCoapplicant($request);
     }
 
     public function stored(Address $address) {
@@ -37,10 +37,13 @@ class AddressController extends ApiBaseController
         $individual->address_id = $address->id;
         $individual->save();
 
-        if(env('CO_APPLICANT_REQUIRED') === true) $this->addEditCoapplicant($request);
+        $this->addEditCoapplicant($request);
     }
 
     public function addEditCoapplicant($request) {
+        // Check if co-applicant is required
+        if(co_applicant_required() === false) return;
+
         $individualId = $this->getIdFromHash($request->individual_id);
         $individual = Individual::find($individualId);
 
