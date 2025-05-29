@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Casts\Hash;
 use App\Models\BaseModel;
-use App\Scopes\CompanyScope;
+use App\Traits\LogsActivity;
 
 class Individual extends BaseModel
 {
     use HasFactory;
+    use LogsActivity;
     
     protected $table = 'individuals';
 
