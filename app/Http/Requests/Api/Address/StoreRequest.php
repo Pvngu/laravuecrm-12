@@ -30,16 +30,18 @@ class StoreRequest extends BaseRequest
                 'string',
                 'required_with:address_line2,city,state_id,zip_code',
             ],
-            'address_line2' => ['nullable','string'],
+            'address_line2' => [
+                'nullable',
+                'string'
+            ],
             'city' => [
                 'nullable',
                 'string',
                 'required_with:address_line1,address_line2,state_id,zip_code',
             ],
-            'state_id' => [
+            'state' => [
                 'nullable',
-                'integer',
-                'exists:states,id',
+                'string',
                 'required_with:address_line1,address_line2,city,zip_code',
             ],
             'zip_code' => [
@@ -58,10 +60,9 @@ class StoreRequest extends BaseRequest
                 'string',
                 'required_with:co_address_line1,co_address_line2,co_state_id,co_zip_code',
             ],
-            'co_state_id' => [
+            'co_state' => [
                 'nullable',
                 'string',
-                'exists:states,id',
                 'required_with:co_address_line1,co_address_line2,co_city,co_zip_code',
             ],
             'co_zip_code' => [

@@ -27,7 +27,7 @@ class UpdateRequest extends BaseRequest
             'address_line1' => 'required|string',
             'address_line2' => 'nullable|string',
             'city' => 'required|string',
-            'state_id' => 'required|integer|exists:states,id',
+            'state_id' => 'required|string|exists:states,id',
             'zip_code' => 'required|string',
             'co_address_line1' => 'required|string',
             'co_address_line2' => 'nullable|string',

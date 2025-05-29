@@ -16,8 +16,7 @@ return new class extends Migration
             $table->string('address_line1');
             $table->string('address_line2')->nullable()->nullable();
             $table->string('city');
-            $table->bigInteger('state_id')->unsigned();
-            $table->foreign('state_id')->references('id')->on('states')->onUpdate('cascade');
+            $table->string('state');
             $table->string('zip_code');
             $table->timestamps();
         });

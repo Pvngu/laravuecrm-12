@@ -27,7 +27,7 @@ class AddressController extends ApiBaseController
                 'address_line1',
                 'address_line2',
                 'city',
-                'state_id',
+                'state',
                 'zip_code',
             ];
 
@@ -44,12 +44,7 @@ class AddressController extends ApiBaseController
                 $addressNotes = [];
 
                 foreach ($addressFields as $field) {
-                    if ($field === 'state_id') {
-                        $state = State::find($request->$field);
-                        $addressNotes[$field] = $state ? $state->name : 'Unknown State';
-                    } else {
-                        $addressNotes[$field] = in_array($field, ['city', 'address_line1', 'address_line2']) ? ucwords($request->$field) : $request->$field;
-                    }
+                    $addressNotes[$field] = in_array($field, ['city', 'address_line1', 'address_line2']) ? ucwords($request->$field) : $request->$field;
                 }
 
                 $address->save();
@@ -86,7 +81,7 @@ class AddressController extends ApiBaseController
                 'address_line1' => 'co_address_line1',
                 'address_line2' => 'co_address_line2',
                 'city' => 'co_city',
-                'state_id' => 'co_state_id',
+                'state' => 'co_state',
                 'zip_code' => 'co_zip_code',
             ];
 
@@ -106,12 +101,7 @@ class AddressController extends ApiBaseController
                 $coAddressNotes = [];
 
                 foreach ($addressFields as $field) {
-                    if ($field === 'state_id') {
-                        $state = State::find($request->$field);
-                        $coAddressNotes[$field] = $state ? $state->name : 'Unknown State';
-                    } else {
-                        $coAddressNotes[$field] = in_array($field, ['city', 'address_line1', 'address_line2']) ? ucwords($request->$field) : $request->$field;
-                    }
+                    $coAddressNotes[$field] = in_array($field, ['city', 'address_line1', 'address_line2']) ? ucwords($request->$field) : $request->$field;
                 }
 
                 $co_address->save();

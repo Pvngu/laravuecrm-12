@@ -550,7 +550,7 @@
                             :help="rules.address_line1 ? rules.address_line1.message : null"
                             :validateStatus="rules.address_line1 ? 'error' : null"
                         >
-                            <a-input v-model:value="addressFormData.address_line1" :placeholder="$t('common.placeholder_default_text', [$t('lead.address_line_1')])"></a-input>
+                            <a-input v-model:value="addressFormData.address_line1" :placeholder="$t('common.placeholder_default_text', [$t('address.address_line_1')])"></a-input>
                         </a-form-item>
                     </a-col>
                     <a-col
@@ -645,21 +645,21 @@
                     <a-col :xs="24" :sm="24" :md="12" :lg="12">
                         <a-form-item
                             :label="$t('address.state')"
-                            name="state_id"
-                            :help="rules.state_id ? rules.state_id.message : null"
-                            :validateStatus="rules.state_id ? 'error' : null"
+                            name="state"
+                            :help="rules.state ? rules.state.message : null"
+                            :validateStatus="rules.state ? 'error' : null"
                         >
                             <a-select
-                                v-model:value="addressFormData.state_id"
+                                v-model:value="addressFormData.state"
                                 :placeholder="$t('common.select_default_text', [$t('address.state')])"
                                 style="width: 100%"
                             >
                                 <a-select-option
                                     v-for="state in states"
-                                    :key="state.xid"
-                                    :value="state.xid"
+                                    :key="state.id"
+                                    :value="state.name"
                                 >
-                                    {{ state.code }}
+                                    {{ state.name }}
                                 </a-select-option>
                             </a-select>
                         </a-form-item>
@@ -673,22 +673,22 @@
                     >
                         <a-form-item
                             :label="$t('address.state')"
-                            name="co_state_id"
-                            :help="rules.co_state_id ? rules.co_state_id.message : null"
-                            :validateStatus="rules.co_state_id ? 'error' : null"
+                            name="co_state"
+                            :help="rules.co_state ? rules.co_state.message : null"
+                            :validateStatus="rules.co_state ? 'error' : null"
                             class="hidden-label"
                         >
                             <a-select
-                                v-model:value="addressFormData.co_state_id"
+                                v-model:value="addressFormData.co_state"
                                 :placeholder="$t('common.select_default_text', [$t('address.state')])"
                                 style="width: 100%"
                             >
                                 <a-select-option
                                     v-for="state in states"
-                                    :key="state.xid"
-                                    :value="state.xid"
+                                    :key="state.id"
+                                    :value="state.name"
                                 >
-                                    {{ state.code }}
+                                    {{ state.name }}
                                 </a-select-option>
                             </a-select>
                         </a-form-item>
@@ -742,6 +742,7 @@
                     <a-button
                         type="primary"
                         :loading="loading"
+                        :disabled="addressValidation"
                         @click="onSubmit"
                     >
                         <template #icon>
@@ -756,7 +757,7 @@
 </template>
 
 <script>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { SaveOutlined, MobileOutlined, HomeOutlined, FileTextOutlined } from "@ant-design/icons-vue";
 import apiAdmin from "../../../common/composable/apiAdmin";
 import common from "../../../common/composable/common";
@@ -829,12 +830,12 @@ export default {
             address_line1: "",
             address_line2: "",
             city: "",
-            state_id: "",
+            state: "",
             zip_code: "",
             co_address_line1: "",
             co_address_line2: "",
             co_city: "",
-            co_state_id: "",
+            co_state: "",
             co_zip_code: "",
         });
 
@@ -855,6 +856,18 @@ export default {
             );
         });
 
+        const addressValidation = computed(() => {
+            if(activeTab.value !== 'address') {
+                return false;
+            }
+            return (
+                !addressFormData.value.address_line1 ||
+                !addressFormData.value.city ||
+                !addressFormData.value.state ||
+                !addressFormData.value.zip_code
+            );
+        });
+
         const onSubmit = () => {
             if (activeTab.value === 'details') {
                 const url = props.isSale
@@ -863,7 +876,7 @@ export default {
                 addEditRequestAdmin({
                     url: url,
                     data: formData.value,
-                    successMessage: t("common.Updated Successfully"),
+                    successMessage: t("common.updated_successfully"),
                     success: (res) => {
                         emit("success");
                     },
@@ -942,7 +955,7 @@ export default {
                             addressFormData.value.address_line1 = newValue.individual.address.address_line1 || "";
                             addressFormData.value.address_line2 = newValue.individual.address.address_line2 || "";
                             addressFormData.value.city = newValue.individual.address.city || "";
-                            addressFormData.value.state_id = newValue.individual.address.state_id || undefined;
+                            addressFormData.value.state = newValue.individual.address.state || undefined;
                             addressFormData.value.zip_code = newValue.individual.address.zip_code || "";
                         }
 
@@ -951,7 +964,7 @@ export default {
                             addressFormData.value.co_address_line1 = newValue.individual.coApplicant.address.address_line1 || "";
                             addressFormData.value.co_address_line2 = newValue.individual.coApplicant.address.address_line2 || "";
                             addressFormData.value.co_city = newValue.individual.coApplicant.address.city || "";
-                            addressFormData.value.co_state_id = newValue.individual.coApplicant.address.state_id || undefined;
+                            addressFormData.value.co_state = newValue.individual.coApplicant.address.state || undefined;
                             addressFormData.value.co_zip_code = newValue.individual.coApplicant.address.zip_code || "";
                         }
                     }
@@ -970,7 +983,8 @@ export default {
             formData,
             addressFormData,
             coApplicantRequired,
-            activeTab
+            activeTab,
+            addressValidation
         };
     },
 };
