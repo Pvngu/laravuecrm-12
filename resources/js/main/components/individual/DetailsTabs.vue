@@ -862,9 +862,13 @@ export default {
                     },
                 });
             } else if (activeTab.value === 'address') {
+                console.log("Address Form Data:", addressFormData.value);
                 addEditRequestAdmin({
-                    url: "addresses/save",
-                    data: addressFormData.value,
+                    url: "addresses/" + (props.saleLeadData.individual.address.xid ?? ""),
+                    data: {
+                        ...addressFormData.value,
+                        _method: props.saleLeadData.individual.address.xid ? "PUT" : "POST",
+                    },
                     successMessage: t("address.updated"),
                     success: (res) => {
                         emit("success");
@@ -919,14 +923,15 @@ export default {
                         };
 
                         // Set co-applicant details if exists
-                        if (coApplicantRequired.value && newValue.individual.coApplicant) {
-                            formData.value.co_first_name = newValue.individual.coApplicant.first_name || "";
-                            formData.value.co_last_name = newValue.individual.coApplicant.last_name || "";
-                            formData.value.co_SSN = newValue.individual.coApplicant.SSN || "";
-                            formData.value.co_date_of_birth = newValue.individual.coApplicant.date_of_birth || "";
-                            formData.value.co_home_phone = newValue.individual.coApplicant.home_phone || "";
-                            formData.value.co_phone_number = newValue.individual.coApplicant.phone_number || "";
-                            formData.value.co_email = newValue.individual.coApplicant.email || "";
+                        console.log("Co-applicant required:", coApplicantRequired.value);
+                        if (coApplicantRequired.value && newValue.individual.co_applicant) {
+                            formData.value.co_first_name = newValue.individual.co_applicant.first_name || "";
+                            formData.value.co_last_name = newValue.individual.co_applicant.last_name || "";
+                            formData.value.co_SSN = newValue.individual.co_applicant.SSN || "";
+                            formData.value.co_date_of_birth = newValue.individual.co_applicant.date_of_birth || "";
+                            formData.value.co_home_phone = newValue.individual.co_applicant.home_phone || "";
+                            formData.value.co_phone_number = newValue.individual.co_applicant.phone_number || "";
+                            formData.value.co_email = newValue.individual.co_applicant.email || "";
                         }
 
                         // Set address data
@@ -940,12 +945,12 @@ export default {
                         }
 
                         // Set co-applicant address if exists
-                        if (coApplicantRequired.value && newValue.individual.coApplicant && newValue.individual.coApplicant.address) {
-                            addressFormData.value.co_address_line1 = newValue.individual.coApplicant.address.address_line1 || "";
-                            addressFormData.value.co_address_line2 = newValue.individual.coApplicant.address.address_line2 || "";
-                            addressFormData.value.co_city = newValue.individual.coApplicant.address.city || "";
-                            addressFormData.value.co_state = newValue.individual.coApplicant.address.state || undefined;
-                            addressFormData.value.co_zip_code = newValue.individual.coApplicant.address.zip_code || "";
+                        if (coApplicantRequired.value && newValue.individual.co_applicant && newValue.individual.co_applicant.address) {
+                            addressFormData.value.co_address_line1 = newValue.individual.co_applicant.address.address_line1 || "";
+                            addressFormData.value.co_address_line2 = newValue.individual.co_applicant.address.address_line2 || "";
+                            addressFormData.value.co_city = newValue.individual.co_applicant.address.city || "";
+                            addressFormData.value.co_state = newValue.individual.co_applicant.address.state || undefined;
+                            addressFormData.value.co_zip_code = newValue.individual.co_applicant.address.zip_code || "";
                         }
                     }
                 }

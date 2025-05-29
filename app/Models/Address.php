@@ -10,7 +10,12 @@ class Address extends BaseModel
     use HasFactory;
 
     protected $appends = ['xid', 'full_address'];
+
+    protected $hidden = ['id'];
+    
     protected $default = ['id','xid','address_line1','address_line2','city','state','zip_code','full_address'];
+
+    protected $fillable = ['address_line1','address_line2','city','state','zip_code',];
 
     protected static function boot()
     {

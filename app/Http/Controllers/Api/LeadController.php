@@ -94,10 +94,6 @@ class LeadController extends ApiBaseController
         return $query;
     }
 
-    public function updated() {
-        
-    }
-
     public function createLead(CreateLeadRequest $request)
     {
         $user = user();
