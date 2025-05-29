@@ -33,8 +33,6 @@ class StoreRequest extends BaseRequest
         // Step First
         if ($currentStep == 0) {
             $rules['name'] = 'required';
-            $rules['form_id'] = 'required';
-            $rules['email_template_id'] = 'required';
 
             $allUsers = $this->user_id != "" ? json_decode($this->user_id) : [];
             $totalMembers = count($allUsers);

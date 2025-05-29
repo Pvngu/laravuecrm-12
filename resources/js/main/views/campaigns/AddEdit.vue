@@ -132,7 +132,6 @@
                                     : null
                             "
                             :validateStatus="rules.email_template_id ? 'error' : null"
-                            class="required"
                         >
                             <span style="display: flex">
                                 <a-select

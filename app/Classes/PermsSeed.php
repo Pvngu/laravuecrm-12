@@ -72,6 +72,9 @@ class PermsSeed
         'sales_create',
         'sales_edit',
         'sales_delete',
+        'activity_logs_view',
+        'activity_logs_view_all',
+        'activity_logs_delete',
     ];
 
     public static function seedPermissions()

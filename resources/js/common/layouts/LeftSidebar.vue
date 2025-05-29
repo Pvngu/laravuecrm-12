@@ -398,6 +398,23 @@
                         <span>{{ $t("menu.forms") }}</span>
                     </a-menu-item>
 
+                    <a-menu-item
+                        v-if="
+                            permsArray.includes('activity_log_view') ||
+                            permsArray.includes('admin')
+                        "
+                        @click="
+                            () => {
+                                menuSelected();
+                                $router.push({ name: 'admin.activity_log.index' });
+                            }
+                        "
+                        key="activity_log"
+                    >
+                        <HistoryOutlined />
+                        <span>{{ $t("menu.activity_log") }}</span>
+                    </a-menu-item>
+
                     <component
                         v-for="(appModule, index) in appModules"
                         :key="index"

@@ -121,5 +121,7 @@ ApiRoute::group(['namespace' => 'App\Http\Controllers\Api'], function () {
         ApiRoute::resource('notes', 'NoteController', $options);
 
         ApiRoute::get('states/all', ['as' => 'api.states.all', 'uses' => 'StateController@allOptions']);
+
+        ApiRoute::resource('activity-logs', 'ActivityLogController', $options);
     });
 });

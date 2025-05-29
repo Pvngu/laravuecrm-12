@@ -2,9 +2,9 @@
 
 namespace App\Traits;
 
-use App\Classes\Common;
+use App\Models\ActivityLog;
 use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 trait LogsActivity
 {
@@ -23,180 +23,216 @@ trait LogsActivity
         });
     }
 
-     /**
+    /**
      * Log the created event for a model.
-     *
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @return void
      */
     protected function logCreatedEvent($model)
     {
         $modelAttributes = $this->getAttributes();
-        $logType = '';
-
-        $excludedLogFields = ['id', 'individual_id', 'created_at', 'updated_at'];
-
-        if(method_exists($this, 'getExcludedLogFields')) {
-            $excludedLogFields = array_merge($excludedLogFields, $this->getExcludedLogFields());
-        }
-
-        $logNotes = [];
-
+        $excludedLogFields = $this->getExcludedLogFields();
+        
+        $logData = [];
         foreach ($modelAttributes as $field => $value) {
-            // Skip excluded fields
             if (in_array($field, $excludedLogFields)) {
                 continue;
             }
 
-            if($this->isForeignKey($field)) {
-                $relatedValue = $this->getRelatedModelAttribute($model, $field, 'name');
-                $logNotes[$field] = $relatedValue ?? 'Unknown';
-            }
-            else {
-                $logNotes[$field] = $value;
+            if ($this->isForeignKey($field)) {
+                $relatedValue = $this->getRelatedModelAttribute($model, $field, 'name', $value);
+                $logData[$field] = $relatedValue ?? 'Unknown';
+            } else {
+                $logData[$field] = $this->maskSensitiveField($field, $value);
             }
         }
 
-        $individualId = $this->getIndividualId($model);
-        $logType = $this->getLogType($model);
+        $entityName = $this->getEntityName();
+        $description = $this->getCreatedDescription($model);
 
-        Common::storeIndividualLog(
-            $individualId,
-            $logType . Str::singular($model->getTable()),
-            json_encode($logNotes)
-        );
+        $this->createActivityLog([
+            'action' => 'CREATED',
+            'entity' => $entityName,
+            'description' => $description,
+            'json_log' => [
+                'data' => ['new' => $logData],
+                'action' => 'CREATED',
+                'entity' => $entityName,
+                'metadata' => $this->getMetadata(),
+                'timestamp' => now()->toISOString(),
+                'description' => $description
+            ]
+        ]);
     }
 
+    /**
+     * Log the updated event for a model.
+     */
     protected function logUpdatedEvent($model)
     {
         $updatedData = $model->getDirty();
         $originalData = $model->getOriginal();
-        $logType = '';
-
-        $excludedLogFields = ['updated_at'];
-        if(method_exists($this, 'getExcludedLogFields')) {
-            $excludedLogFields = array_merge($excludedLogFields, $this->getExcludedLogFields());
-        }
+        $excludedLogFields = $this->getExcludedLogFields();
 
         $changes = [];
-
         foreach ($updatedData as $field => $newValue) {
-
             if (in_array($field, $excludedLogFields)) {
                 continue;
             }
 
-            if($this->isForeignKey($field)) {
-                $relatedValue = $this->getRelatedModelAttribute($model, $field, 'name', $newValue);
+            if ($this->isForeignKey($field)) {
+                $oldRelatedValue = $this->getRelatedModelAttribute($model, $field, 'name', $originalData[$field]);
+                $newRelatedValue = $this->getRelatedModelAttribute($model, $field, 'name', $newValue);
+                
                 $changes[$field] = [
-                    'old_value' => $this->getRelatedModelAttribute($model, $field, 'name', $originalData[$field]),
-                    'new_value' => $relatedValue ?? 'Unknown',
+                    'old' => $oldRelatedValue ?? 'Unknown',
+                    'new' => $newRelatedValue ?? 'Unknown',
                 ];
             } else {
                 $changes[$field] = [
-                    'old_value' => $originalData[$field],
-                    'new_value' => $newValue,
+                    'old' => $this->maskSensitiveField($field, $originalData[$field]),
+                    'new' => $this->maskSensitiveField($field, $newValue),
                 ];
             }
         }
 
-        $individualId = $this->getIndividualId($model);
-        $logType = $this->getLogType($model);
-
         if (!empty($changes)) {
-            Common::storeIndividualLog(
-                $individualId, 
-                'updated_' . $logType . Str::singular($model->getTable()), 
-                json_encode($changes)
-            );
+            $entityName = $this->getEntityName();
+            $description = $this->getUpdatedDescription($model, $changes);
+
+            $this->createActivityLog([
+                'action' => 'UPDATED',
+                'entity' => $entityName,
+                'description' => $description,
+                'json_log' => [
+                    'data' => [
+                        'old' => array_map(fn($change) => $change['old'], $changes),
+                        'new' => array_map(fn($change) => $change['new'], $changes)
+                    ],
+                    'action' => 'UPDATED',
+                    'entity' => $entityName,
+                    'metadata' => $this->getMetadata(),
+                    'timestamp' => now()->toISOString(),
+                    'description' => $description
+                ]
+            ]);
         }
     }
 
+    /**
+     * Log the deleted event for a model.
+     */
     protected function logDeletedEvent($model)
     {
         $modelAttributes = $model->getAttributes();
-        $logType = '';
+        $excludedLogFields = $this->getExcludedLogFields();
 
-        $excludedLogFields = ['id', 'individual_id', 'created_at', 'updated_at'];
-
-        if(method_exists($this, 'getExcludedLogFields')) {
-            $excludedLogFields = array_merge($excludedLogFields, $this->getExcludedLogFields());
-        }
-
-        $logNotes = [];
+        $logData = [];
         foreach ($modelAttributes as $field => $value) {
-            // Skip excluded fields
             if (in_array($field, $excludedLogFields)) {
                 continue;
             }
-            if($this->isForeignKey($field)) {
-                $relatedValue = $this->getRelatedModelAttribute($model, $field, 'name');
-                $logNotes[$field] = $relatedValue ?? 'Unknown';
+
+            if ($this->isForeignKey($field)) {
+                $relatedValue = $this->getRelatedModelAttribute($model, $field, 'name', $value);
+                $logData[$field] = $relatedValue ?? 'Unknown';
             } else {
-                $logNotes[$field] = $value;
+                $logData[$field] = $this->maskSensitiveField($field, $value);
             }
         }
 
-        $individualId = $this->getIndividualId($model);
-        $logType = $this->getLogType($model);
+        $entityName = $this->getEntityName();
+        $description = $this->getDeletedDescription($model);
 
-        Common::storeIndividualLog($individualId, 'deleted_' . $logType . Str::singular($model->getTable()), json_encode($logNotes));
+        $this->createActivityLog([
+            'action' => 'DELETED',
+            'entity' => $entityName,
+            'description' => $description,
+            'json_log' => [
+                'data' => ['old' => $logData],
+                'action' => 'DELETED',
+                'entity' => $entityName,
+                'metadata' => $this->getMetadata(),
+                'timestamp' => now()->toISOString(),
+                'description' => $description
+            ]
+        ]);
     }
 
-     /**
-     * Determine if a field is a foreign key.
-     *
-     * @param string $field
-     * @return bool
+    /**
+     * Create the activity log record.
      */
-    protected function isForeignKey(string $field): bool
+    protected function createActivityLog($data)
+    {
+        ActivityLog::create([
+            'company_id' => company()?->id,
+            'user_id' => user()?->id,
+            'loggable_type' => get_class($this),
+            'loggable_id' => $this->id,
+            'action' => $data['action'],
+            'entity' => $data['entity'],
+            'description' => $data['description'],
+            'json_log' => $data['json_log'],
+            'datetime' => now(),
+        ]);
+    }
+
+    /**
+     * Get fields to exclude from activity logging.
+     * Override in individual models as needed.
+     */
+    protected function getExcludedLogFields()
+    {
+        $defaultExcluded = ['id', 'created_at', 'updated_at', 'company_id'];
+        
+        if (method_exists($this, 'getCustomExcludedLogFields')) {
+            return array_merge($defaultExcluded, $this->getCustomExcludedLogFields());
+        }
+        
+        return $defaultExcluded;
+    }
+
+    /**
+     * Check if a field is a foreign key.
+     */
+    protected function isForeignKey($field)
     {
         return Str::endsWith($field, '_id');
     }
 
     /**
-     * Retrieve a related model's attribute for logging.
-     *
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @param string $field
-     * @param string $attribute
-     * @param mixed|null $relatedId
-     * @return mixed|null
+     * Get related model attribute value.
      */
-    protected function getRelatedModelAttribute(Model $model, string $field, string $attribute = 'name', $relatedId = null)
+    protected function getRelatedModelAttribute($model, $field, $attribute = 'name', $value = null)
     {
-        // Derive the relationship name by removing '_id'
-        $relationName = Str::before($field, '_id');
-
-        // Check if the relationship method exists
-        if (!method_exists($model, $relationName)) {
-            // Attempt to resolve the related model class dynamically
-            $relatedModelClass = $this->resolveRelatedModelClass($relationName);
-            if (!$relatedModelClass) {
-                return null;
-            }
-
-            // Fetch the related model instance
-            $relatedModel = $relatedId 
-                ? $relatedModelClass::find($relatedId) 
-                : $relatedModelClass::find($model->$field);
-
-            return $relatedModel ? $relatedModel->$attribute : null;
+        if (!$value) {
+            return null;
         }
 
-        // Utilize the defined relationship
-        $relatedModel = $model->$relationName;
+        // Remove _id suffix to get relation name
+        $relationName = Str::beforeLast($field, '_id');
+        
+        try {
+            // Get the model class for this relation
+            $modelClass = $this->getModelClassFromRelation($relationName);
+            
+            if ($modelClass && class_exists($modelClass)) {
+                $relatedModel = $modelClass::find($value);
+                
+                if ($relatedModel && isset($relatedModel->$attribute)) {
+                    return $relatedModel->$attribute;
+                }
+            }
+        } catch (\Exception $e) {
+            // Log the error or handle it as needed
+            return null;
+        }
 
-        return $relatedModel ? $relatedModel->$attribute : null;
+        return null;
     }
 
     /**
-     * Resolve the related model class based on the relation name.
-     *
-     * @param string $relationName
-     * @return string|null
+     * Get model class from relation name.
      */
-    protected function resolveRelatedModelClass(string $relationName): ?string
+    protected function getModelClassFromRelation($relationName)
     {
         // Convert relation name to StudlyCase for the model class
         $modelClassName = Str::studly(Str::singular($relationName));
@@ -212,37 +248,72 @@ trait LogsActivity
             return $fullModelClass;
         }
 
-        // Optionally, handle cases where models are in different namespaces or need custom resolution
-        // Add additional logic here if necessary
-
         return null;
     }
 
     /**
-    * Mask sensitive fields.
-    */
+     * Mask sensitive fields.
+     */
     protected function maskSensitiveField($field, $value)
     {
-        if ($field === 'card_number') {
-            return str_repeat('*', strlen($value) - 4) . substr($value, -4);
-        }
-
-        if ($field === 'CVV') {
-            return '***';
+        $sensitiveFields = ['password', 'card_number', 'cvv', 'ssn'];
+        
+        if (in_array(strtolower($field), $sensitiveFields)) {
+            if ($field === 'card_number') {
+                return str_repeat('*', strlen($value) - 4) . substr($value, -4);
+            }
+            if ($field === 'cvv') {
+                return '***';
+            }
+            return '***MASKED***';
         }
 
         return $value;
     }
 
-    protected function getIndividualId($model)
+    /**
+     * Get entity name for logging.
+     */
+    protected function getEntityName()
     {
-        return $model->individual_id 
-        ?? $model->individual?->id 
-        ?? $model->debt?->individual?->id;
+        return Str::plural(Str::snake(class_basename($this)));
     }
 
-    protected function getLogType($model)
+    /**
+     * Get metadata for logging.
+     */
+    protected function getMetadata()
     {
-        return !$model->individual_id && !$model->individual ? ($model->debt ? 'debt_' : '') : '';
+        return [
+            'server' => gethostname(),
+            'database' => config('database.connections.mysql.database', 'unknown'),
+        ];
+    }
+
+    /**
+     * Get created description.
+     */
+    protected function getCreatedDescription($model)
+    {
+        $entityName = Str::title(str_replace('_', ' ', Str::singular($this->getEntityName())));
+        return "{$entityName} created: ID {$model->id}";
+    }
+
+    /**
+     * Get updated description.
+     */
+    protected function getUpdatedDescription($model, $changes)
+    {
+        $entityName = Str::title(str_replace('_', ' ', Str::singular($this->getEntityName())));
+        return "{$entityName} updated: ID {$model->id}";
+    }
+
+    /**
+     * Get deleted description.
+     */
+    protected function getDeletedDescription($model)
+    {
+        $entityName = Str::title(str_replace('_', ' ', Str::singular($this->getEntityName())));
+        return "{$entityName} deleted: ID {$model->id}";
     }
 }

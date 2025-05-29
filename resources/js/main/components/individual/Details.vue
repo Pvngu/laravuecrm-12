@@ -273,6 +273,7 @@
                     >
                         <PhoneInput
                             v-model="formData.phone_number"
+                            :disabled="true"
                         />
                     </a-form-item>
                 </a-col>
@@ -286,6 +287,7 @@
                     >
                         <PhoneInput
                             v-model="formData.co_phone_number"
+                            :disabled="true"
                         />
                     </a-form-item>
                 </a-col>
@@ -508,9 +510,6 @@
                 </a-col>
             </a-row>
         </perfect-scrollbar>
-        <div v-if="isSale">
-            
-        </div>
     </a-form>
     <div
         :class="[
@@ -615,7 +614,6 @@ export default {
         });
 
         const onSubmit = () => {
-            loading.value = true;
             const url = props.isSale
                 ? "campaigns/update-actioned-sale"
                 : "campaigns/update-actioned-lead";
@@ -623,17 +621,13 @@ export default {
                 url: url,
                 data: formData.value,
                 success: (res) => {
-                    if(res.message === 'success') {
-                        notification.success({
-                            message: t("common.success"),
-                            description: t("sales.updated"),
-                            placement: "bottomRight",
-                        });
+                    notification.success({
+                        message: t("common.success"),
+                        description: t("sales.updated"),
+                        placement: "bottomRight",
+                    });
 
-                        emit("success");
-
-                        loading.value = false;
-                    }
+                    emit("success");                    
                 },
             });
         };
@@ -674,6 +668,7 @@ export default {
                     co_email: newValue.individual.co_applicant?.email || "",
                     co_language: newValue.individual.co_applicant?.language || "",
                     lead_status: newValue?.lead_status,
+                    sale_status_id: newValue.sale_status_id || null,
                 };
 
                 if(props.isSale) {

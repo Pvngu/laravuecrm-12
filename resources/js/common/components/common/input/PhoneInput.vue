@@ -3,16 +3,19 @@
         v-model="model"
         :placeholder="$t('common.phone_number')"
         :inputOptions="{
-            showDialCode: true,
-            mode: 'international',
-            formatOnDisplay: false
+            mode: 'national',
+            formatOnDisplay: false,
         }"
         :dropdownOptions="{
             showDialCodeInSelection: false,
             showFlags: true
         }"
         :disabled="disabled"
-        :onlyCountries="['US', 'CA', 'MX']"
+        :onlyCountries="['US']"
+        defaultCountry="US"
+        @on-input="(no, obj) => {
+            model = obj.nationalNumber;
+        }"
     />
 </template>
 

@@ -4,12 +4,13 @@ namespace App\Models;
 
 use App\Models\BaseModel;
 use App\Scopes\CompanyScope;
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Sale extends BaseModel
 {
-
     use HasFactory;
+    use LogsActivity;
 
     protected $table = 'sales';
 
@@ -36,6 +37,14 @@ class Sale extends BaseModel
         static::deleting(function ($sale) {
             $sale->individual()->delete();
         });
+    }
+
+    /**
+     * Get fields to exclude from activity logging
+     */
+    public function getCustomExcludedLogFields()
+    {
+        return ['created_by'];
     }
 
     public function individual()

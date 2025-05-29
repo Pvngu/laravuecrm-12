@@ -15,6 +15,7 @@ import LeadCallRoutes from './leadsCalls';
 import SettingRoutes from './settings';
 import BookingRoutes from './bookings';
 import SaleRoutes from './sales';
+import ActivityLog from './activityLog';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -35,6 +36,7 @@ const router = createRouter({
         ...ExpensesRoutes,
         ...ProductsRoutes,
         ...SaleRoutes,
+        ...ActivityLog,
     ],
     scrollBehavior: () => ({ left: 0, top: 0 }),
 });
