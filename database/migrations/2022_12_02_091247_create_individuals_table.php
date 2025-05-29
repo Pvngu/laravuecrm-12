@@ -24,7 +24,6 @@ return new class extends Migration
             $table->string('home_phone')->nullable()->default(null);
             $table->string('email')->nullable()->default(null);
             $table->string('language')->nullable()->default(null);
-            $table->string('original_profile_id')->nullable()->default(null);
             $table->longText('lead_data')->nullable()->default(null);
             $table->bigInteger('address_id')->unsigned()->nullable()->default(null);
             $table->foreign('address_id')->references('id')->on('addresses')->onUpdate('cascade')->onDelete('set null');

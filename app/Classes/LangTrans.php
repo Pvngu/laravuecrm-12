@@ -783,7 +783,6 @@ class LangTrans
             'email' => 'Email',
             'language' => 'Language',
             'co_applicant_id' => 'Co-Applicant ID',
-            'original_profile_id' => 'Original Profile ID',
             'address' => 'Address',
 
             'basic_details' => 'Basic Details',

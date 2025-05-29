@@ -30,8 +30,6 @@ class UpdateRequest extends BaseRequest
         // Step First
         if ($currentStep == 0) {
             $rules['name'] = 'required';
-            $rules['form_id'] = 'required';
-            $rules['email_template_id'] = 'required';
 
             $allUsers = json_decode($this->user_id);
             $totalMembers = count($allUsers);

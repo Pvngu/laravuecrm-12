@@ -59,9 +59,6 @@
                     <a-descriptions-item :label="$t('lead.language')">
                         <span>{{ lead && lead.language ? lead.language : "-" }}</span>
                     </a-descriptions-item>
-                    <a-descriptions-item :label="$t('lead.original_profile_id')">
-                        <span>{{ lead && lead.original_profile_id ? lead.original_profile_id : "-" }}</span>
-                    </a-descriptions-item>
                 </a-descriptions>
 
                 <a-descriptions

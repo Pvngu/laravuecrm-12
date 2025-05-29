@@ -1,5 +1,9 @@
 <template>
-    <div v-if="permsArray.includes('leads_create') || permsArray.includes('admin')">
+    <div
+        v-if="
+            permsArray.includes('leads_create') || permsArray.includes('admin')
+        "
+    >
         <a-tooltip :title="$t('lead.add')">
             <a-button :type="btnType" :class="btnClass" @click="showAdd">
                 <template #icon>
@@ -25,7 +29,14 @@
                             :label="$t('lead.first_name')"
                             name="first_name"
                         >
-                            <a-input v-model:value="leadDetailsFormData.first_name" :placeholder="$t('common.placeholder_default_text', [$t('lead.first_name')])"></a-input>
+                            <a-input
+                                v-model:value="leadDetailsFormData.first_name"
+                                :placeholder="
+                                    $t('common.placeholder_default_text', [
+                                        $t('lead.first_name'),
+                                    ])
+                                "
+                            ></a-input>
                         </a-form-item>
                     </a-col>
                     <a-col :xs="24" :sm="24" :md="12" :lg="12">
@@ -33,32 +44,65 @@
                             :label="$t('lead.last_name')"
                             name="last_name"
                         >
-                            <a-input v-model:value="leadDetailsFormData.last_name" :placeholder="$t('common.placeholder_default_text', [$t('lead.last_name')])"></a-input>
+                            <a-input
+                                v-model:value="leadDetailsFormData.last_name"
+                                :placeholder="
+                                    $t('common.placeholder_default_text', [
+                                        $t('lead.last_name'),
+                                    ])
+                                "
+                            ></a-input>
                         </a-form-item>
                     </a-col>
                 </a-row>
                 <a-row :gutter="16">
                     <a-col :xs="24" :sm="24" :md="12" :lg="12">
                         <a-form-item :label="$t('lead.SSN')" name="SSN">
-                            <a-input v-model:value="leadDetailsFormData.SSN" :placeholder="$t('common.placeholder_default_text', [$t('lead.SSN')])"></a-input>
+                            <a-input
+                                v-model:value="leadDetailsFormData.SSN"
+                                :placeholder="
+                                    $t('common.placeholder_default_text', [
+                                        $t('lead.SSN'),
+                                    ])
+                                "
+                            ></a-input>
                         </a-form-item>
                     </a-col>
                     <a-col :xs="24" :sm="24" :md="12" :lg="12">
-                        <a-form-item :label="$t('lead.date_of_birth')" name="date_of_birth">
-                            <a-date-picker v-model:value="leadDetailsFormData.date_of_birth" :placeholder="$t('common.placeholder_default_text', [$t('lead.date_of_birth')])" style="width: 100%"></a-date-picker>
+                        <a-form-item
+                            :label="$t('lead.date_of_birth')"
+                            name="date_of_birth"
+                        >
+                            <a-date-picker
+                                v-model:value="
+                                    leadDetailsFormData.date_of_birth
+                                "
+                                :placeholder="
+                                    $t('common.placeholder_default_text', [
+                                        $t('lead.date_of_birth'),
+                                    ])
+                                "
+                                style="width: 100%"
+                            ></a-date-picker>
                         </a-form-item>
                     </a-col>
                 </a-row>
                 <a-row :gutter="16">
                     <a-col :xs="24" :sm="24" :md="12" :lg="12">
-                        <a-form-item :label="$t('lead.phone_number')" name="phone_number">
+                        <a-form-item
+                            :label="$t('lead.phone_number')"
+                            name="phone_number"
+                        >
                             <PhoneInput
                                 v-model:value="leadDetailsFormData.phone_number"
                             />
                         </a-form-item>
                     </a-col>
                     <a-col :xs="24" :sm="24" :md="12" :lg="12">
-                        <a-form-item :label="$t('lead.home_phone')" name="home_phone">
+                        <a-form-item
+                            :label="$t('lead.home_phone')"
+                            name="home_phone"
+                        >
                             <PhoneInput
                                 v-model:value="leadDetailsFormData.home_phone"
                             />
@@ -68,19 +112,35 @@
                 <a-row :gutter="16">
                     <a-col :xs="24" :sm="24" :md="12" :lg="12">
                         <a-form-item :label="$t('lead.email')" name="email">
-                            <a-input v-model:value="leadDetailsFormData.email" :placeholder="$t('common.placeholder_default_text', [$t('lead.email')])"></a-input>
+                            <a-input
+                                v-model:value="leadDetailsFormData.email"
+                                :placeholder="
+                                    $t('common.placeholder_default_text', [
+                                        $t('lead.email'),
+                                    ])
+                                "
+                            ></a-input>
                         </a-form-item>
                     </a-col>
-                    <a-col :xs="24" :sm="24" :md="12" :lg="12" v-if="optionLanguages.length">
-                        <a-form-item :label="$t('lead.language')" name="language">
+                    <a-col
+                        :xs="24"
+                        :sm="24"
+                        :md="12"
+                        :lg="12"
+                        v-if="optionLanguages.length"
+                    >
+                        <a-form-item
+                            :label="$t('lead.language')"
+                            name="language"
+                        >
                             <a-select
                                 v-model:value="leadDetailsFormData.language"
                                 show-search
                                 :placeholder="
-                                    $t(
-                                        'common.placeholder_default_text',
-                                        [$t('lead.language')]
-                                    )"
+                                    $t('common.placeholder_default_text', [
+                                        $t('lead.language'),
+                                    ])
+                                "
                             >
                                 <a-select-option
                                     v-for="option in optionLanguages"
@@ -90,13 +150,6 @@
                                     {{ $t(option.value) }}
                                 </a-select-option>
                             </a-select>
-                        </a-form-item>
-                    </a-col>
-                </a-row>
-                <a-row :gutter="16">
-                    <a-col :xs="24" :sm="24" :md="12" :lg="12">
-                        <a-form-item :label="$t('lead.original_profile_id')" name="original_profile_id">
-                            <a-input v-model:value="leadDetailsFormData.original_profile_id" :placeholder="$t('common.placeholder_default_text', [$t('lead.original_profile_id')])"></a-input>
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -192,9 +245,9 @@ export default defineComponent({
         const optionLanguages = ref([]);
 
         onMounted(() => {
-            axiosAdmin.get('select-options/language').then((res) => {
+            axiosAdmin.get("select-options/language").then((res) => {
                 optionLanguages.value = res.data;
-            })
+            });
 
             resetFormData();
         });
@@ -239,7 +292,6 @@ export default defineComponent({
                     home_phone: leadDetailsFormData.value.home_phone,
                     email: leadDetailsFormData.value.email,
                     language: leadDetailsFormData.value.language,
-                    original_profile_id: leadDetailsFormData.value.original_profile_id,
                 },
                 successMessage: t("lead.created"),
                 success: (res) => {

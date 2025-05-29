@@ -242,10 +242,6 @@ export default defineComponent ({
                 value: "language",
             },
             {
-                label: t("lead.original_profile_id"),
-                value: "original_profile_id",
-            },
-            {
                 label: t("lead.time_taken"),
                 value: "time_taken",
             },

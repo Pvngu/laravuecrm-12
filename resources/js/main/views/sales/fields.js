@@ -5,7 +5,7 @@ import common from "../../../common/composable/common";
 const fields = () => {
     const { getCampaignUrl } = common();
     const { t } = useI18n();
-    const url = 'sales?fields=id,xid,saleStatus{id,xid,name},individual{id,xid,reference_number,first_name,last_name,full_name,home_phone,phone_number,email,SSN,date_of_birth,language,original_profile_id,lead_data,template_form,full_address,updated_at,created_at},individual:coApplicant{id,xid,first_name,last_name,SSN,date_of_birth,home_phone,phone_number,email,language},assignedUser{id,xid,name},individual:address';
+    const url = 'sales?fields=id,xid,saleStatus{id,xid,name},individual{id,xid,reference_number,first_name,last_name,full_name,home_phone,phone_number,email,SSN,date_of_birth,language,lead_data,template_form,full_address,updated_at,created_at},individual:coApplicant{id,xid,first_name,last_name,SSN,date_of_birth,home_phone,phone_number,email,language},assignedUser{id,xid,name},individual:address';
     const hashableColumns = [
         'assigned_to',
         'campaign_id',

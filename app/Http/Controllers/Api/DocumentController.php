@@ -415,7 +415,6 @@ class DocumentController extends ApiBaseController
             'home_phone' => $individual->home_phone ?? null,
             'email' => $individual->email ?? null,
             'language' => $individual->language ?? null,
-            'original_profile_id' => $individual->original_profile_id ?? null,
             ]);
         }
 

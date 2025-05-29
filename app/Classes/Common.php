@@ -420,7 +420,6 @@ class Common
             'phone_number',
             'email',
             'language',
-            'original_profile_id',
             'lead_data',
         ];
 

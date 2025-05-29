@@ -166,10 +166,6 @@ class LeadImport implements ToArray, WithHeadingRow
                         $individual->email = $email;
                     }
 
-                    if(isset($originalProfileId)) {
-                        $individual->original_profile_id = $originalProfileId;
-                    }
-
                     $individual->lead_data = $newLeadData;
                     $individual->created_by = user() ?  user()->id : null;
                     $lead->lead_hash = $leadHash;

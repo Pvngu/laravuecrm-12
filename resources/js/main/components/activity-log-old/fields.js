@@ -4,7 +4,7 @@ import common from "../../../common/composable/common";
 
 const fields = (props) => {
     const { getCampaignUrl } = common();
-    const leadUrl = "individual{id,xid,campaign_id,x_campaign_id,reference_number,first_name,last_name,email,home_phone,phone_number,language,SSN,date_of_birth,original_profile_id,lead_data,time_taken,first_action_by,x_first_action_by,last_action_by,x_last_action_by},individual:campaign{id,xid,name,status},individual:firstActioner{id,xid,name},individual:lastActioner{id,xid,name}";
+    const leadUrl = "individual{id,xid,campaign_id,x_campaign_id,reference_number,first_name,last_name,email,home_phone,phone_number,language,SSN,date_of_birth,lead_data,time_taken,first_action_by,x_first_action_by,last_action_by,x_last_action_by},individual:campaign{id,xid,name,status},individual:firstActioner{id,xid,name},individual:lastActioner{id,xid,name}";
     const formFieldNamesUrl = "form-field-names/all";
     const url = `individual-logs?fields=id,xid,time_taken,notes,log_type,date_time,user_id,x_user_id,user{id,xid,name,profile_image,profile_image_url},individual_id,x_individual_id,${props.showIndividualDetails ? leadUrl : ''}`;
     const allFormFieldNames = ref([]);

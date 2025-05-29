@@ -5,7 +5,7 @@ import common from "../../../../common/composable/common";
 
 const fields = () => {
     const { convertStringToKey, getCampaignUrl, getCampaignStatsUrl } = common();
-    const url = "leads?fields=id,xid,individual{id,xid,reference_number,first_name,last_name,home_phone,phone_number,email,SSN,date_of_birth,language,original_profile_id,lead_data,campaign_id,x_campaign_id,time_taken,first_action_by,x_first_action_by,last_action_by,x_last_action_by},lead_status,started,individual:campaign{id,xid,name,status},individual:firstActioner{id,xid,name},individual:lastActioner{id,xid,name}";
+    const url = "leads?fields=id,xid,individual{id,xid,reference_number,first_name,last_name,home_phone,phone_number,email,SSN,date_of_birth,language,lead_data,campaign_id,x_campaign_id,time_taken,first_action_by,x_first_action_by,last_action_by,x_last_action_by},lead_status,started,individual:campaign{id,xid,name,status},individual:firstActioner{id,xid,name},individual:lastActioner{id,xid,name}";
     const addEditUrl = "leads";
     const hashableColumns = ['campaign_id'];
     const { t } = useI18n();

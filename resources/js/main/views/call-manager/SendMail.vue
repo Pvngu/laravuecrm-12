@@ -240,20 +240,6 @@
                         {{ $t('lead.language') }}
                     </a-button>
                 </a-col>
-                <a-col
-                    :xs="8"
-                    :sm="8"
-                    :md="6"
-                    :lg="4"
-                >
-                    <a-button
-                        @click="insertFormText('original_profile_id')"
-                        type="link"
-                        style="padding: 0px"
-                    >
-                        {{ $t('lead.original_profile_id') }}
-                    </a-button>
-                </a-col>
             </a-row>
             <a-typography-title :level="5">
                 {{ $t("lead.co_applicant") }}

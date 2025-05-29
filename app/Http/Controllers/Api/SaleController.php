@@ -117,7 +117,6 @@ class SaleController extends ApiBaseController
             'home_phone',
             'email',
             'language',
-            'original_profile_id',
         ];
 
         foreach ($fields as $field) {

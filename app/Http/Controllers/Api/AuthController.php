@@ -444,7 +444,7 @@ class AuthController extends ApiBaseController
         $request = request();
         $user = user();
 
-        $allAppointments = Individual::select('individuals.id', 'individuals.reference_number','individuals.first_name','individuals.SSN','individuals.date_of_birth', 'individuals.home_phone', 'individuals.phone_number', 'individuals.email', 'individuals.language', 'individuals.original_profile_id', 'individuals.lead_data', 'individuals.campaign_id', 'individuals.time_taken', 'individuals.first_action_by', 'individuals.last_action_by', 'individuals.salesman_booking_id')
+        $allAppointments = Individual::select('individuals.id', 'individuals.reference_number','individuals.first_name','individuals.SSN','individuals.date_of_birth', 'individuals.home_phone', 'individuals.phone_number', 'individuals.email', 'individuals.language', 'individuals.lead_data', 'individuals.campaign_id', 'individuals.time_taken', 'individuals.first_action_by', 'individuals.last_action_by', 'individuals.salesman_booking_id')
             ->with([
                 'campaign' => function ($query) {
                     $query->select('id', 'name', 'status');
@@ -494,7 +494,7 @@ class AuthController extends ApiBaseController
         $request = request();
         $user = user();
 
-        $allAppointments = Individual::select('individuals.id', 'individuals.reference_number','individuals.first_name','individuals.SSN','individuals.date_of_birth', 'individuals.home_phone', 'individuals.phone_number', 'individuals.email', 'individuals.language', 'individuals.original_profile_id', 'individuals.last_name', 'individuals.lead_data', 'individuals.campaign_id', 'individuals.time_taken', 'individuals.first_action_by', 'individuals.last_action_by', 'individuals.individual_follow_up_id')
+        $allAppointments = Individual::select('individuals.id', 'individuals.reference_number','individuals.first_name','individuals.SSN','individuals.date_of_birth', 'individuals.home_phone', 'individuals.phone_number', 'individuals.email', 'individuals.language', 'individuals.last_name', 'individuals.lead_data', 'individuals.campaign_id', 'individuals.time_taken', 'individuals.first_action_by', 'individuals.last_action_by', 'individuals.individual_follow_up_id')
             ->with([
                 'campaign' => function ($query) {
                     $query->select('id', 'name', 'status');

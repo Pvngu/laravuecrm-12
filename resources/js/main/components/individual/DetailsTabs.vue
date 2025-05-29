@@ -436,23 +436,6 @@
                         </a-select>
                     </a-form-item>
                 </a-col>
-                <a-col :xs="24" :sm="24" :md="12" :lg="12">
-                    <a-form-item
-                        :label="$t('lead.original_profile_id')"
-                        name="original_profile_id"
-                        :help="rules.original_profile_id ? rules.original_profile_id.message : null"
-                        :validateStatus="rules.original_profile_id ? 'error' : null"
-                    >
-                        <a-input
-                            v-model:value="formData.original_profile_id"
-                            :placeholder="
-                                $t('common.placeholder_default_text', [
-                                    $t('lead.original_profile_id'),
-                                ])
-                            "
-                        ></a-input>
-                    </a-form-item>
-                </a-col>
             </a-row>
             <a-row :gutter="16" style="padding-bottom: 53px">
                 <a-col
@@ -820,7 +803,6 @@ export default {
             co_phone_number: "",
             co_email: "",
             co_language: "",
-            original_profile_id: "",
             lead_data: [],
         });
 
@@ -843,14 +825,12 @@ export default {
             const statusesUrl = props.isSale
                 ? "sale-statuses"
                 : "lead-statuses";
-            const selectOptionsPromise = axiosAdmin.get(
-                "select-options/language"
-            );
+            const selectOptionsPromise = axiosAdmin.get("select-options/language");
             const statusesPromise = axiosAdmin.get(statusesUrl);
 
             Promise.all([selectOptionsPromise, statusesPromise]).then(
                 ([selectOptionsResponse, statusesResponse]) => {
-                    optionLanguages.value = selectOptionsResponse.data.language;
+                    optionLanguages.value = selectOptionsResponse.data;
                     statuses.value = statusesResponse.data;
                 }
             );
