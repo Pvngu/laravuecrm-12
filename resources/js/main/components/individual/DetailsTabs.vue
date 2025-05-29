@@ -296,7 +296,6 @@
                     >
                         <PhoneInput
                             v-model="formData.co_phone_number"
-                            :disabled="true"
                         />
                     </a-form-item>
                 </a-col>
@@ -320,14 +319,9 @@
                         :validateStatus="rules.co_home_phone ? 'error' : null"
                         class="hidden-label"
                     >
-                        <a-input
-                            v-model:value="formData.co_home_phone"
-                            :placeholder="
-                                $t('common.placeholder_default_text', [
-                                    $t('lead.home_phone'),
-                                ])
-                            "
-                        ></a-input>
+                        <PhoneInput
+                            v-model="formData.co_home_phone"
+                        />
                     </a-form-item>
                 </a-col>
                 <a-col :xs="24" :sm="24" :md="12" :lg="12">
@@ -923,6 +917,7 @@ export default {
                             email: newValue.individual.email || "",
                             assigned_to: newValue.x_assigned_to || null,
                             reference_number: newValue.individual.reference_number || "",
+                            language: newValue.individual.language || "",
                             sale_status_id: newValue.sale_status_id || null,
                             lead_status: newValue.individual.lead_status || null,
                             lead_data: newValue.individual.lead_data || [],
@@ -941,6 +936,7 @@ export default {
                             formData.value.co_home_phone = newValue.individual.co_applicant.home_phone || "";
                             formData.value.co_phone_number = newValue.individual.co_applicant.phone_number || "";
                             formData.value.co_email = newValue.individual.co_applicant.email || "";
+                            formData.value.co_language = newValue.individual.co_applicant.language || "";
                             coApplicantData.value = newValue.individual.co_applicant;
                         } else {
                             coApplicantData.value = null;

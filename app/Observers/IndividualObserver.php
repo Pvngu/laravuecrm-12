@@ -12,6 +12,8 @@ use App\Classes\Common;
 use Illuminate\Support\Arr;
 use Examyou\RestAPI\Exceptions\ApiException;
 
+use function Laravel\Prompts\error;
+
 class IndividualObserver
 {
     /**
@@ -69,6 +71,8 @@ class IndividualObserver
                 }
             }
         }
+
+        $this->addEditCoapplicant($request);
     }
 
     /**
@@ -120,6 +124,43 @@ class IndividualObserver
             if ($notes !== '[]') {
                 Common::storeIndividualLog($individual->id, 'updated_lead', $notes);
             }
+        }
+    }
+
+    public function addEditCoapplicant($request) {
+        // Check if co-applicant is required
+        if (co_applicant_required() === false) return;
+
+        if ($request->has('co_first_name') && $request->co_first_name !== null) {
+
+            $individualId = Common::getIdFromHash($request->individual_id);
+            $individual = Individual::find($individualId);
+
+            if ($individual->coApplicant) {
+                $coApplicant = $individual->coApplicant;
+            } else {
+                $coApplicant = new \App\Models\CoApplicant;
+                $coApplicant->individual_id = $individualId;
+            }
+
+            $coFields = [
+                'first_name' => 'co_first_name',
+                'last_name' => 'co_last_name',
+                'SSN' => 'co_SSN',
+                'date_of_birth' => 'co_date_of_birth',
+                'home_phone' => 'co_home_phone',
+                'phone_number' => 'co_phone_number',
+                'email' => 'co_email',
+                'language' => 'co_language',
+            ];
+
+            foreach ($coFields as $field => $value) {
+                if ($request->has($value)) {
+                    $coApplicant->$field = $request->$value;
+                }
+            }
+
+            $coApplicant->save();
         }
     }
 }
