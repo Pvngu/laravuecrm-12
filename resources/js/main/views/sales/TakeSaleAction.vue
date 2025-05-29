@@ -230,22 +230,12 @@
                                 {{ $t("sales.sale_details") }}
                             </span>
                         </template>
-                        <a-tabs v-model:activeKeySale="activeKeySale" type="card" class="address">
-                            <a-tab-pane key="details" :tab="$t('common.details')">
-                                <Details
-                                    :saleLeadData="saleData"
-                                    @success="() => (refreshTimeLine = true)"
-                                    :isSale="true"
-                                />
-                            </a-tab-pane>
-                            <a-tab-pane key="address" :tab="$t('common.address')">
-                                <Address
-                                    :individualData="saleData.individual"
-                                    :states="states"
-                                    @success="() => (refreshTimeLine = true)"
-                                />
-                            </a-tab-pane>
-                        </a-tabs>
+                        <DetailsTabs
+                            :saleLeadData="saleData"
+                            :states="states"
+                            @success="() => (refreshTimeLine = true)"
+                            :isSale="true"
+                        />
                     </a-tab-pane>
                     <a-tab-pane key="lead_notes">
                         <template #tab>
@@ -305,8 +295,7 @@
     import DocsTable from "../../components/docs/index.vue";
     import ActivityLogTable from "../../components/activity-log/index.vue";
     import Alerts from '../../components/individual/Alerts.vue';
-    import Address from '../../components/individual/Address.vue';
-    import Details from '../../components/individual/Details.vue';
+    import DetailsTabs from '../../components/individual/DetailsTabs.vue';
 
     export default {
         components: {
@@ -324,13 +313,11 @@
             DocsTable,
             ActivityLogTable,
             Alerts,
-            Address,
-            Details
+            DetailsTabs
         },
         setup() {
             const { formatDateTime, formatDate, formatAmountCurrency } = common();
             const activeKey = ref("sale_details");
-            const activeKeySale = ref("details");
             const route = useRoute();
             const states = ref([]);
             const saleData = ref({});
@@ -354,7 +341,6 @@
                 const saleDetailsUrl = `sales/${route.params.id}?fields=id,xid,sale_status_id,assigned_to,x_assigned_to,created_at,saleStatus{id,name},assignedUser{id,xid,name,email,phone},individual,individual:coApplicant,individual:coApplicant:address{id,xid,address_line1,address_line2,city,state_id,zip_code,full_address},individual:lastActioner{id,xid,name},${campaignUrl},individual:individualFollowUp{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:individualFollowUp:user{id,xid,name},individual:salesmanBooking{id,xid,log_type,user_id,x_user_id,date_time,notes},individual:salesmanBooking:user{id,xid,name}`;
                 saleCallLogDetails.value = {};
                 activeKey.value =  route.query.tab ?? "sale_details";
-                activeKeySale.value = "details";
                 saleFollowUp.value = {};
                 salesmanBooking.value = {};
 
@@ -380,7 +366,6 @@
 
             return {
                 activeKey,
-                activeKeySale,
                 states,
                 formatDateTime,
                 refreshNotes,

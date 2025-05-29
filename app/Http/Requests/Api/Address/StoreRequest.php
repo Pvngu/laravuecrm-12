@@ -60,7 +60,7 @@ class StoreRequest extends BaseRequest
             ],
             'co_state_id' => [
                 'nullable',
-                'integer',
+                'string',
                 'exists:states,id',
                 'required_with:co_address_line1,co_address_line2,co_city,co_zip_code',
             ],
@@ -69,11 +69,11 @@ class StoreRequest extends BaseRequest
                 'string',
                 'required_with:co_address_line1,co_address_line2,co_city,co_state_id',
             ],
-            'address_check' => [
-                Rule::requiredIf(function () {
-                    return $this->allAddressFieldsAreNull();
-                }),
-            ],
+            // 'address_check' => [
+            //     Rule::requiredIf(function () {
+            //         return $this->allAddressFieldsAreNull();
+            //     }),
+            // ],
         ];
         return $rules;
     }

@@ -377,21 +377,12 @@
                                 {{ $t("lead.lead_details") }}
                             </span>
                         </template>
-                        <a-tabs v-model:activeKeyLead="activeKeyLead" type="card">
-                            <a-tab-pane key="details" tab="Details">
-                                <Details
-                                    :saleLeadData="leadData"
-                                    @success="() => (refreshTimeLine = true)"
-                                />
-                            </a-tab-pane>
-                            <a-tab-pane key="address" tab="Address">
-                                <Address
-                                    :individualData="leadData.individual"
-                                    :states="states"
-                                    @success="() => (refreshTimeLine = true)"
-                                />
-                            </a-tab-pane>
-                        </a-tabs>
+                        <DetailsTabs
+                            :saleLeadData="leadData"
+                            :states="states"
+                            @success="() => (refreshTimeLine = true)"
+                            :isSale="false"
+                        />
                     </a-tab-pane>
                     <a-tab-pane key="call_logs">
                         <template #tab>
@@ -535,8 +526,7 @@ import DocsTable from "../../components/docs/index.vue";
 import SmsChat from "../../components/sms/index.vue";
 import SkipLeadModal from "./SkipLeadModal.vue";
 import Alerts from "../../components/individual/Alerts.vue";
-import Address from "../../components/individual/Address.vue";
-import Details from "../../components/individual/Details.vue";
+import DetailsTabs from "../../components/individual/DetailsTabs.vue";
 
 export default {
     components: {
@@ -561,8 +551,7 @@ export default {
         SkipLeadModal,
         ExclamationCircleFilled,
         Alerts,
-        Address,
-        Details
+        DetailsTabs
     },
     setup() {
         const { formatDateTime } = common();
@@ -572,7 +561,6 @@ export default {
         const leadDetails = ref({});
         const leadCallLogDetails = ref({});
         const activeKey = ref("lead_details");
-        const activeKeyLead = ref("details");
         const activeLeftPanelKey = ref("lead_details");
         const leadFormData = ref({});
         const extraLeadFormData = ref({});
@@ -605,7 +593,6 @@ export default {
             leadDetails.value = {};
             leadCallLogDetails.value = {};
             activeKey.value = "lead_details";
-            activeKeyLead.value = "details";
             activeLeftPanelKey.value = "lead_details";
             leadFormData.value = {};
             extraLeadFormData.value = {};

@@ -116,6 +116,7 @@ class LangTrans
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'downloading' => 'Downloading',
+            'updated_successfully' => 'Updated Successfully',
         ],
         'menu' => [
             'dashboard' => 'Dashboard',
@@ -783,11 +784,6 @@ class LangTrans
             'language' => 'Language',
             'co_applicant_id' => 'Co-Applicant ID',
             'original_profile_id' => 'Original Profile ID',
-            'address_line_1' => 'Address (P.O. Box Not Accepted)',
-            'address_line_2' => 'Address 2',
-            'city' => 'City',
-            'state' => 'State',
-            'zip_code' => 'Zip',
             'address' => 'Address',
 
             'basic_details' => 'Basic Details',
@@ -800,6 +796,14 @@ class LangTrans
             'save_address' => 'Save Address',
             'address_saved_successfully' => 'Address saved successfully',
             'address_save_error_message' => 'There was an error while saving address... Please try again',
+        ],
+        'address' => [
+            'updated' => 'Address Updated Successfully',
+            'address_line_1' => 'Address (P.O. Box Not Accepted)',
+            'address_line_2' => 'Address 2',
+            'city' => 'City',
+            'state' => 'State',
+            'zip_code' => 'Zip',
         ],
         'docs' => [
             'name' => 'Document Name',
