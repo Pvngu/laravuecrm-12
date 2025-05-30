@@ -71,8 +71,9 @@ class AddressController extends ApiBaseController
                 }
             }
 
+            $co_address->save();
+            
             if (!$coApplicant->address_id) {
-                $co_address->save();
                 $coApplicant->address_id = $co_address->id;
                 $coApplicant->save();
             }

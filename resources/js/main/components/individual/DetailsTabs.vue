@@ -580,7 +580,7 @@
                             class="hidden-label"
                         >
                             <a-input
-                                v-model:value="addressFormData.co_address_line_2"
+                                v-model:value="addressFormData.co_address_line2"
                                 :placeholder="$t('common.placeholder_default_text', [$t('address.address_line_2')])"
                                 :disabled="isCoApplicantDisabled"
                             />
