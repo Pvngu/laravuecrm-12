@@ -54,7 +54,7 @@ class IndividualObserver
             // Lead related logic (similar to saveIndividualData 'lead' type)
             $leadId = Common::getIdFromHash($request->lead_id);
             $lead = Lead::where('individual_id', $leadId)->first();
-
+            
             if ($request->has('lead_status')) {
                 $lead->lead_status = $request->has('lead_status') && $request->lead_status != '' ? $request->lead_status : null;
             }
@@ -73,58 +73,6 @@ class IndividualObserver
         }
 
         $this->addEditCoapplicant($request);
-    }
-
-    /**
-     * Handle the Individual "updating" event.
-     *
-     * @param  \App\Models\Individual  $individual
-     * @return void
-     */
-    public function updating(Individual $individual)
-    {
-        $request = request();
-        $loggedUser = user();
-        $type = 'lead'; // Default to lead type if not specified in the request
-        
-        if ($request->has('type')) {
-            $type = $request->type;
-        } else {
-            // Determine type from request parameters
-            if ($request->has('x_sale_lead_id')) {
-                $saleLeadXId = $request->x_sale_lead_id;
-                $saleLeadId = Common::getIdFromHash($saleLeadXId);
-                $sale = Sale::find($saleLeadId);
-                if ($sale) {
-                    $type = 'sale';
-                }
-            }
-        }
-
-        // Track changes for individual
-        $updatedData = $type == 'sale' ? Arr::except($individual->getDirty(), ['date_of_birth']) : 
-                                         Arr::except($individual->getDirty(), ['time_taken', 'date_of_birth']);
-        $changes = [];
-
-        if ($updatedData) {
-            $originalData = $individual->getOriginal();
-
-            foreach ($updatedData as $field => $newValue) {
-                if ($field !== 'address_id' && $field !== 'co_applicant_id' && $field !== 'lead_data') {
-                    $changes[$field] = [
-                        'old_value' => $originalData[$field],
-                        'new_value' => $newValue,
-                    ];
-                }
-            }
-        }
-
-        if (!empty($changes)) {
-            $notes = json_encode($changes);
-            if ($notes !== '[]') {
-                Common::storeIndividualLog($individual->id, 'updated_lead', $notes);
-            }
-        }
     }
 
     public function addEditCoapplicant($request) {

@@ -1,5 +1,5 @@
 <template>
-    <a-layout-header :style="{ padding: '0 16px', background: 'white' }">
+    <a-layout-header :style="{ padding: '0 16px', background: 'white', position: 'sticky', top: '0px', zIndex: 1000 }">
         <a-row>
             <a-col :span="4">
                 <a-space>

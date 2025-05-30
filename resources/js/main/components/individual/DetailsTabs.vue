@@ -919,7 +919,7 @@ export default {
                             reference_number: newValue.individual.reference_number || "",
                             language: newValue.individual.language || "",
                             sale_status_id: newValue.sale_status_id || null,
-                            lead_status: newValue.individual.lead_status || null,
+                            lead_status: newValue.lead_status || null,
                             lead_data: newValue.individual.lead_data || [],
                             // campaign: newValue.individual.campaign || {},
                             individual_id: newValue.individual.xid,
